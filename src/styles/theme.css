@@ -1,0 +1,121 @@
+/*
+ * RajaThrifs design tokens: night navy with champagne gold and a starlit sky.
+ * Tailwind v4 turns every token in @theme into utilities
+ * (e.g. --color-sand becomes bg-sand, text-sand, border-sand/30).
+ * JavaScript-side tokens (motion, z-index) live in src/theme/tokens.ts.
+ */
+@theme {
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  /* Brand palette */
+  /* night/carbon keep their names so every component follows the theme. */
+  --color-night: #1b2550; /* night navy */
+  --color-carbon: #26336a; /* raised navy */
+  --color-bone: #f7f3ea;
+  --color-sand: #e6c983; /* champagne gold */
+  --color-stone: #b9b2a4;
+  /* Glow hues for the sky backdrop (decorative only, never text). */
+  --color-aurora: #5c70d6;
+  --color-orchid: #8b6fd6;
+
+  /* Sand scale (accent) */
+  --color-sand-100: #f6ecd2;
+  --color-sand-300: #efd9a6;
+  --color-sand-500: #e6c983;
+  --color-sand-600: #d4b265;
+  --color-sand-700: #a88a45;
+
+  /* Semantic roles (night navy). Contrast on the page: ink 13.3:1, muted 8.1:1, subtle 6.0:1 (4.9:1 on raised panels). */
+  --color-surface: #1b2550;
+  --color-surface-raised: #26336a;
+  --color-surface-sunken: #202b5a;
+  --color-ink: #f7f3ea;
+  --color-ink-muted: #b8c0dc;
+  --color-ink-subtle: #9aa5c9;
+  --color-line: #34437a;
+  --color-line-strong: #4a5a96;
+
+  /* Feedback */
+  --color-success: #8fd19e;
+  --color-warning: #ecc172;
+  --color-danger: #f08a7b;
+  --color-info: #9ec3f0;
+
+  /* Admin shell */
+  --color-admin-sidebar: #151e44;
+  --color-admin-sidebar-text: #cdd3e8;
+
+  /* Radius: mostly sharp, editorial */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1.25rem;
+
+  /* Elevation */
+  --shadow-card: 0 1px 0 rgb(245 241 232 / 0.04) inset, 0 20px 40px -24px rgb(8 12 36 / 0.6);
+  --shadow-pop: 0 30px 80px -20px rgb(8 12 36 / 0.7);
+  --shadow-glow: 0 0 0 1px rgb(230 201 131 / 0.25), 0 20px 60px -20px rgb(230 201 131 / 0.35);
+
+  /* Motion (CSS side; mirrored in src/theme/tokens.ts) */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-smooth: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-marquee-reverse: marquee 40s linear infinite reverse;
+  --animate-scroll-cue: scroll-cue 2.2s var(--ease-in-out-smooth) infinite;
+  --animate-twinkle: twinkle 3.2s ease-in-out infinite;
+  --animate-float: float 7s ease-in-out infinite;
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.15;
+      transform: scale(0.6) rotate(0deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1) rotate(45deg);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-14px);
+    }
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @keyframes scroll-cue {
+    0% {
+      transform: scaleY(0);
+      transform-origin: top;
+    }
+    45% {
+      transform: scaleY(1);
+      transform-origin: top;
+    }
+    55% {
+      transform: scaleY(1);
+      transform-origin: bottom;
+    }
+    100% {
+      transform: scaleY(0);
+      transform-origin: bottom;
+    }
+  }
+}
