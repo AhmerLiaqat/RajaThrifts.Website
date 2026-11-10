@@ -14,8 +14,8 @@ import type { DashboardSummary } from '@/types/dashboard'
 
 // Single series → no legend; the panel title names it. One axis only.
 const SERIES = palette.sand
-const GRID = '#34437a'
-const AXIS_TEXT = '#9aa5c9'
+const GRID = palette.grid
+const AXIS_TEXT = palette.axis
 
 const compact = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
 const dayLabel = (iso: string) =>
@@ -69,7 +69,7 @@ export function SalesChart({ daily }: { daily: DashboardSummary['daily'] }) {
               width={64}
               allowDecimals={false}
             />
-            <Tooltip content={<ChartTooltip />} cursor={{ stroke: '#4a5a96', strokeWidth: 1 }} />
+            <Tooltip content={<ChartTooltip />} cursor={{ stroke: '#CDD2DE', strokeWidth: 1 }} />
             <Area
               type="monotone"
               dataKey="sales"
@@ -79,7 +79,7 @@ export function SalesChart({ daily }: { daily: DashboardSummary['daily'] }) {
               strokeLinecap="round"
               fill={SERIES}
               fillOpacity={0.1}
-              activeDot={{ r: 4, fill: SERIES, stroke: '#202b5a', strokeWidth: 2 }}
+              activeDot={{ r: 4, fill: SERIES, stroke: '#FFFFFF', strokeWidth: 2 }}
               dot={false}
               isAnimationActive={false}
             />
@@ -95,7 +95,7 @@ export function SalesChart({ daily }: { daily: DashboardSummary['daily'] }) {
         <summary className="cursor-pointer text-ink-muted hover:text-bone">View as table</summary>
         <div className="mt-2 max-h-56 overflow-y-auto rounded border border-bone/10">
           <table className="w-full">
-            <thead className="sticky top-0 bg-carbon text-left text-ink-muted">
+            <thead className="sticky top-0 border-b border-line bg-surface-sunken text-left text-ink-muted">
               <tr>
                 <th className="px-3 py-1.5 font-medium">Date</th>
                 <th className="px-3 py-1.5 text-right font-medium">Orders</th>

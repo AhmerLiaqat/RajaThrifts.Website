@@ -35,7 +35,8 @@ export interface Payment {
 export interface Order {
   id: ID
   orderNumber: string
-  userId: ID
+  /** null for guest orders. */
+  userId: ID | null
   status: OrderStatus
   paymentStatus: PaymentStatus
   paymentMethod: PaymentMethod
@@ -62,6 +63,9 @@ export interface Order {
   shippedAt: ISODateString | null
   deliveredAt: ISODateString | null
   cancelledAt: ISODateString | null
+  /** Private storage path of the bank-transfer screenshot (payment-proofs bucket). */
+  paymentProofPath: string | null
+  paymentProofUploadedAt: ISODateString | null
   items: OrderItem[]
   payments: Payment[]
 }
@@ -72,4 +76,39 @@ export interface PlaceOrderInput {
   address: { line1: string; line2?: string; city: string; province?: string; postalCode?: string }
   paymentMethod: Exclude<PaymentMethod, 'card'>
   notes?: string
+}
+
+/** Storefront checkout: always an advance bank transfer with a screenshot already uploaded. */
+export type PlaceAdvanceOrderInput = Omit<PlaceOrderInput, 'paymentMethod'> & { paymentProofPath: string }
+
+/** What a guest sees when tracking an order (public.track_order): no address or phone. */
+export interface TrackedOrder {
+  orderNumber: string
+  status: OrderStatus
+  paymentStatus: PaymentStatus
+  paymentMethod: PaymentMethod
+  hasPaymentProof: boolean
+  subtotal: MinorUnits
+  shippingFee: MinorUnits
+  discountTotal: MinorUnits
+  total: MinorUnits
+  contactName: string
+  city: string
+  courier: string | null
+  trackingNumber: string | null
+  placedAt: ISODateString
+  confirmedAt: ISODateString | null
+  shippedAt: ISODateString | null
+  deliveredAt: ISODateString | null
+  cancelledAt: ISODateString | null
+  items: Array<{
+    productName: string
+    brandName: string
+    collection: Collection
+    sizeLabel: string
+    imageUrl: string | null
+    unitPrice: MinorUnits
+    quantity: number
+    lineTotal: MinorUnits
+  }>
 }

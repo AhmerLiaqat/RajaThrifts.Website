@@ -65,7 +65,6 @@ function InvestmentForm({ initial, onDone }: { initial: Draft; onDone: () => voi
           type="date"
           value={d.invested_on}
           onChange={(e) => set({ invested_on: e.target.value })}
-          className="[color-scheme:dark]"
         />
       </div>
       <Input
@@ -199,7 +198,7 @@ export default function InvestmentsPage() {
                   type="button"
                   aria-label="Edit"
                   onClick={() => setEditing({ ...r, amount: String(r.amount) })}
-                  className="rounded p-1.5 text-ink-muted hover:bg-white/5 hover:text-bone"
+                  className="rounded p-1.5 text-ink-muted hover:bg-surface-sunken hover:text-bone"
                 >
                   <Pencil className="size-4" />
                 </button>

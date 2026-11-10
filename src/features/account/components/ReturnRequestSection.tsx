@@ -42,7 +42,7 @@ export function ReturnRequestSection({ order }: { order: Order }) {
 
   return (
     <section className="border-t border-bone/10 pt-6">
-      <h2 className="mb-3 font-display text-xs tracking-[0.24em] uppercase">Returns</h2>
+      <h2 className="mb-3 font-display text-xs tracking-wider uppercase">Returns</h2>
 
       {!!returns.data?.length && (
         <ul className="mb-4 space-y-2">

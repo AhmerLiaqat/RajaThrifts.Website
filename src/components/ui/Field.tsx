@@ -9,11 +9,11 @@ import {
 import { cn } from '@/lib/utils/cn'
 
 const control =
-  'w-full rounded-md border border-line-strong bg-surface-raised px-3 text-sm text-ink placeholder:text-ink-subtle focus:border-sand focus:outline-none disabled:opacity-50'
+  'w-full rounded-lg border border-line-strong bg-surface-raised px-3 text-sm text-ink shadow-sm placeholder:text-ink-subtle transition-shadow focus:border-sand focus:ring-3 focus:ring-sand/15 focus:outline-none disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:opacity-60'
 
 function Label({ htmlFor, children }: { htmlFor: string; children: ReactNode }) {
   return (
-    <label htmlFor={htmlFor} className="text-xs font-medium tracking-wide text-bone/80">
+    <label htmlFor={htmlFor} className="text-sm font-medium text-ink">
       {children}
     </label>
   )
@@ -52,7 +52,7 @@ export function Select({ label, error, hint, id, className, children, ...props }
         id={sid}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${sid}-error` : hint ? `${sid}-hint` : undefined}
-        className={cn(control, 'h-11 cursor-pointer', error && 'border-danger', className)}
+        className={cn(control, 'h-11 cursor-pointer', error && 'border-danger focus:border-danger focus:ring-danger/15', className)}
         {...props}
       >
         {children}
@@ -80,7 +80,7 @@ export function Textarea({ label, error, hint, id, className, rows = 3, ...props
         rows={rows}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${tid}-error` : hint ? `${tid}-hint` : undefined}
-        className={cn(control, 'py-2.5 leading-relaxed', error && 'border-danger', className)}
+        className={cn(control, 'py-2.5 leading-relaxed', error && 'border-danger focus:border-danger focus:ring-danger/15', className)}
         {...props}
       />
       <Message id={tid} error={error} hint={hint} />
@@ -91,7 +91,7 @@ export function Textarea({ label, error, hint, id, className, rows = 3, ...props
 const ALERT = {
   error: { icon: AlertTriangle, cls: 'border-danger/40 bg-danger/10 text-danger' },
   success: { icon: CheckCircle2, cls: 'border-success/40 bg-success/10 text-success' },
-  info: { icon: Info, cls: 'border-sand/30 bg-sand/5 text-sand' },
+  info: { icon: Info, cls: 'border-sand/20 bg-sand-100/60 text-sand' },
 } as const
 
 export function Alert({
@@ -109,11 +109,11 @@ export function Alert({
   return (
     <div
       role={tone === 'error' ? 'alert' : 'status'}
-      className={cn('flex gap-3 rounded-sm border p-4 text-sm', cls, className)}
+      className={cn('flex gap-3 rounded-lg border p-4 text-sm', cls, className)}
     >
       <Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
-      <div className="min-w-0 text-bone/85">
-        {title && <p className="font-medium text-bone">{title}</p>}
+      <div className="min-w-0 text-ink-muted">
+        {title && <p className="font-semibold text-ink">{title}</p>}
         {children && <div className={title ? 'mt-1' : undefined}>{children}</div>}
       </div>
     </div>

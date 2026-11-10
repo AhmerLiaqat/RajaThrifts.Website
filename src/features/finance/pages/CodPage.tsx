@@ -62,7 +62,6 @@ function SettleForm({ orders, onDone }: { orders: PendingCodOrder[]; onDone: () 
           value={date}
           max={todayPKT()}
           onChange={(e) => setDate(e.target.value)}
-          className="[color-scheme:dark]"
         />
       </div>
       <Input
@@ -213,7 +212,7 @@ export default function CodPage() {
                   aria-label="Select all"
                   checked={rows.length > 0 && rows.every((o) => selected.has(o.id))}
                   onChange={(e) => setSelected(e.target.checked ? new Set(rows.map((o) => o.id)) : new Set())}
-                  className="accent-[#C7B99A]"
+                  className="accent-sand"
                 />
               </th>
             )}
@@ -244,7 +243,7 @@ export default function CodPage() {
                         return n
                       })
                     }
-                    className="accent-[#C7B99A]"
+                    className="accent-sand"
                   />
                 </td>
               )}

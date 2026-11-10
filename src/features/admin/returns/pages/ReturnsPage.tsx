@@ -95,7 +95,7 @@ function ReturnPanel({ ret, onClose }: { ret: ReturnRequest; onClose: () => void
                   type="checkbox"
                   checked={restock}
                   onChange={(e) => setRestock(e.target.checked)}
-                  className="mt-0.5 accent-[#C7B99A]"
+                  className="mt-0.5 accent-sand"
                 />
                 <span>
                   Put the pair back on sale when received
@@ -212,7 +212,7 @@ export default function ReturnsPage() {
       >
         {returns.isPending && <TableMessage colSpan={5}>Loading…</TableMessage>}
         {returns.data?.map((r) => (
-          <tr key={r.id} onClick={() => setSelectedId(r.id)} className="cursor-pointer hover:bg-white/[0.03]">
+          <tr key={r.id} onClick={() => setSelectedId(r.id)} className="cursor-pointer hover:bg-surface-sunken">
             <td className="px-4 py-3">
               <button type="button" className="font-mono text-bone hover:text-sand">
                 {r.returnNumber}

@@ -40,7 +40,7 @@ export default function UsersPage() {
       <dl className="mb-6 grid gap-3 sm:grid-cols-3">
         {USER_ROLES.map((r) => (
           <div key={r} className="rounded-sm border border-bone/10 p-4">
-            <dt className="font-display text-xs tracking-[0.2em] text-sand uppercase">{r}</dt>
+            <dt className="font-display text-xs tracking-wider text-sand uppercase">{r}</dt>
             <dd className="mt-1 text-xs text-ink-muted">{ROLE_HELP[r]}</dd>
           </div>
         ))}
@@ -65,7 +65,7 @@ export default function UsersPage() {
 
       <div className="overflow-x-auto rounded-sm border border-bone/10">
         <table className="w-full min-w-[680px] text-sm">
-          <thead className="bg-carbon text-left text-[11px] tracking-[0.18em] text-ink-muted uppercase">
+          <thead className="border-b border-line bg-surface-sunken text-left text-xs tracking-wider text-ink-muted uppercase">
             <tr>
               <th className="px-4 py-3 font-medium">User</th>
               <th className="px-4 py-3 font-medium">Phone</th>
@@ -77,7 +77,7 @@ export default function UsersPage() {
             {users.isPending && (
               <tr>
                 <td colSpan={4} className="px-4 py-3">
-                  <Skeleton className="h-9 bg-carbon" />
+                  <Skeleton className="h-9" />
                 </td>
               </tr>
             )}

@@ -35,9 +35,9 @@ export function WishlistButton({
       className={cn(
         'grid place-items-center rounded-full transition-colors',
         variant === 'overlay'
-          ? 'size-9 bg-night/60 text-bone backdrop-blur hover:bg-night/80'
-          : 'h-14 w-14 shrink-0 border border-bone/25 text-bone hover:border-bone',
-        saved && 'text-sand',
+          ? 'size-9 bg-white/90 text-ink shadow-sm ring-1 ring-line hover:bg-white'
+          : 'h-12 w-12 shrink-0 rounded-lg border border-line-strong text-ink hover:bg-surface-sunken',
+        saved && 'text-danger',
         className,
       )}
     >
@@ -48,7 +48,7 @@ export function WishlistButton({
         transition={{ type: 'spring', stiffness: 500, damping: 15 }}
         className="grid place-items-center"
       >
-        <Heart className={cn(variant === 'overlay' ? 'size-4' : 'size-5', saved && 'fill-sand')} />
+        <Heart className={cn(variant === 'overlay' ? 'size-4' : 'size-5', saved && 'fill-danger')} />
       </motion.span>
     </motion.button>
   )

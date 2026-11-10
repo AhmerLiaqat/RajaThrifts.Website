@@ -19,14 +19,17 @@ export function RequireAuth() {
   return <Outlet />
 }
 
-/** Users holding one of `roles`. Signed-in users without the role go home. */
+/**
+ * Users holding one of `roles`. Staff without the role (e.g. a shopkeeper on an admin page) go to the
+ * dashboard; signed-in non-staff go to the staff login page, which explains how to get access.
+ */
 export function RequireRole({ roles }: { roles: readonly UserRole[] }) {
   const { isLoading, isAuthenticated, hasRole } = useAuth()
   const location = useLocation()
 
   if (isLoading) return <PageLoader />
   if (!isAuthenticated) return <Navigate to={paths.login} replace state={{ from: location }} />
-  if (!hasRole(roles)) return <Navigate to={paths.home} replace />
+  if (!hasRole(roles)) return <Navigate to={hasRole(STAFF_ROLES) ? paths.admin.root : paths.login} replace />
   return <Outlet />
 }
 

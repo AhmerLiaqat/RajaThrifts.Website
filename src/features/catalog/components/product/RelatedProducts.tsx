@@ -10,8 +10,8 @@ export function RelatedProducts({ product, isDemo }: { product: Product; isDemo?
   if (related.data && related.data.length === 0) return null
 
   return (
-    <section aria-labelledby="related-heading" className="border-t border-bone/10 bg-night py-20 lg:py-28">
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-10">
+    <section aria-labelledby="related-heading" className="border-t border-line bg-surface-sunken py-12 lg:py-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div id="related-heading">
           <SectionHeading
             eyebrow="Keep looking"
@@ -20,11 +20,11 @@ export function RelatedProducts({ product, isDemo }: { product: Product; isDemo?
             description={`More pairs from ${product.collection} and ${product.brand}, close to this price.`}
           />
         </div>
-        <div className="mt-12">
+        <div className="mt-8">
           {!related.data ? (
             <ProductGridSkeleton count={4} />
           ) : (
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-12 sm:gap-x-6 lg:grid-cols-4">
+            <ul className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
               {related.data.map((p, i) => (
                 <li key={p.id}>
                   <Reveal delay={i * 0.06}>

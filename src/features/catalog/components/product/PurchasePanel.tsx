@@ -72,8 +72,8 @@ export function PurchasePanel({ product, isDemo }: PurchasePanelProps) {
         {isDemo && <DemoTag label="Demo listing" />}
       </div>
 
-      <p className="mt-6 font-display text-xs tracking-[0.3em] text-sand uppercase">{product.brand}</p>
-      <h1 className="mt-2 text-[clamp(2rem,4vw,3.25rem)] leading-[1] font-semibold tracking-[-0.03em]">
+      <p className="mt-5 text-sm font-semibold text-sand">{product.brand}</p>
+      <h1 className="mt-1 text-2xl leading-tight font-bold tracking-tight text-ink sm:text-3xl">
         {product.name}
       </h1>
       {product.model && <p className="mt-2 text-sm text-ink-muted">{product.model}</p>}
@@ -113,7 +113,7 @@ export function PurchasePanel({ product, isDemo }: PurchasePanelProps) {
       {/* Size */}
       <div className="mt-8 border-t border-bone/10 pt-6">
         <div className="mb-3 flex items-baseline justify-between">
-          <h2 id="size-heading" className="font-display text-xs tracking-[0.24em] text-bone uppercase">
+          <h2 id="size-heading" className="text-sm font-medium text-ink">
             Size <span className="text-ink-subtle">(EU)</span>
           </h2>
           {variant && <span className="text-xs text-ink-muted">Selected: EU {variant.size.value}</span>}
@@ -172,7 +172,7 @@ export function PurchasePanel({ product, isDemo }: PurchasePanelProps) {
       <section aria-labelledby="condition-heading" className="mt-10 border-t border-bone/10 pt-6">
         <h2
           id="condition-heading"
-          className="mb-4 font-display text-xs tracking-[0.24em] text-bone uppercase"
+          className="mb-4 text-sm font-medium text-ink"
         >
           Condition
         </h2>
@@ -182,10 +182,10 @@ export function PurchasePanel({ product, isDemo }: PurchasePanelProps) {
       <section aria-labelledby="defects-heading" className="mt-8">
         <h2
           id="defects-heading"
-          className="mb-3 flex items-center justify-between font-display text-xs tracking-[0.24em] text-bone uppercase"
+          className="mb-3 flex items-center justify-between text-sm font-medium text-ink"
         >
           Defect disclosure
-          <span className="font-sans text-[11px] tracking-normal text-ink-subtle normal-case">
+          <span className="font-sans text-xs tracking-normal text-ink-subtle normal-case">
             {product.defects.length} recorded
           </span>
         </h2>

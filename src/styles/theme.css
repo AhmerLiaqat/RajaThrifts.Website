@@ -1,63 +1,69 @@
 /*
- * RajaThrifs design tokens: night navy with champagne gold and a starlit sky.
+ * RajaThrifs design tokens: clean light theme with a deep navy brand and a gold highlight.
  * Tailwind v4 turns every token in @theme into utilities
  * (e.g. --color-sand becomes bg-sand, text-sand, border-sand/30).
- * JavaScript-side tokens (motion, z-index) live in src/theme/tokens.ts.
+ * JavaScript-side tokens (motion, palette for charts) live in src/theme/tokens.ts.
+ *
+ * Legacy token names are kept so existing components follow the theme:
+ *   bone   → primary ink (headings, body text, primary buttons)
+ *   night  → page / on-dark colour (white)
+ *   carbon → raised card surface (white)
+ *   sand   → brand accent (deep navy blue: links, active states, accent buttons)
+ *   gold   → small brand highlights only (ratings, badges); never body text
  */
 @theme {
   /* Typography */
   --font-sans: 'Inter', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
 
   /* Brand palette */
-  /* night/carbon keep their names so every component follows the theme. */
-  --color-night: #1b2550; /* night navy */
-  --color-carbon: #26336a; /* raised navy */
-  --color-bone: #f7f3ea;
-  --color-sand: #e6c983; /* champagne gold */
-  --color-stone: #b9b2a4;
-  /* Glow hues for the sky backdrop (decorative only, never text). */
-  --color-aurora: #5c70d6;
-  --color-orchid: #8b6fd6;
+  --color-night: #ffffff;
+  --color-carbon: #ffffff;
+  --color-bone: #111a33;
+  --color-sand: #24358a;
+  --color-stone: #6b7280;
+  --color-gold: #c99a2e;
+  --color-gold-soft: #fbf3e0;
+  --color-brand-navy: #1b2550;
 
-  /* Sand scale (accent) */
-  --color-sand-100: #f6ecd2;
-  --color-sand-300: #efd9a6;
-  --color-sand-500: #e6c983;
-  --color-sand-600: #d4b265;
-  --color-sand-700: #a88a45;
+  /* Accent scale (navy) */
+  --color-sand-100: #eceffa;
+  --color-sand-300: #c7cff0;
+  --color-sand-500: #24358a;
+  --color-sand-600: #1d2b73;
+  --color-sand-700: #16215a;
 
-  /* Semantic roles (night navy). Contrast on the page: ink 13.3:1, muted 8.1:1, subtle 6.0:1 (4.9:1 on raised panels). */
-  --color-surface: #1b2550;
-  --color-surface-raised: #26336a;
-  --color-surface-sunken: #202b5a;
-  --color-ink: #f7f3ea;
-  --color-ink-muted: #b8c0dc;
-  --color-ink-subtle: #9aa5c9;
-  --color-line: #34437a;
-  --color-line-strong: #4a5a96;
+  /* Semantic roles. Contrast on white: ink 16:1, muted 7.6:1, subtle 4.9:1. */
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #f4f5f9;
+  --color-ink: #111a33;
+  --color-ink-muted: #474f68;
+  --color-ink-subtle: #687089;
+  --color-line: #e3e6ee;
+  --color-line-strong: #cdd2de;
 
-  /* Feedback */
-  --color-success: #8fd19e;
-  --color-warning: #ecc172;
-  --color-danger: #f08a7b;
-  --color-info: #9ec3f0;
+  /* Feedback (text-safe on white and on their own /10 tints) */
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #c62828;
+  --color-info: #1d4ed8;
 
-  /* Admin shell */
-  --color-admin-sidebar: #151e44;
-  --color-admin-sidebar-text: #cdd3e8;
+  /* Admin shell: navy sidebar on a light workspace */
+  --color-admin-sidebar: #141c3f;
+  --color-admin-sidebar-text: #c9cfe6;
 
-  /* Radius: mostly sharp, editorial */
-  --radius-sm: 0.25rem;
+  /* Radius */
+  --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-  --radius-xl: 1.25rem;
+  --radius-xl: 1rem;
 
-  /* Elevation */
-  --shadow-card: 0 1px 0 rgb(245 241 232 / 0.04) inset, 0 20px 40px -24px rgb(8 12 36 / 0.6);
-  --shadow-pop: 0 30px 80px -20px rgb(8 12 36 / 0.7);
-  --shadow-glow: 0 0 0 1px rgb(230 201 131 / 0.25), 0 20px 60px -20px rgb(230 201 131 / 0.35);
+  /* Elevation: soft, neutral */
+  --shadow-card: 0 1px 2px rgb(17 26 51 / 0.05), 0 1px 3px rgb(17 26 51 / 0.04);
+  --shadow-pop: 0 20px 50px -12px rgb(17 26 51 / 0.25);
+  --shadow-glow: 0 8px 24px -8px rgb(17 26 51 / 0.18);
 
   /* Motion (CSS side; mirrored in src/theme/tokens.ts) */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -66,30 +72,8 @@
   --animate-marquee: marquee 40s linear infinite;
   --animate-marquee-reverse: marquee 40s linear infinite reverse;
   --animate-scroll-cue: scroll-cue 2.2s var(--ease-in-out-smooth) infinite;
-  --animate-twinkle: twinkle 3.2s ease-in-out infinite;
-  --animate-float: float 7s ease-in-out infinite;
-
-  @keyframes twinkle {
-    0%,
-    100% {
-      opacity: 0.15;
-      transform: scale(0.6) rotate(0deg);
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1) rotate(45deg);
-    }
-  }
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-14px);
-    }
-  }
+  --animate-twinkle: none;
+  --animate-float: none;
 
   @keyframes marquee {
     from {

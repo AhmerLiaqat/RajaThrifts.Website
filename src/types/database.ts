@@ -121,7 +121,7 @@ export interface ProductWithRelationsRow extends ProductRow {
 export interface OrderRow {
   id: string
   order_number: string
-  user_id: string
+  user_id: string | null
   status: OrderStatus
   payment_status: PaymentStatus
   payment_method: PaymentMethod
@@ -147,6 +147,8 @@ export interface OrderRow {
   shipped_at: string | null
   delivered_at: string | null
   cancelled_at: string | null
+  payment_proof_path?: string | null
+  payment_proof_uploaded_at?: string | null
   created_at: string
   updated_at: string
 }
@@ -193,4 +195,36 @@ export interface WishlistRow {
   user_id: string
   product_id: string
   created_at: string
+}
+
+/** jsonb returned by public.track_order(). */
+export interface TrackedOrderRow {
+  order_number: string
+  status: OrderStatus
+  payment_status: PaymentStatus
+  payment_method: PaymentMethod
+  has_payment_proof: boolean
+  subtotal: NumericPkr
+  shipping_fee: NumericPkr
+  discount_total: NumericPkr
+  total: NumericPkr
+  contact_name: string
+  shipping_city: string
+  courier: string | null
+  tracking_number: string | null
+  placed_at: string
+  confirmed_at: string | null
+  shipped_at: string | null
+  delivered_at: string | null
+  cancelled_at: string | null
+  items: Array<{
+    product_name: string
+    brand_name: string
+    collection: Collection
+    size_label: string
+    image_path: string | null
+    unit_price: NumericPkr
+    quantity: number
+    line_total: NumericPkr
+  }>
 }

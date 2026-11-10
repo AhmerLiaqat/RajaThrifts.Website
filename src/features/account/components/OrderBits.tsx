@@ -15,7 +15,7 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full border px-2.5 py-0.5 font-display text-[10px] tracking-[0.2em] whitespace-nowrap uppercase',
+        'inline-flex items-center rounded-full border px-2.5 py-0.5 font-display text-[11px] tracking-wider whitespace-nowrap uppercase',
         meta.className,
       )}
     >
@@ -25,7 +25,7 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
 }
 
 /** Progress rail: Pending → Confirmed → Processing → Shipped → Delivered. */
-export function OrderTimeline({ order }: { order: Order }) {
+export function OrderTimeline({ order }: { order: Pick<Order, 'status'> }) {
   if (order.status === 'cancelled' || order.status === 'refunded') {
     return <p className="text-sm text-ink-muted">{ORDER_STATUS_META[order.status].description}</p>
   }
@@ -37,7 +37,7 @@ export function OrderTimeline({ order }: { order: Order }) {
           <span className={cn('h-1 rounded-full', i <= current ? 'bg-sand' : 'bg-bone/10')} />
           <span
             className={cn(
-              'flex items-center gap-1 text-[10px] tracking-wide uppercase',
+              'flex items-center gap-1 text-[11px] tracking-wide uppercase',
               i <= current ? 'text-bone' : 'text-ink-subtle',
             )}
           >
@@ -58,10 +58,10 @@ export function OrderItemsList({ order }: { order: Order }) {
           {item.imageUrl ? (
             <img src={item.imageUrl} alt="" className="aspect-[4/5] w-16 shrink-0 rounded-sm object-cover" />
           ) : (
-            <div className="aspect-[4/5] w-16 shrink-0 rounded-sm bg-carbon" />
+            <div className="aspect-[4/5] w-16 shrink-0 rounded-sm bg-surface-sunken" />
           )}
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] tracking-[0.2em] text-ink-subtle uppercase">{item.brandName}</p>
+            <p className="text-xs tracking-wider text-ink-subtle uppercase">{item.brandName}</p>
             <p className="truncate font-display text-bone">{item.productName}</p>
             <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-muted">
               <CollectionBadge collection={item.collection} /> {item.sizeLabel} ·{' '}

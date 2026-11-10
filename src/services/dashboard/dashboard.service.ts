@@ -18,6 +18,7 @@ import type {
 } from '@/types/dashboard'
 import type { ProductStatus } from '@/types/product'
 import { check, fromPostgrestError, unwrap } from '../core/errors'
+import { mapPublicSettings, type PublicSettingsRow } from '../store/store.service'
 import { minorToPkr, pkrToMinor, pkrToMinorOrNull } from '../core/money'
 import { productImageUrl } from '../core/storage'
 import { slugify } from '../products/admin-product.service'
@@ -107,10 +108,11 @@ export const dashboardService = {
   },
 
   async settings(): Promise<StoreSettings> {
-    const r = unwrap<{ low_stock_threshold: number; return_window_days: number; updated_at: string }>(
-      await getSupabase().from('store_settings').select('*').single(),
-    )
+    const r = unwrap<
+      PublicSettingsRow & { low_stock_threshold: number; return_window_days: number; updated_at: string }
+    >(await getSupabase().from('store_settings').select('*').single())
     return {
+      ...mapPublicSettings(r),
       lowStockThreshold: r.low_stock_threshold,
       returnWindowDays: r.return_window_days,
       updatedAt: r.updated_at,
@@ -118,10 +120,25 @@ export const dashboardService = {
   },
 
   /** Admin only (RLS). Zero rows updated means the caller is not an admin. */
-  async updateSettings(patch: { lowStockThreshold: number; returnWindowDays: number }): Promise<void> {
+  async updateSettings(
+    patch: Omit<StoreSettings, 'updatedAt'>,
+  ): Promise<void> {
+    const blank = (v: string | null) => (v?.trim() ? v.trim() : null)
     const { data, error } = await getSupabase()
       .from('store_settings')
-      .update({ low_stock_threshold: patch.lowStockThreshold, return_window_days: patch.returnWindowDays })
+      .update({
+        low_stock_threshold: patch.lowStockThreshold,
+        return_window_days: patch.returnWindowDays,
+        bank_name: blank(patch.bankName),
+        bank_account_title: blank(patch.bankAccountTitle),
+        bank_account_number: blank(patch.bankAccountNumber),
+        bank_iban: blank(patch.bankIban)?.replace(/\s+/g, '').toUpperCase() ?? null,
+        payment_instructions: blank(patch.paymentInstructions),
+        whatsapp_number: blank(patch.whatsappNumber),
+        whatsapp_group_url: blank(patch.whatsappGroupUrl),
+        delivery_charge: patch.deliveryCharge / 100,
+        free_delivery_threshold: patch.freeDeliveryThreshold === null ? null : patch.freeDeliveryThreshold / 100,
+      })
       .eq('id', true)
       .select('id')
     if (error) throw fromPostgrestError(error)

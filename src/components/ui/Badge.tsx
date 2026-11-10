@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils/cn'
 
 const tones = {
   neutral: 'bg-surface-sunken text-ink-muted',
-  accent: 'bg-sand/15 text-sand',
+  accent: 'bg-sand-100 text-sand',
   success: 'bg-success/10 text-success',
   warning: 'bg-warning/10 text-warning',
   danger: 'bg-danger/10 text-danger',
@@ -17,7 +17,7 @@ export function Badge({ tone = 'neutral', className, ...props }: BadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide uppercase',
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold',
         tones[tone],
         className,
       )}

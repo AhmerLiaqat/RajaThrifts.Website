@@ -39,7 +39,7 @@ function SearchResults({ term, onNavigate }: { term: string; onNavigate: () => v
                 <img src={p.primaryImage.url} alt="" className="size-14 rounded-sm object-cover" />
               )}
               <span className="min-w-0 flex-1">
-                <span className="block text-[11px] tracking-[0.2em] text-ink-subtle uppercase">
+                <span className="block text-xs tracking-wider text-ink-subtle uppercase">
                   {p.brand}
                 </span>
                 <span className="block truncate font-display text-bone group-hover:text-sand">{p.name}</span>
@@ -61,7 +61,7 @@ function SearchResults({ term, onNavigate }: { term: string; onNavigate: () => v
       <Link
         to={`${paths.shop}?q=${encodeURIComponent(term)}`}
         onClick={onNavigate}
-        className="mt-4 inline-flex items-center gap-2 font-display text-xs tracking-[0.22em] text-sand uppercase"
+        className="mt-4 inline-flex items-center gap-2 font-display text-xs tracking-wider text-sand uppercase"
       >
         See all {data.total} results <ArrowRight className="size-4" />
       </Link>
@@ -151,7 +151,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                 <SearchResults term={debounced} onNavigate={close} />
               ) : (
                 <div>
-                  <p className="font-display text-[11px] tracking-[0.24em] text-ink-subtle uppercase">Try</p>
+                  <p className="font-display text-xs tracking-wider text-ink-subtle uppercase">Try</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {SUGGESTIONS.map((s) => (
                       <button

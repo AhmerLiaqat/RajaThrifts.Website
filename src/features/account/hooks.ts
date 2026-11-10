@@ -3,7 +3,8 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { queryKeys } from '@/lib/query/queryClient'
 import { orderService, profileService } from '@/services'
 import type { ProfileUpdate } from '@/types/auth'
-import type { PlaceOrderInput } from '@/types/order'
+import { uploadPaymentProof } from '@/services/core/storage'
+import type { PlaceAdvanceOrderInput, PlaceOrderInput } from '@/types/order'
 
 export function useMyProfile() {
   const { user } = useAuth()
@@ -52,6 +53,48 @@ export function usePlaceOrder() {
       // Stock changed: refresh catalog views.
       qc.invalidateQueries({ queryKey: queryKeys.products.all })
     },
+  })
+}
+
+/** Storefront checkout: upload the transfer screenshot, then place the order with it attached. */
+export function usePlaceAdvanceOrder() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      file,
+      uploadedPath,
+      input,
+    }: {
+      /** null for guests (no account). */
+      userId: string | null
+      file: File
+      /** Re-use a screenshot already uploaded by a previous attempt with the same file. */
+      uploadedPath?: string
+      input: Omit<PlaceAdvanceOrderInput, 'paymentProofPath'>
+    }) => {
+      const paymentProofPath = uploadedPath ?? (await uploadPaymentProof(userId, file))
+      try {
+        return { order: await orderService.placeWithProof({ ...input, paymentProofPath }), paymentProofPath }
+      } catch (e) {
+        Object.assign(e as object, { paymentProofPath })
+        throw e
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: queryKeys.orders.all })
+      qc.invalidateQueries({ queryKey: queryKeys.products.all })
+    },
+  })
+}
+
+/** Customer: replace the payment screenshot on a pending order. */
+export function useReplacePaymentProof() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ userId, orderId, file }: { userId: string; orderId: string; file: File }) =>
+      orderService.setPaymentProof(orderId, await uploadPaymentProof(userId, file)),
+    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.orders.all }),
   })
 }
 

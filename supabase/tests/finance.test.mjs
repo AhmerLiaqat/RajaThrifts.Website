@@ -112,10 +112,13 @@ eq('unit cost snapshotted at checkout', (await q(`select c.unit_cost from order_
 await as(shop)
 const move = async (o, ...statuses) => { for (const s of statuses) await q(`select update_order_status($1, $2)`, [o.id, s]) }
 await move(O1, 'confirmed', 'shipped', 'delivered')
-await q(`select record_payment($1, 'paid', 'BANK-O2')`, [O2.id])
-await move(O2, 'confirmed', 'shipped', 'delivered')
+// Bank transfers are verified and approved by the admin (migration 0011); staff then fulfil.
+await as(admin)
+await q(`select approve_order($1, 'BANK-O2')`, [O2.id])
+await q(`select approve_order($1, 'BANK-O4')`, [O4.id])
+await as(shop)
+await move(O2, 'shipped', 'delivered')
 await move(O3, 'confirmed', 'shipped', 'returned')
-await q(`select record_payment($1, 'paid', 'BANK-O4')`, [O4.id])
 await move(O4, 'cancelled')
 await move(O5, 'confirmed', 'shipped', 'delivered')
 eq('courier return puts the pair back in stock', (await q(`select quantity from product_variants where id = $1`, [vA42]))[0].quantity, 1)

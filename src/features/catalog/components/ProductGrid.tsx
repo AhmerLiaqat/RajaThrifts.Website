@@ -7,7 +7,7 @@ import { motion as m } from '@/theme/tokens'
 import type { ProductSummary } from '@/types/product'
 import { ProductCard } from './ProductCard'
 
-const GRID = 'grid grid-cols-2 gap-x-4 gap-y-12 sm:gap-x-6 xl:grid-cols-3 2xl:grid-cols-4'
+const GRID = 'grid grid-cols-2 gap-4 sm:gap-6 xl:grid-cols-3 2xl:grid-cols-4'
 
 interface ProductGridProps {
   products: ProductSummary[]
@@ -43,9 +43,9 @@ export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
     <ul className={GRID} aria-label="Loading products">
       {Array.from({ length: count }, (_, i) => (
         <li key={i}>
-          <Skeleton className="aspect-[4/5] w-full rounded-sm bg-carbon" />
-          <Skeleton className="mt-4 h-3 w-16 bg-carbon" />
-          <Skeleton className="mt-2 h-4 w-3/4 bg-carbon" />
+          <Skeleton className="aspect-[4/5] w-full rounded-sm" />
+          <Skeleton className="mt-4 h-3 w-16" />
+          <Skeleton className="mt-2 h-4 w-3/4" />
         </li>
       ))}
     </ul>

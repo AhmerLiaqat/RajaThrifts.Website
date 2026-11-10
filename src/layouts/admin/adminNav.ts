@@ -10,6 +10,7 @@ import {
   Wallet,
   Footprints,
   LayoutDashboard,
+  MessageSquareQuote,
   Package,
   Receipt,
   RotateCcw,
@@ -61,6 +62,7 @@ export const DASHBOARD_NAV: Array<{ label: string; items: NavItem[] }> = [
       { to: paths.admin.orders, label: 'Orders', icon: Receipt, roles: STAFF, badge: 'pendingOrders' },
       { to: paths.admin.returns, label: 'Returns', icon: RotateCcw, roles: STAFF, badge: 'openReturns' },
       { to: paths.admin.customers, label: 'Customers', icon: UserRound, roles: STAFF },
+      { to: paths.admin.reviews, label: 'Reviews', icon: MessageSquareQuote, roles: STAFF },
     ],
   },
   {

@@ -19,11 +19,11 @@ export function Panel({
   className?: string
 }) {
   return (
-    <section className={cn('rounded-md border border-bone/10 bg-carbon/50', className)}>
+    <section className={cn('rounded-xl border border-line bg-surface-raised shadow-card', className)}>
       {(title || actions) && (
-        <header className="flex items-start justify-between gap-4 border-b border-bone/10 px-5 py-4">
+        <header className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
           <div>
-            {title && <h2 className="text-sm font-semibold tracking-tight text-bone">{title}</h2>}
+            {title && <h2 className="text-base font-semibold tracking-tight text-ink">{title}</h2>}
             {description && <p className="mt-0.5 text-xs text-ink-muted">{description}</p>}
           </div>
           {actions}
@@ -49,12 +49,12 @@ export function StatTile({
   return (
     <div
       className={cn(
-        'rounded-md border bg-carbon/50 p-4',
-        tone === 'attention' ? 'border-sand/40' : 'border-bone/10',
+        'rounded-xl border bg-surface-raised p-5 shadow-card',
+        tone === 'attention' ? 'border-warning/40 bg-warning/[0.04]' : 'border-line',
       )}
     >
-      <p className="text-xs text-ink-muted">{label}</p>
-      <p className="mt-2 font-display text-2xl font-semibold tracking-tight text-bone tabular-nums">
+      <p className="text-sm font-medium text-ink-muted">{label}</p>
+      <p className="mt-2 font-display text-2xl font-bold tracking-tight text-ink tabular-nums">
         {value}
       </p>
       {note && <p className="mt-1 text-xs text-ink-subtle">{note}</p>}
@@ -66,7 +66,7 @@ export function Pill({ children, className }: { children: ReactNode; className?:
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] tracking-[0.16em] whitespace-nowrap uppercase',
+        'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap',
         className,
       )}
     >
@@ -89,7 +89,7 @@ export function SearchBox({
   return (
     <label
       className={cn(
-        'flex h-11 items-center gap-2 rounded-md border border-line-strong bg-surface-raised px-3 focus-within:border-sand',
+        'flex h-11 items-center gap-2 rounded-lg border border-line-strong bg-surface-raised px-3 shadow-sm focus-within:border-sand focus-within:ring-3 focus-within:ring-sand/15',
         className,
       )}
     >
@@ -99,7 +99,7 @@ export function SearchBox({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="w-full bg-transparent text-sm focus:outline-none"
+        className="w-full bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
       />
     </label>
   )
@@ -118,7 +118,7 @@ export function Tabs<T extends string>({
   return (
     <div
       role="tablist"
-      className="no-scrollbar flex gap-1 overflow-x-auto rounded-md border border-bone/10 bg-carbon/50 p-1"
+      className="no-scrollbar flex gap-1 overflow-x-auto rounded-lg border border-line bg-surface-sunken p-1"
     >
       {options.map((o) => (
         <button
@@ -128,13 +128,13 @@ export function Tabs<T extends string>({
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}
           className={cn(
-            'flex shrink-0 items-center gap-2 rounded px-3 py-1.5 text-xs whitespace-nowrap transition-colors',
-            value === o.value ? 'bg-bone text-night' : 'text-ink-muted hover:text-bone',
+            'flex shrink-0 items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors',
+            value === o.value ? 'bg-surface-raised text-ink shadow-sm ring-1 ring-line' : 'text-ink-muted hover:text-ink',
           )}
         >
           {o.label}
           {o.count != null && (
-            <span className={cn('tabular-nums', value === o.value ? 'text-night/60' : 'text-ink-subtle')}>
+            <span className={cn('tabular-nums', value === o.value ? 'rounded-full bg-sand-100 px-1.5 text-xs text-sand' : 'text-xs text-ink-subtle')}>
               {o.count}
             </span>
           )}
@@ -172,7 +172,7 @@ export function Drawer({
       {open && (
         <div className="fixed inset-0 z-40">
           <motion.div
-            className="absolute inset-0 bg-night/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-bone/40 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -185,14 +185,14 @@ export function Drawer({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ duration: 0.4, ease: m.ease.outExpo }}
-            className={cn('absolute inset-y-0 right-0 flex w-full flex-col bg-night shadow-pop', width)}
+            className={cn('absolute inset-y-0 right-0 flex w-full flex-col bg-surface-raised shadow-pop', width)}
           >
-            <div className="flex items-start justify-between gap-4 border-b border-bone/10 p-5">
+            <div className="flex items-start justify-between gap-4 border-b border-line p-5">
               <div className="min-w-0">
                 <div className="truncate text-lg font-semibold">{title}</div>
                 {subtitle && <div className="mt-0.5 text-xs text-ink-muted">{subtitle}</div>}
               </div>
-              <button type="button" onClick={onClose} aria-label="Close" className="p-1 text-bone">
+              <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1.5 text-ink-muted hover:bg-surface-sunken hover:text-ink">
                 <X className="size-5" />
               </button>
             </div>
@@ -207,7 +207,7 @@ export function Drawer({
 export function DrawerSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section>
-      <h3 className="mb-3 text-[11px] tracking-[0.22em] text-ink-muted uppercase">{title}</h3>
+      <h3 className="mb-3 text-xs font-semibold tracking-wide text-ink-subtle uppercase">{title}</h3>
       {children}
     </section>
   )
@@ -224,12 +224,12 @@ export function DataTable({
   minWidth?: number
 }) {
   return (
-    <div className="overflow-x-auto rounded-md border border-bone/10">
+    <div className="overflow-x-auto rounded-xl border border-line bg-surface-raised shadow-card">
       <table className="w-full text-sm" style={{ minWidth }}>
-        <thead className="bg-carbon text-left text-[11px] tracking-[0.14em] text-ink-muted uppercase">
+        <thead className="border-b border-line bg-surface-sunken text-left text-xs font-semibold tracking-wide text-ink-subtle uppercase">
           {head}
         </thead>
-        <tbody className="divide-y divide-bone/10">{children}</tbody>
+        <tbody className="divide-y divide-line">{children}</tbody>
       </table>
     </div>
   )

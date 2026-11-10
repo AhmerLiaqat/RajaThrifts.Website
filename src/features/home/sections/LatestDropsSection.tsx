@@ -6,18 +6,11 @@ import { ButtonLink } from '@/components/ui'
 import { COLLECTIONS, COLLECTION_META, type Collection } from '@/constants/collections'
 import { ProductCard } from '@/features/catalog/components/ProductCard'
 import { cn } from '@/lib/utils/cn'
-import {
-  DEMO_A_CATEGORY,
-  DEMO_B_CATEGORY,
-  DEMO_NEW_ARRIVALS,
-  DEMO_PREMIUM,
-  IS_DEMO_CATALOG,
-} from '@/mocks/demo-catalog'
+import { ProductGridSkeleton } from '@/features/catalog/components/ProductGrid'
 import { motion as m } from '@/theme/tokens'
 import { HomeHeading } from '../components/HomeHeading'
+import { useHomeProducts } from '../useHomeProducts'
 
-/** Newest first, then the rest of each collection. The lists are disjoint. */
-const POOL = [...DEMO_NEW_ARRIVALS, ...DEMO_PREMIUM, ...DEMO_A_CATEGORY, ...DEMO_B_CATEGORY]
 const LIMIT = 8
 
 type Tab = 'ALL' | Collection
@@ -25,12 +18,13 @@ type Tab = 'ALL' | Collection
 /** LATEST DROPS: tabbed product grid filtered by collection. */
 export function LatestDropsSection() {
   const [tab, setTab] = useState<Tab>('ALL')
-  const items = (tab === 'ALL' ? POOL : POOL.filter((p) => p.collection === tab)).slice(0, LIMIT)
-  const newIds = new Set(DEMO_NEW_ARRIVALS.map((p) => p.id))
+  // Newest first (in-stock pairs before sold-out ones), straight from the catalog.
+  const { items: all, isPending, error, isDemo, isNew } = useHomeProducts()
+  const items = (tab === 'ALL' ? all : all.filter((p) => p.collection === tab)).slice(0, LIMIT)
 
   return (
-    <section id="new-arrivals" aria-labelledby="drops-title" className="relative py-24 lg:py-32">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10">
+    <section id="new-arrivals" aria-labelledby="drops-title" className="relative border-t border-line bg-surface-sunken py-16 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <HomeHeading
           id="drops-title"
           eyebrow="Fresh off the shipment"
@@ -38,7 +32,7 @@ export function LatestDropsSection() {
           highlight="drops"
           description="One of each, so when a pair is gone, it is gone. New pairs land first."
           action={
-            <ButtonLink to={paths.shop} variant="outline" className="glass border-white/15">
+            <ButtonLink to={paths.shop} variant="outline">
               See everything <ArrowRight className="size-4" />
             </ButtonLink>
           }
@@ -47,7 +41,7 @@ export function LatestDropsSection() {
         <div
           role="tablist"
           aria-label="Filter by collection"
-          className="glass no-scrollbar mt-10 inline-flex max-w-full gap-1 overflow-x-auto rounded-full p-1.5"
+          className="no-scrollbar mt-8 inline-flex max-w-full gap-1 overflow-x-auto rounded-lg border border-line bg-white p-1 shadow-sm"
         >
           {(['ALL', ...COLLECTIONS] as Tab[]).map((t) => (
             <button
@@ -57,14 +51,14 @@ export function LatestDropsSection() {
               aria-selected={tab === t}
               onClick={() => setTab(t)}
               className={cn(
-                'relative shrink-0 rounded-full px-5 py-2.5 font-display text-[11px] font-medium tracking-[0.2em] whitespace-nowrap uppercase transition-colors',
-                tab === t ? 'text-night' : 'text-ink-muted hover:text-bone',
+                'relative shrink-0 rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors',
+                tab === t ? 'text-white' : 'text-ink-muted hover:text-ink',
               )}
             >
               {tab === t && (
                 <motion.span
                   layoutId="drops-tab"
-                  className="absolute inset-0 rounded-full bg-sand"
+                  className="absolute inset-0 rounded-md bg-sand"
                   transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                 />
               )}
@@ -73,24 +67,35 @@ export function LatestDropsSection() {
           ))}
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8">
+        {isPending && (
+          <div className="mt-8">
+            <ProductGridSkeleton count={4} />
+          </div>
+        )}
+        {error && <p className="mt-10 text-sm text-danger">Could not load pairs: {error.message}</p>}
+        {!isPending && !error && items.length === 0 && (
+          <p className="mt-8 rounded-xl border border-dashed border-line-strong bg-white p-10 text-center text-ink-muted">
+            {tab === 'ALL' ? 'New pairs are on the way. Check back soon!' : `No ${COLLECTION_META[tab].label} pairs right now.`}
+          </p>
+        )}
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
           <AnimatePresence mode="popLayout" initial={false}>
             {items.map((p, i) => (
               <motion.div
                 key={p.id}
                 layout
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.5, ease: m.ease.outExpo, delay: i * 0.03 }}
+                transition={{ duration: 0.3, ease: m.ease.outExpo, delay: i * 0.02 }}
                 className="relative"
               >
-                {newIds.has(p.id) && (
-                  <span className="absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-sand px-2.5 py-0.5 font-display text-[10px] font-semibold tracking-[0.2em] text-night uppercase shadow-glow">
+                {isNew(p) && (
+                  <span className="pointer-events-none absolute top-10 left-3 z-10 rounded-md bg-gold px-2 py-0.5 text-[11px] font-bold text-brand-navy uppercase shadow-sm">
                     New
                   </span>
                 )}
-                <ProductCard product={p} isDemo={IS_DEMO_CATALOG} priority={i < 4} />
+                <ProductCard product={p} isDemo={isDemo} priority={i < 4} />
               </motion.div>
             ))}
           </AnimatePresence>

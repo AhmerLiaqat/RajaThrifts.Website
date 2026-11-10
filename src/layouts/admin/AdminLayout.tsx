@@ -8,6 +8,7 @@ import { SupabaseNotice } from '@/components/feedback/SupabaseNotice'
 import { env } from '@/config/env'
 import { motion as m } from '@/theme/tokens'
 import { AdminSidebar, DashboardNav } from './AdminSidebar'
+import { NewOrderAlerts } from './NewOrderAlerts'
 
 /**
  * Shopkeeper dashboard shell: its own layout (no storefront header/footer),
@@ -25,20 +26,21 @@ export function AdminLayout() {
   return (
     <div className="flex min-h-dvh bg-surface-sunken">
       <AdminSidebar />
+      <NewOrderAlerts />
 
       <div className="min-w-0 flex-1">
         {/* Mobile top bar */}
-        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-bone/10 bg-admin-sidebar/95 px-4 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/10 bg-admin-sidebar px-4 lg:hidden">
           <button
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Open menu"
-            className="-ml-1 p-1.5 text-bone"
+            className="-ml-1 rounded-md p-1.5 text-white hover:bg-white/10"
           >
             <Menu className="size-5" />
           </button>
           <Link to={paths.admin.root} className="font-display text-sm font-bold tracking-wide text-white">
-            Raja<span className="text-sand">Thrifs</span> · Dashboard
+            Raja<span className="text-gold">Thrifs</span> <span className="font-medium text-admin-sidebar-text/70">· Dashboard</span>
           </Link>
           <span className="w-7" />
         </header>
@@ -47,7 +49,7 @@ export function AdminLayout() {
           {open && (
             <div className="fixed inset-0 z-40 lg:hidden">
               <motion.div
-                className="absolute inset-0 bg-night/70"
+                className="absolute inset-0 bg-bone/40"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -66,7 +68,7 @@ export function AdminLayout() {
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Close menu"
-                  className="absolute top-4 right-3 p-1.5 text-bone"
+                  className="absolute top-5 right-3 rounded-md p-1.5 text-white hover:bg-white/10"
                 >
                   <X className="size-5" />
                 </button>
@@ -76,7 +78,7 @@ export function AdminLayout() {
           )}
         </AnimatePresence>
 
-        <main className="mx-auto max-w-[1500px] px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+        <main className="mx-auto max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           {!env.isSupabaseConfigured && <SupabaseNotice feature="The dashboard" className="mb-8" />}
           <Suspense fallback={<PageLoader />}>
             <Outlet />
@@ -97,9 +99,9 @@ export function AdminPageHeader({
   actions?: ReactNode
 }) {
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-6 flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-ink">{title}</h1>
         {description && <p className="mt-1 max-w-2xl text-sm text-ink-muted">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}

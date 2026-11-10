@@ -2,7 +2,23 @@ import type { Collection } from '@/constants/collections'
 import type { BrandRef, CategoryRef, Product, ProductStatus } from './product'
 import type { ID, ISODateString, MinorUnits } from './common'
 
-export interface StoreSettings {
+/** Shop contact + payment details shown publicly (checkout, WhatsApp button). */
+export interface PublicStoreSettings {
+  bankName: string | null
+  bankAccountTitle: string | null
+  bankAccountNumber: string | null
+  bankIban: string | null
+  paymentInstructions: string | null
+  /** International digits only, e.g. 923001234567. */
+  whatsappNumber: string | null
+  whatsappGroupUrl: string | null
+  /** Delivery charge added to every order (paisa); 0 = free. Mirrors private.shipping_fee_for(). */
+  deliveryCharge: number
+  /** Subtotal (paisa) at or above which delivery is free; null = never. */
+  freeDeliveryThreshold: number | null
+}
+
+export interface StoreSettings extends PublicStoreSettings {
   lowStockThreshold: number
   returnWindowDays: number
   updatedAt: ISODateString

@@ -164,7 +164,7 @@ export default function ProductListPage() {
                 aria-label="Select all"
                 checked={allChecked}
                 onChange={() => setSelected(allChecked ? new Set() : new Set(visibleIds))}
-                className="accent-[#C7B99A]"
+                className="accent-sand"
               />
             </th>
             <th className="px-4 py-3 font-medium">Product</th>
@@ -183,14 +183,14 @@ export default function ProductListPage() {
           const low = p.status === 'active' && stock > 0 && stock <= threshold
           const margin = p.purchasePrice != null ? p.price - p.purchasePrice : null
           return (
-            <tr key={p.id} className={cn('hover:bg-white/[0.02]', selected.has(p.id) && 'bg-sand/[0.04]')}>
+            <tr key={p.id} className={cn('hover:bg-surface-sunken', selected.has(p.id) && 'bg-sand/[0.04]')}>
               <td className="px-4 py-3">
                 <input
                   type="checkbox"
                   aria-label={`Select ${p.name}`}
                   checked={selected.has(p.id)}
                   onChange={() => toggle(p.id)}
-                  className="accent-[#C7B99A]"
+                  className="accent-sand"
                 />
               </td>
               <td className="px-4 py-3">
@@ -198,16 +198,16 @@ export default function ProductListPage() {
                   {p.images[0] ? (
                     <img src={p.images[0].url} alt="" className="size-11 rounded object-cover" />
                   ) : (
-                    <span className="grid size-11 place-items-center rounded bg-carbon text-[9px] text-ink-subtle">
+                    <span className="grid size-11 place-items-center rounded bg-surface-sunken text-[10px] text-ink-subtle">
                       NO PHOTO
                     </span>
                   )}
                   <span className="min-w-0">
-                    <span className="block text-[11px] tracking-[0.14em] text-ink-subtle uppercase">
+                    <span className="block text-xs tracking-wider text-ink-subtle uppercase">
                       {p.brand}
                     </span>
                     <span className="block max-w-72 truncate text-bone hover:text-sand">{p.name}</span>
-                    <span className="block font-mono text-[11px] text-ink-subtle">
+                    <span className="block font-mono text-xs text-ink-subtle">
                       {p.variants.map((v) => v.sku).join(' · ')}
                     </span>
                   </span>
@@ -223,7 +223,7 @@ export default function ProductListPage() {
                 <span className={stock === 0 ? 'text-ink-subtle' : undefined}>{stock}</span>
                 <span className="text-ink-subtle"> pairs</span>
                 {low && <Pill className="ml-2 border-warning/40 text-warning">Low</Pill>}
-                <span className="block text-[11px] text-ink-subtle">
+                <span className="block text-xs text-ink-subtle">
                   {p.variants.length} {p.variants.length === 1 ? 'size' : 'sizes'}
                 </span>
               </td>
@@ -244,7 +244,7 @@ export default function ProductListPage() {
                 {margin != null ? (
                   <>
                     {formatPrice(margin)}
-                    <span className="block text-[11px] text-ink-subtle">
+                    <span className="block text-xs text-ink-subtle">
                       {p.price > 0 ? Math.round((margin / p.price) * 100) : 0}%
                     </span>
                   </>

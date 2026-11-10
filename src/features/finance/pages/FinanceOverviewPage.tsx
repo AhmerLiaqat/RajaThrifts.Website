@@ -105,7 +105,7 @@ export default function FinanceOverviewPage() {
       {!r || !t ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 8 }, (_, i) => (
-            <Skeleton key={i} className="h-28 bg-carbon" />
+            <Skeleton key={i} className="h-28" />
           ))}
         </div>
       ) : (
@@ -254,7 +254,7 @@ export default function FinanceOverviewPage() {
             )}
           </Panel>
 
-          <details className="rounded-md border border-bone/10 bg-carbon/50 p-4 text-sm">
+          <details className="rounded-xl border border-line bg-surface-raised shadow-card p-4 text-sm">
             <summary className="cursor-pointer text-ink-muted hover:text-bone">
               View period table ({r.series.length} rows)
             </summary>

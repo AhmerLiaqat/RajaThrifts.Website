@@ -111,7 +111,7 @@ export default function BrandsPage() {
                       type="button"
                       aria-label="Save name"
                       onClick={() => rename.mutate(editing, { onSuccess: () => setEditing(null) })}
-                      className="rounded p-1.5 text-success hover:bg-white/5"
+                      className="rounded p-1.5 text-success hover:bg-surface-sunken"
                     >
                       <Check className="size-4" />
                     </button>
@@ -119,7 +119,7 @@ export default function BrandsPage() {
                       type="button"
                       aria-label="Cancel"
                       onClick={() => setEditing(null)}
-                      className="rounded p-1.5 hover:bg-white/5"
+                      className="rounded p-1.5 hover:bg-surface-sunken"
                     >
                       <X className="size-4" />
                     </button>
@@ -129,7 +129,7 @@ export default function BrandsPage() {
                     type="button"
                     aria-label={`Rename ${b.name}`}
                     onClick={() => setEditing({ id: b.id, name: b.name })}
-                    className="rounded p-1.5 text-ink-muted hover:bg-white/5 hover:text-bone"
+                    className="rounded p-1.5 text-ink-muted hover:bg-surface-sunken hover:text-bone"
                   >
                     <Pencil className="size-4" />
                   </button>

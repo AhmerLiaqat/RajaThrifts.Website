@@ -33,10 +33,10 @@ export function CollectionTabs() {
           end
           className={({ isActive }) =>
             cn(
-              'shrink-0 rounded-full border px-4 py-2 font-display text-[11px] tracking-[0.2em] whitespace-nowrap uppercase transition-colors',
+              'shrink-0 rounded-lg border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors',
               isActive
-                ? 'border-bone bg-bone text-night'
-                : 'border-bone/15 text-bone/70 hover:border-bone/40 hover:text-bone',
+                ? 'border-sand bg-sand text-white'
+                : 'border-line-strong bg-white text-ink-muted hover:border-ink-subtle hover:text-ink',
             )
           }
         >
@@ -59,7 +59,7 @@ export function CatalogHero({ meta, total, isDemo }: CatalogHeroProps) {
   const title = meta?.label ?? 'Shop all'
 
   return (
-    <section className="grain relative isolate overflow-hidden border-b border-bone/10">
+    <section className="relative isolate overflow-hidden border-b border-line bg-surface-sunken">
       {photo && (
         <>
           <motion.img
@@ -68,39 +68,36 @@ export function CatalogHero({ meta, total, isDemo }: CatalogHeroProps) {
             srcSet={unsplashSrcSet(photo.id, [800, 1200, 1800, 2400])}
             sizes="100vw"
             alt=""
-            initial={{ scale: 1.15, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.8, ease: m.ease.outExpo }}
-            className="absolute inset-0 -z-10 size-full object-cover"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, ease: m.ease.outExpo }}
+            className="absolute inset-y-0 right-0 -z-10 hidden h-full w-1/2 object-cover lg:block"
           />
           <div
             aria-hidden
-            className="absolute inset-0 -z-10 bg-gradient-to-t from-night via-night/75 to-night/40"
+            className="absolute inset-y-0 right-0 -z-10 hidden w-1/2 bg-gradient-to-r from-surface-sunken via-surface-sunken/60 to-transparent lg:block"
           />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-night/80 to-transparent" />
         </>
       )}
 
-      <div className="mx-auto flex max-w-[1600px] flex-col gap-8 px-4 pt-16 pb-10 sm:px-6 lg:px-10 lg:pt-28 lg:pb-14">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <div className="flex max-w-2xl flex-col gap-3">
           <div>
-            <p className="eyebrow flex items-center gap-3">
-              <span className="h-px w-8 bg-sand" aria-hidden />
+            <p className="eyebrow">
               {meta ? 'Collection' : 'The full rack'}
-              {total != null && <span className="text-ink-muted">· {total} in stock</span>}
+              {total != null && <span className="font-medium tracking-normal text-ink-subtle normal-case"> · {total} in stock</span>}
             </p>
             <h1
               key={title}
               className={cn(
-                'mt-5 text-[clamp(3rem,10vw,9rem)] leading-[0.86] font-semibold tracking-[-0.04em] uppercase',
-                meta?.value === 'PREMIUM' && 'text-sand',
+                'mt-2 text-3xl leading-tight font-extrabold tracking-tight text-ink sm:text-4xl',
               )}
             >
               <MaskedText immediate lines={[{ text: title }]} />
             </h1>
           </div>
-          <div className="max-w-sm">
-            <p className="text-sm leading-relaxed text-bone/75">
+          <div className="max-w-lg">
+            <p className="text-sm leading-relaxed text-ink-muted">
               {meta?.tagline ??
                 'Every pair in stock across PREMIUM, A CATEGORY and B CATEGORY. Filter by brand, size, price and availability.'}
             </p>

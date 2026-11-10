@@ -20,7 +20,7 @@ export function AddedToBagToast() {
   return (
     <div
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex justify-end sm:inset-x-6 sm:bottom-6"
+      className="pointer-events-none fixed inset-x-4 bottom-24 z-50 flex justify-end sm:inset-x-6 sm:bottom-26"
     >
       <AnimatePresence>
         {lastAdded && (
@@ -30,7 +30,7 @@ export function AddedToBagToast() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5, ease: m.ease.outExpo }}
-            className="pointer-events-auto flex w-full max-w-sm gap-4 rounded-sm border border-bone/10 bg-carbon/95 p-4 shadow-pop backdrop-blur-xl"
+            className="pointer-events-auto flex w-full max-w-sm gap-4 rounded-xl border border-line bg-surface-raised shadow-card p-4 shadow-pop backdrop-blur-xl"
           >
             {lastAdded.item.imageUrl && (
               <img
@@ -40,7 +40,7 @@ export function AddedToBagToast() {
               />
             )}
             <div className="min-w-0 flex-1">
-              <p className="flex items-center gap-2 font-display text-[11px] tracking-[0.24em] text-sand uppercase">
+              <p className="flex items-center gap-2 font-display text-xs tracking-wider text-sand uppercase">
                 <Check className="size-3.5" /> Added to bag
               </p>
               <p className="mt-1.5 truncate text-sm text-bone">{lastAdded.item.name}</p>
@@ -50,7 +50,7 @@ export function AddedToBagToast() {
               <Link
                 to={paths.cart}
                 onClick={() => cartStore.dismissToast()}
-                className="mt-2 inline-block font-display text-[11px] tracking-[0.2em] text-bone uppercase underline underline-offset-4 hover:text-sand"
+                className="mt-2 inline-block text-sm font-medium text-ink underline underline-offset-4 hover:text-sand"
               >
                 View bag ({count})
               </Link>

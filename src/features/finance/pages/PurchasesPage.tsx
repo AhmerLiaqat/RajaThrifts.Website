@@ -122,7 +122,6 @@ function PurchaseForm({ initial, onSaved }: { initial: Draft; onSaved: (id: stri
           type="date"
           value={d.purchase_date}
           onChange={(e) => set({ purchase_date: e.target.value })}
-          className="[color-scheme:dark]"
         />
         <Input
           label="Pairs"
@@ -155,7 +154,6 @@ function PurchaseForm({ initial, onSaved }: { initial: Draft; onSaved: (id: stri
           type="date"
           value={d.received_on}
           onChange={(e) => set({ received_on: e.target.value })}
-          className="[color-scheme:dark]"
         />
       </div>
       <Input
@@ -255,7 +253,7 @@ function ImportCosts({ purchase }: { purchase: StockPurchase }) {
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="h-10 [color-scheme:dark]"
+          className="h-10"
         />
         <Input
           aria-label="Paid to"
@@ -334,7 +332,7 @@ function LinkedProducts({ purchase }: { purchase: StockPurchase }) {
         <ul className="mt-2 max-h-56 overflow-y-auto text-sm">
           {candidates.map((p) => (
             <li key={p.id}>
-              <label className="flex cursor-pointer items-center gap-2 rounded px-1 py-1.5 hover:bg-white/5">
+              <label className="flex cursor-pointer items-center gap-2 rounded px-1 py-1.5 hover:bg-surface-sunken">
                 <input
                   type="checkbox"
                   checked={picked.has(p.id)}
@@ -346,7 +344,7 @@ function LinkedProducts({ purchase }: { purchase: StockPurchase }) {
                       return n
                     })
                   }
-                  className="accent-[#C7B99A]"
+                  className="accent-sand"
                 />
                 <span className="flex-1 truncate">
                   {p.brand} {p.name}
@@ -455,7 +453,7 @@ export default function PurchasesPage() {
       >
         {purchases.isPending && <TableMessage colSpan={7}>Loading…</TableMessage>}
         {rows.map((p) => (
-          <tr key={p.id} onClick={() => setSelectedId(p.id)} className="cursor-pointer hover:bg-white/[0.03]">
+          <tr key={p.id} onClick={() => setSelectedId(p.id)} className="cursor-pointer hover:bg-surface-sunken">
             <td className="px-4 py-3">
               <button type="button" className="font-mono text-bone hover:text-sand">
                 {p.reference}

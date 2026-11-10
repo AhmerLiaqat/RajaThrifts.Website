@@ -104,7 +104,6 @@ function ExpenseForm({ initial, onDone }: { initial: Draft; onDone: () => void }
           type="date"
           value={d.expense_date}
           onChange={(e) => set({ expense_date: e.target.value })}
-          className="[color-scheme:dark]"
         />
       </div>
       <Select
@@ -259,7 +258,7 @@ export default function ExpensesPage() {
                     type="button"
                     aria-label="Edit expense"
                     onClick={() => setEditing({ ...e, amount: String(e.amount) })}
-                    className="rounded p-1.5 text-ink-muted hover:bg-white/5 hover:text-bone"
+                    className="rounded p-1.5 text-ink-muted hover:bg-surface-sunken hover:text-bone"
                   >
                     <Pencil className="size-4" />
                   </button>

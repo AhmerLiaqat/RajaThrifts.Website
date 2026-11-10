@@ -11,9 +11,9 @@ export const CONDITION_META: Record<ConditionGrade, { label: string; description
 export const CONDITION_ORDER: ConditionGrade[] = ['fair', 'good', 'excellent', 'like_new']
 
 export const DEFECT_SEVERITY_META: Record<DefectSeverity, { label: string; className: string }> = {
-  minor: { label: 'Minor', className: 'border-bone/20 text-bone/80' },
-  moderate: { label: 'Moderate', className: 'border-warning/50 text-warning' },
-  notable: { label: 'Notable', className: 'border-danger/60 text-danger' },
+  minor: { label: 'Minor', className: 'border-line bg-surface-sunken text-ink-muted' },
+  moderate: { label: 'Moderate', className: 'border-warning/25 bg-warning/10 text-warning' },
+  notable: { label: 'Notable', className: 'border-danger/25 bg-danger/10 text-danger' },
 }
 
 export const IMAGE_VIEW_LABEL: Record<ProductImageView, string> = {

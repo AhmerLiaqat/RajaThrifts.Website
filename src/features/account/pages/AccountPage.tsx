@@ -63,7 +63,7 @@ function ProfileForm({ profile }: { profile: Profile }) {
         hint="Contact us to change your email address."
         readOnly
       />
-      <p className="mt-2 font-display text-[11px] tracking-[0.24em] text-ink-subtle uppercase">
+      <p className="mt-2 font-display text-xs tracking-wider text-ink-subtle uppercase">
         Default delivery address
       </p>
       <Input
@@ -101,13 +101,13 @@ export default function AccountPage() {
   const wishlist = useWishlist()
 
   return (
-    <div className="mx-auto max-w-[1600px] px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <div className="flex flex-col gap-6 border-b border-bone/10 pb-10 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="eyebrow">
             {user ? ROLE_LABEL[user.role] : 'Account'} · {user?.email}
           </p>
-          <h1 className="mt-5 text-[clamp(2.75rem,7vw,6rem)] leading-[0.9] font-semibold tracking-[-0.04em] uppercase">
+          <h1 className="mt-2 text-3xl leading-tight font-extrabold tracking-tight text-ink sm:text-4xl">
             <MaskedText
               immediate
               lines={[{ text: user?.fullName ? `Hi, ${user.fullName.split(' ')[0]}` : 'Your account' }]}
@@ -135,14 +135,14 @@ export default function AccountPage() {
 
       <div className="mt-12 grid gap-16 lg:grid-cols-[1.2fr_1fr]">
         <section aria-labelledby="orders-heading">
-          <h2 id="orders-heading" className="font-display text-xs tracking-[0.24em] uppercase">
+          <h2 id="orders-heading" className="font-display text-xs tracking-wider uppercase">
             Orders
           </h2>
           <div className="mt-6">
             {orders.isPending ? (
               <div className="space-y-3">
                 {[0, 1, 2].map((i) => (
-                  <Skeleton key={i} className="h-20 bg-carbon" />
+                  <Skeleton key={i} className="h-20" />
                 ))}
               </div>
             ) : orders.error ? (
@@ -201,7 +201,7 @@ export default function AccountPage() {
         </section>
 
         <section aria-labelledby="profile-heading">
-          <h2 id="profile-heading" className="font-display text-xs tracking-[0.24em] uppercase">
+          <h2 id="profile-heading" className="font-display text-xs tracking-wider uppercase">
             Profile
           </h2>
           <div className="mt-6">
@@ -212,7 +212,7 @@ export default function AccountPage() {
             ) : user?.id === 'dev-admin' ? (
               <Alert tone="info">Dev admin bypass has no profile. Sign in with a real account.</Alert>
             ) : (
-              <Skeleton className="h-80 bg-carbon" />
+              <Skeleton className="h-80" />
             )}
           </div>
         </section>

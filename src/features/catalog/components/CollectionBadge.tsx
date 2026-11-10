@@ -15,7 +15,7 @@ export function CollectionBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-widest',
+        'inline-flex items-center whitespace-nowrap rounded-md px-2 py-0.5 text-[11px] font-bold tracking-wide',
         variant === 'solid' ? tone.solid : [tone.soft, tone.text],
         className,
       )}

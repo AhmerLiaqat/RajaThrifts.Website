@@ -203,7 +203,7 @@ export function PriceFilter({ api, facets }: FilterProps) {
             ] as const
           ).map(([label, value, setter, hint], i) => (
             <label key={label} className={cn('flex flex-col gap-1.5', i === 1 && 'col-start-3')}>
-              <span className="text-[11px] tracking-[0.2em] text-ink-subtle uppercase">{label}</span>
+              <span className="text-xs tracking-wider text-ink-subtle uppercase">{label}</span>
               <span className="flex h-10 items-center gap-1.5 rounded-sm border border-bone/15 px-2.5 focus-within:border-sand">
                 <span className="text-xs text-ink-subtle">Rs</span>
                 <input

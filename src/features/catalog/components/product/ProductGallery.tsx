@@ -63,7 +63,7 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
 
   if (!current) {
     return (
-      <div className="grid aspect-[4/5] place-items-center rounded-sm bg-carbon text-sm text-ink-muted">
+      <div className="grid aspect-[4/5] place-items-center rounded-sm bg-surface-sunken text-sm text-ink-muted">
         Photos coming soon
       </div>
     )
@@ -82,7 +82,7 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
           onMouseMove={onMouseMove}
           onMouseLeave={() => setZoom(null)}
           className={cn(
-            'relative aspect-[4/5] overflow-hidden rounded-sm bg-carbon outline-none focus-visible:ring-2 focus-visible:ring-sand',
+            'relative aspect-[4/5] overflow-hidden rounded-sm bg-surface-sunken outline-none focus-visible:ring-2 focus-visible:ring-sand',
             zoom ? 'cursor-zoom-out' : 'cursor-zoom-in',
           )}
         >
@@ -117,7 +117,7 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
 
           {/* Overlays */}
           <div className="pointer-events-none absolute inset-x-3 top-3 flex items-start justify-between">
-            <span className="rounded-full bg-night/70 px-3 py-1 font-display text-[10px] tracking-[0.24em] text-bone uppercase backdrop-blur">
+            <span className="rounded-full bg-night/70 px-3 py-1 font-display text-[11px] tracking-wider text-bone uppercase backdrop-blur">
               {IMAGE_VIEW_LABEL[current.view]}
             </span>
             {isDemo && <DemoTag label="Demo photo" />}
@@ -127,7 +127,7 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
               Sold out
             </span>
           )}
-          <span className="pointer-events-none absolute bottom-3 left-3 font-display text-[11px] text-bone/80 tabular-nums">
+          <span className="pointer-events-none absolute bottom-3 left-3 font-display text-xs text-bone/80 tabular-nums">
             {String(index + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
           </span>
 
@@ -154,8 +154,8 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
         </div>
 
         {/* View coverage */}
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px]">
-          <span className="font-display tracking-[0.22em] text-ink-subtle uppercase">Views</span>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+          <span className="font-display tracking-wider text-ink-subtle uppercase">Views</span>
           {COVERAGE_VIEWS.map((v) => {
             const has = coverage.has(v)
             const target = images.findIndex((i) => i.view === v)
@@ -180,7 +180,7 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
           })}
         </div>
         {isDemo && COVERAGE_VIEWS.some((v) => !coverage.has(v)) && (
-          <p className="mt-2 text-[11px] leading-relaxed text-ink-subtle">
+          <p className="mt-2 text-xs leading-relaxed text-ink-subtle">
             Demo listing: only one stock photo per pair, plus close-ups of it. Real listings include front,
             side, back and sole photos of the actual pair.
           </p>
@@ -206,7 +206,7 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
                 )}
               >
                 <img src={img.url} alt="" loading="lazy" className="aspect-[4/5] w-full object-cover" />
-                <span className="absolute inset-x-0 bottom-0 bg-night/75 py-0.5 text-center font-display text-[9px] tracking-[0.18em] text-bone uppercase">
+                <span className="absolute inset-x-0 bottom-0 bg-night/75 py-0.5 text-center font-display text-[10px] tracking-wider text-bone uppercase">
                   {IMAGE_VIEW_LABEL[img.view]}
                 </span>
               </button>

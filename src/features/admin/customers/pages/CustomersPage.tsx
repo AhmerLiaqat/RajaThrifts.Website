@@ -15,21 +15,27 @@ import { Alert } from '@/components/ui/Field'
 import { OrderStatusBadge } from '@/features/account/components/OrderBits'
 import { AdminPageHeader } from '@/layouts/admin/AdminLayout'
 import { formatDate, formatPrice } from '@/lib/utils/format'
-import { orderService, profileService } from '@/services'
+import { orderService } from '@/services'
 import type { CustomerSummary } from '@/types/dashboard'
 import { useCustomers } from '../../hooks'
 
 function CustomerPanel({ customer }: { customer: CustomerSummary }) {
-  const profile = useQuery({
-    queryKey: ['admin', 'customer', customer.id],
-    queryFn: () => profileService.getById(customer.id),
-  })
+  // Customers check out as guests, so a customer is everyone who ordered with this phone number.
   const orders = useQuery({
     queryKey: ['admin', 'customer-orders', customer.id],
-    queryFn: () => orderService.listForUser(customer.id),
+    queryFn: () => orderService.listByPhoneKey(customer.id),
   })
-  const p = profile.data
-  const address = p && [p.line1, p.line2, p.city, p.province, p.postalCode].filter(Boolean).join(', ')
+  const latest = orders.data?.[0]
+  const address =
+    latest &&
+    [
+      latest.shippingAddress.line1,
+      latest.shippingAddress.line2,
+      latest.shippingAddress.city,
+      latest.shippingAddress.province,
+    ]
+      .filter(Boolean)
+      .join(', ')
 
   return (
     <>
@@ -58,8 +64,8 @@ function CustomerPanel({ customer }: { customer: CustomerSummary }) {
             </li>
           )}
         </ul>
-        <p className="mt-3 text-sm text-ink-muted">{address || 'No saved address.'}</p>
-        <p className="mt-1 text-xs text-ink-subtle">Customer since {formatDate(customer.createdAt)}</p>
+        <p className="mt-3 text-sm text-ink-muted">{address ? `Last delivery address: ${address}` : 'No address yet.'}</p>
+        <p className="mt-1 text-xs text-ink-subtle">First order {formatDate(customer.createdAt)}</p>
       </DrawerSection>
 
       <DrawerSection title="Orders">
@@ -104,12 +110,12 @@ export default function CustomersPage() {
     <>
       <AdminPageHeader
         title="Customers"
-        description="Contact details, order history and lifetime spend. Visible to staff only."
+        description="Everyone who has ordered, grouped by phone number: contact details, order history and lifetime spend. Visible to staff only."
       />
       <SearchBox
         value={search}
         onChange={setSearch}
-        placeholder="Search name, email or phone"
+        placeholder="Search name or phone"
         className="mb-6 max-w-md"
       />
       {customers.error && (
@@ -132,7 +138,7 @@ export default function CustomersPage() {
       >
         {customers.isPending && <TableMessage colSpan={6}>Loading…</TableMessage>}
         {customers.data?.map((c) => (
-          <tr key={c.id} onClick={() => setSelectedId(c.id)} className="cursor-pointer hover:bg-white/[0.03]">
+          <tr key={c.id} onClick={() => setSelectedId(c.id)} className="cursor-pointer hover:bg-surface-sunken">
             <td className="px-4 py-3">
               <button type="button" className="text-left text-bone hover:text-sand">
                 {c.fullName ?? '—'}

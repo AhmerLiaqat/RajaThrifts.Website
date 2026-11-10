@@ -3,7 +3,7 @@
 ## 1. Create the project
 
 1. Create a project at [supabase.com](https://supabase.com) (closest region to Pakistan: Mumbai / Singapore).
-2. **Project Settings → API**: copy the **Project URL** and the **anon / publishable** key into `.env.local`
+2. **Project Settings → API**: copy the **Project URL** and the **anon / publishable** key into `.env.local` (not `.env.example`, which Vite never reads; restart `npm run dev` afterwards)
    (see `.env.example`). Never use the `service_role` / `sb_secret_` key in this app. `src/config/env.ts`
    refuses to start if a privileged key is supplied.
 
@@ -29,6 +29,9 @@ npx supabase db seed --linked # or paste supabase/seed.sql into the SQL editor
 | `…000500_functions` | `place_order`, `cancel_order`, `update_order_status`, `record_payment`, `adjust_stock`, `save_product` |
 | `…000600_dashboard` | `store_settings`, `product_costs` (staff-only purchase prices), `shoe_sizes` + size validation, `orders.courier`, `returns` + `request_return` / `update_return`, `dashboard_summary`, `customer_summaries`; refunds become admin-only |
 | `…000700_order_returned_status` | Adds the `returned` order status (courier return to sender) |
+| `…000900_advance_payment_whatsapp_reviews` | Bank details + WhatsApp in `store_settings`, private `payment-proofs` bucket, `place_order_with_proof()` / `set_payment_proof()`, `reviews` |
+| `…001000_guest_checkout` | Guest checkout (no customer accounts): nullable `orders.user_id`, `orders.phone_key`, guest screenshot uploads, `track_order()`, customers grouped by phone, 3 open orders per phone |
+| `…001100_admin_approval` | Bank-transfer orders stay pending until an admin verifies the payment: `approve_order()`, `reject_order()`, trigger blocking non-admin verification |
 | `…000800_finance` | Admin-only finance: investments, suppliers, stock purchases + import costs (landed cost), expenses, courier settlements, `order_item_costs`, delivery charge settings, `finance_report()` |
 
 ## 3. Authentication settings
@@ -107,9 +110,11 @@ npm run test:db
 Runs every migration on an in-process Postgres (PGlite) with Supabase-like `auth` / `storage` stubs
 (`supabase/tests/harness.mjs`), then two suites:
 
-- `security.test.mjs` (96 checks) tests security and business rules as anon, customer, shopkeeper and admin:
+- `security.test.mjs` (103 checks) tests security and business rules as anon, customer, shopkeeper and admin:
   privilege escalation, cross-user reads, overselling the last pair, price tampering, stock ledger, order
   lifecycle, returns, wishlist privacy.
+- `checkout.test.mjs` (64 checks, including guest checkout, order tracking and admin approval) covers advance-payment checkout: screenshot required and owned by the buyer, private
+  screenshots (owner + staff only), bank/WhatsApp settings admin-only, reviews publishing.
 - `finance.test.mjs` (102 checks) runs a two-month shop scenario through the real functions: investments,
   an imported bale with import costs, five orders (delivered, prepaid, courier return, cancelled and refunded,
   returned by the customer), a COD settlement and expenses. It then compares every P&L and cash-flow figure,

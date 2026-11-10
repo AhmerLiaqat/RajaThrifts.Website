@@ -37,7 +37,7 @@ export function FilterDrawer({ open, onClose, api, facets, resultCount }: Filter
       {open && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <motion.div
-            className="absolute inset-0 bg-night/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-bone/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -54,7 +54,7 @@ export function FilterDrawer({ open, onClose, api, facets, resultCount }: Filter
             className="absolute inset-y-0 left-0 flex w-[min(420px,90vw)] flex-col bg-night shadow-pop"
           >
             <div className="flex items-center justify-between border-b border-bone/10 px-5 py-4">
-              <p className="font-display text-sm tracking-[0.24em] uppercase">Filters</p>
+              <p className="text-sm font-semibold text-ink">Filters</p>
               <button
                 ref={closeRef}
                 type="button"

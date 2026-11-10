@@ -31,11 +31,16 @@ export function DashboardNav({ onNavigate }: { onNavigate?: () => void }) {
       <Link
         to={paths.admin.root}
         onClick={onNavigate}
-        className="px-5 py-5 font-display text-lg font-bold text-white"
+        className="flex items-center gap-3 px-5 py-5"
       >
-        Raja<span className="text-sand">Thrifs</span>
-        <span className="mt-0.5 block text-[10px] font-medium tracking-[0.3em] text-admin-sidebar-text/60 uppercase">
-          Shop dashboard
+        <span className="grid size-9 place-items-center rounded-lg bg-gold font-display text-sm font-extrabold text-brand-navy">
+          RT
+        </span>
+        <span className="leading-tight">
+          <span className="block font-display text-base font-bold text-white">
+            Raja<span className="text-gold">Thrifs</span>
+          </span>
+          <span className="block text-xs text-admin-sidebar-text/70">Shop dashboard</span>
         </span>
       </Link>
 
@@ -45,7 +50,7 @@ export function DashboardNav({ onNavigate }: { onNavigate?: () => void }) {
           if (!items.length) return null
           return (
             <div key={group.label}>
-              <p className="px-3 pb-2 text-[10px] tracking-[0.24em] text-admin-sidebar-text/50 uppercase">
+              <p className="px-3 pb-1.5 text-[11px] font-semibold tracking-wider text-admin-sidebar-text/50 uppercase">
                 {group.label}
               </p>
               <ul className="space-y-0.5">
@@ -59,8 +64,10 @@ export function DashboardNav({ onNavigate }: { onNavigate?: () => void }) {
                         onClick={onNavigate}
                         className={({ isActive }) =>
                           cn(
-                            'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
-                            isActive ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white',
+                            'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                            isActive
+                              ? 'bg-white/12 text-white before:absolute before:inset-y-2 before:-left-3 before:w-1 before:rounded-r-full before:bg-gold'
+                              : 'hover:bg-white/6 hover:text-white',
                           )
                         }
                       >
@@ -68,7 +75,7 @@ export function DashboardNav({ onNavigate }: { onNavigate?: () => void }) {
                         <span className="flex-1">{label}</span>
                         {!!count && (
                           <span
-                            className="min-w-5 rounded-full bg-sand px-1.5 text-center text-[10px] leading-5 font-semibold text-night"
+                            className="min-w-5 rounded-full bg-gold px-1.5 text-center text-[11px] leading-5 font-bold text-brand-navy"
                             aria-label={`${count} need attention`}
                           >
                             {count}
@@ -84,11 +91,11 @@ export function DashboardNav({ onNavigate }: { onNavigate?: () => void }) {
         })}
       </nav>
 
-      <div className="border-t border-white/5 p-3">
+      <div className="border-t border-white/10 p-3">
         {user && (
           <div className="px-3 py-2">
             <p className="truncate text-sm text-white">{user.fullName ?? user.email}</p>
-            <p className="text-[10px] tracking-[0.24em] text-sand uppercase">{user.role}</p>
+            <p className="text-xs text-gold capitalize">{user.role}</p>
           </div>
         )}
         <Link

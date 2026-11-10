@@ -47,7 +47,7 @@ export function ActiveFilters({ api }: { api: CatalogFiltersApi }) {
           type="button"
           onClick={c.onRemove}
           aria-label={`Remove filter ${c.label}`}
-          className="group inline-flex items-center gap-1.5 rounded-full border border-bone/15 bg-carbon py-1.5 pr-2 pl-3 text-xs text-bone transition-colors hover:border-sand"
+          className="group inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-raised shadow-card py-1.5 pr-2 pl-3 text-xs text-bone transition-colors hover:border-sand"
         >
           {c.label}
           <X className="size-3.5 text-ink-muted group-hover:text-sand" />

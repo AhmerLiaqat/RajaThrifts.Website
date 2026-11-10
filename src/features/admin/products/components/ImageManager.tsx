@@ -78,7 +78,7 @@ export function ImageManager({
 
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
         {images.map((img, i) => (
-          <li key={img.id} className="overflow-hidden rounded-sm border border-bone/10 bg-carbon">
+          <li key={img.id} className="overflow-hidden rounded-xl border border-line bg-surface-raised shadow-card">
             <img src={img.url} alt={img.alt} className="aspect-[4/5] w-full object-cover" />
             <div className="flex flex-col gap-2 p-2">
               <Select
@@ -106,7 +106,7 @@ export function ImageManager({
                     aria-label="Move earlier"
                     disabled={i === 0}
                     onClick={() => move(i, -1)}
-                    className="rounded p-1.5 hover:bg-white/5 disabled:opacity-30"
+                    className="rounded p-1.5 hover:bg-surface-sunken disabled:opacity-30"
                   >
                     <ArrowUp className="size-3.5" />
                   </button>
@@ -115,7 +115,7 @@ export function ImageManager({
                     aria-label="Move later"
                     disabled={i === images.length - 1}
                     onClick={() => move(i, 1)}
-                    className="rounded p-1.5 hover:bg-white/5 disabled:opacity-30"
+                    className="rounded p-1.5 hover:bg-surface-sunken disabled:opacity-30"
                   >
                     <ArrowDown className="size-3.5" />
                   </button>
@@ -131,7 +131,7 @@ export function ImageManager({
               </div>
             </div>
             {i === 0 && (
-              <p className="bg-sand/10 py-1 text-center text-[10px] tracking-widest text-sand uppercase">
+              <p className="bg-sand/10 py-1 text-center text-[11px] tracking-widest text-sand uppercase">
                 Cover
               </p>
             )}
@@ -160,7 +160,7 @@ export function ImageManager({
           >
             {busy > 0 ? <Spinner /> : <ImagePlus className="size-6" />}
             {busy > 0 ? `Uploading ${busy}…` : dragging ? 'Drop to upload' : 'Add or drop photos'}
-            <span className="text-[10px] text-ink-subtle">
+            <span className="text-[11px] text-ink-subtle">
               Multiple files · JPG, PNG, WebP · max 5 MB each
             </span>
           </button>

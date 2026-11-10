@@ -35,7 +35,7 @@ export default function ProductDetailPage() {
 
   return (
     <>
-      <div className="mx-auto max-w-[1600px] px-4 pt-6 pb-20 sm:px-6 lg:px-10 lg:pt-10">
+      <div className="mx-auto max-w-7xl px-4 pt-6 pb-20 sm:px-6 lg:px-8 lg:pt-10">
         {/* Breadcrumbs */}
         <nav aria-label="Breadcrumb" className="mb-6 lg:mb-10">
           <ol className="flex flex-wrap items-center gap-1.5 text-xs text-ink-muted">

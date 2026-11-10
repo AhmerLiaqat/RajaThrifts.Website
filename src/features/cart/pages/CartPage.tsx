@@ -11,12 +11,12 @@ export default function CartPage() {
   const { items, count, subtotal } = useCart()
 
   return (
-    <div className="mx-auto max-w-[1600px] px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <p className="eyebrow">
         Your bag · {count} {count === 1 ? 'pair' : 'pairs'}
       </p>
-      <h1 className="mt-5 text-[clamp(3rem,8vw,7rem)] leading-[0.88] font-semibold tracking-[-0.04em] uppercase">
-        <MaskedText immediate lines={[{ text: 'Bag' }]} />
+      <h1 className="mt-2 text-3xl leading-tight font-extrabold tracking-tight text-ink sm:text-4xl">
+        <MaskedText immediate lines={[{ text: 'Your bag' }]} />
       </h1>
 
       {items.length === 0 ? (
@@ -41,13 +41,13 @@ export default function CartPage() {
                       className="aspect-[4/5] w-24 rounded-sm object-cover sm:w-32"
                     />
                   ) : (
-                    <div className="aspect-[4/5] w-24 rounded-sm bg-carbon sm:w-32" />
+                    <div className="aspect-[4/5] w-24 rounded-sm bg-surface-sunken sm:w-32" />
                   )}
                 </Link>
                 <div className="flex min-w-0 flex-1 flex-col">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <p className="font-display text-[11px] tracking-[0.24em] text-ink-subtle uppercase">
+                      <p className="font-display text-xs tracking-wider text-ink-subtle uppercase">
                         {item.brand}
                       </p>
                       <Link
@@ -102,8 +102,8 @@ export default function CartPage() {
             ))}
           </ul>
 
-          <aside className="h-fit rounded-sm border border-bone/10 bg-carbon p-6 lg:sticky lg:top-28">
-            <p className="font-display text-xs tracking-[0.24em] uppercase">Summary</p>
+          <aside className="h-fit rounded-xl border border-line bg-surface-raised shadow-card p-6 lg:sticky lg:top-28">
+            <p className="font-display text-xs tracking-wider uppercase">Summary</p>
             <dl className="mt-6 space-y-3 text-sm">
               <div className="flex justify-between">
                 <dt className="text-ink-muted">Subtotal</dt>

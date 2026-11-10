@@ -12,8 +12,10 @@ export const paths = {
   cart: '/cart',
   checkout: '/checkout',
   wishlist: '/wishlist',
+  orderConfirmed: (orderNumber = ':orderNumber') => `/order-confirmed/${orderNumber}`,
+  trackOrder: '/track-order',
 
-  // Auth & account
+  // Staff sign-in (customers check out as guests). Account pages remain for older accounts.
   login: '/login',
   register: '/register',
   resetPassword: '/reset-password',
@@ -32,6 +34,7 @@ export const paths = {
     orders: '/dashboard/orders',
     returns: '/dashboard/returns',
     customers: '/dashboard/customers',
+    reviews: '/dashboard/reviews',
     users: '/dashboard/users',
     settings: '/dashboard/settings',
     finance: {

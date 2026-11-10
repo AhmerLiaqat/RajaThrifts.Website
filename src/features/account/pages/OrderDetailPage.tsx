@@ -10,6 +10,7 @@ import NotFoundPage from '@/pages/NotFoundPage'
 import { ServiceError } from '@/services'
 import { formatDate } from '@/lib/utils/format'
 import { OrderItemsList, OrderStatusBadge, OrderTimeline, OrderTotals } from '../components/OrderBits'
+import { PaymentProofSection, WhatsAppOrderButton } from '../components/PaymentProof'
 import { ReturnRequestSection } from '../components/ReturnRequestSection'
 import { useCancelOrder, useOrder } from '../hooks'
 
@@ -37,8 +38,19 @@ export default function OrderDetailPage() {
       {justPlaced && (
         <Alert tone="success" title="Order placed. Thank you!" className="mt-6">
           <span className="inline-flex items-center gap-2">
-            <PartyPopper className="size-4 text-sand" /> We’ll confirm your order shortly.{' '}
-            {PAYMENT_METHOD_META[order.paymentMethod].description}
+            <PartyPopper className="size-4 text-sand" />
+            {order.paymentMethod === 'bank_transfer'
+              ? 'We’ll verify your payment and confirm your order shortly.'
+              : `We’ll confirm your order shortly. ${PAYMENT_METHOD_META[order.paymentMethod].description}`}
+          </span>
+          <span className="mt-4 block">
+            <WhatsAppOrderButton
+              order={{
+                ...order,
+                city: order.shippingAddress.city,
+                hasPaymentProof: !!order.paymentProofPath,
+              }}
+            />
           </span>
         </Alert>
       )}
@@ -51,7 +63,7 @@ export default function OrderDetailPage() {
         <OrderStatusBadge status={order.status} />
       </div>
 
-      <div className="mt-8 rounded-sm border border-bone/10 bg-carbon/50 p-5">
+      <div className="mt-8 rounded-xl border border-line bg-surface-raised shadow-card p-5">
         <OrderTimeline order={order} />
         <p className="mt-4 text-sm text-ink-muted">{ORDER_STATUS_META[order.status].description}</p>
         {order.trackingNumber && (
@@ -63,7 +75,7 @@ export default function OrderDetailPage() {
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <section>
-          <h2 className="mb-4 font-display text-xs tracking-[0.24em] uppercase">Items</h2>
+          <h2 className="mb-4 font-display text-xs tracking-wider uppercase">Items</h2>
           <OrderItemsList order={order} />
         </section>
         <aside className="space-y-8">
@@ -71,7 +83,7 @@ export default function OrderDetailPage() {
             <OrderTotals order={order} />
           </section>
           <section>
-            <h2 className="mb-3 font-display text-xs tracking-[0.24em] uppercase">Delivery to</h2>
+            <h2 className="mb-3 font-display text-xs tracking-wider uppercase">Delivery to</h2>
             <address className="text-sm leading-relaxed text-bone/85 not-italic">
               {order.contactName} · {order.contactPhone}
               <br />
@@ -91,6 +103,8 @@ export default function OrderDetailPage() {
               <p className="mt-3 text-xs text-ink-muted">Note: {order.customerNotes}</p>
             )}
           </section>
+
+          <PaymentProofSection order={order} />
 
           <ReturnRequestSection order={order} />
 

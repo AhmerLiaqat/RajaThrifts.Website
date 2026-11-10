@@ -348,7 +348,7 @@ export default function InventoryPage() {
         {rows.map((r) => {
           const low = r.quantity > 0 && r.productStock <= threshold && r.product.status === 'active'
           return (
-            <tr key={r.variantId} className="hover:bg-white/[0.02]">
+            <tr key={r.variantId} className="hover:bg-surface-sunken">
               <td className="px-4 py-2.5">
                 <Link
                   to={paths.admin.productEdit(r.product.id)}
@@ -357,10 +357,10 @@ export default function InventoryPage() {
                   {r.product.imageUrl ? (
                     <img src={r.product.imageUrl} alt="" className="size-10 rounded object-cover" />
                   ) : (
-                    <span className="size-10 rounded bg-carbon" />
+                    <span className="size-10 rounded bg-surface-sunken" />
                   )}
                   <span className="min-w-0">
-                    <span className="block text-[11px] tracking-[0.14em] text-ink-subtle uppercase">
+                    <span className="block text-xs tracking-wider text-ink-subtle uppercase">
                       {r.product.brand}
                     </span>
                     <span className="block max-w-64 truncate">{r.product.name}</span>

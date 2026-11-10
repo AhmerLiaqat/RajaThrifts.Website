@@ -6,8 +6,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    color-scheme: dark;
-    background: var(--color-night);
+    color-scheme: light;
+    background: var(--color-surface);
   }
 
   body {
@@ -24,7 +24,7 @@
   }
 
   ::selection {
-    @apply bg-sand text-night;
+    @apply bg-sand-100 text-sand-700;
   }
 
   :focus-visible {
@@ -49,90 +49,31 @@
 @layer components {
   /* Eyebrow / kicker label above headings */
   .eyebrow {
-    @apply font-display text-[11px] font-medium tracking-[0.32em] text-sand uppercase;
+    @apply font-sans text-xs font-semibold tracking-[0.12em] text-sand uppercase;
   }
 
-  /* Hollow display text */
-  /* Uses text-fill-color so a text-* colour utility still sets the stroke colour. */
+  /* Legacy decorative helpers, neutralised for the light theme. */
   .hollow {
-    -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1.5px currentColor;
+    color: inherit;
   }
-
-  /* Film grain overlay for cinematic surfaces */
   .grain::after {
-    content: '';
-    position: absolute;
-    inset: -50%;
-    pointer-events: none;
-    opacity: 0.07;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    content: none;
   }
-
-  /* Night sky: soft aurora glows over the navy base (storefront backdrop). */
   .sky {
-    background:
-      radial-gradient(70rem 45rem at 12% -8%, rgb(92 112 214 / 0.32), transparent 62%),
-      radial-gradient(55rem 40rem at 100% 18%, rgb(139 111 214 / 0.2), transparent 60%),
-      radial-gradient(60rem 40rem at 40% 105%, rgb(70 92 190 / 0.25), transparent 65%),
-      var(--color-night);
+    background: var(--color-surface);
   }
-
-  /* Star dust: tiled dots in two sizes; the second layer twinkles. */
   .stars,
   .stars-twinkle {
-    position: absolute;
-    inset: 0;
-    background-repeat: repeat;
-  }
-  .stars {
-    opacity: 0.55;
-    background-image:
-      radial-gradient(1px 1px at 20px 30px, #fff, transparent),
-      radial-gradient(1px 1px at 120px 80px, #e6c983, transparent),
-      radial-gradient(1px 1px at 200px 160px, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 310px 40px, #fff, transparent),
-      radial-gradient(1px 1px at 400px 220px, #cdd3e8, transparent),
-      radial-gradient(1px 1px at 80px 260px, #fff, transparent),
-      radial-gradient(1px 1px at 470px 120px, #e6c983, transparent),
-      radial-gradient(1px 1px at 260px 300px, #fff, transparent);
-    background-size: 520px 340px;
-  }
-  .stars-twinkle {
-    background-image:
-      radial-gradient(1.6px 1.6px at 60px 110px, #fff, transparent),
-      radial-gradient(1.4px 1.4px at 380px 60px, #f6ecd2, transparent),
-      radial-gradient(1.8px 1.8px at 250px 380px, #fff, transparent),
-      radial-gradient(1.2px 1.2px at 560px 240px, #e6c983, transparent),
-      radial-gradient(1.6px 1.6px at 700px 420px, #fff, transparent);
-    background-size: 760px 500px;
-    animation: stars-pulse 5s ease-in-out infinite;
-  }
-  @keyframes stars-pulse {
-    0%,
-    100% {
-      opacity: 0.25;
-    }
-    50% {
-      opacity: 0.9;
-    }
+    display: none;
   }
 
-  /* Frosted glass panel used for cards and chips on the night sky. */
+  /* Card-like panel (formerly frosted glass). */
   .glass {
-    background: linear-gradient(160deg, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.03));
-    border: 1px solid rgb(255 255 255 / 0.1);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-card);
   }
 
-  /* Champagne-gold gradient text. */
-  .text-gold {
-    background: linear-gradient(100deg, #f6ecd2 0%, #e6c983 35%, #d4a955 65%, #f3dfa8 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
 
   .no-scrollbar {
     scrollbar-width: none;

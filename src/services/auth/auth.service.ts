@@ -27,6 +27,7 @@ export interface AuthService {
   signUp(input: SignUpInput): Promise<SignUpResult>
   signInWithPassword(email: string, password: string): Promise<AppUser>
   signOut(): Promise<void>
+  resendConfirmation(email: string): Promise<void>
   requestPasswordReset(email: string): Promise<void>
   updatePassword(password: string): Promise<void>
   onAuthChange(cb: (event: string) => void): () => void
@@ -61,6 +62,15 @@ export const authService: AuthService = {
     const { data, error } = await getSupabase().auth.signInWithPassword({ email: email.trim(), password })
     if (error) throw fromAuthError(error)
     return toAppUser(data.user)
+  },
+
+  async resendConfirmation(email) {
+    const { error } = await getSupabase().auth.resend({
+      type: 'signup',
+      email: email.trim(),
+      options: { emailRedirectTo: `${env.appUrl}/login?confirmed=1` },
+    })
+    if (error) throw fromAuthError(error)
   },
 
   async signOut() {

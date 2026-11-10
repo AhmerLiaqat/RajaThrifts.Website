@@ -2,11 +2,14 @@ import type { Collection } from '@/constants/collections'
 
 /** Raw brand palette, mirrored from src/styles/theme.css for use in JS (charts, canvas, GSAP). */
 export const palette = {
-  night: '#1B2550',
-  carbon: '#26336A',
-  bone: '#F7F3EA',
-  sand: '#E6C983',
-  stone: '#B9B2A4',
+  night: '#FFFFFF',
+  carbon: '#FFFFFF',
+  bone: '#111A33',
+  sand: '#24358A',
+  stone: '#6B7280',
+  gold: '#C99A2E',
+  grid: '#E3E6EE',
+  axis: '#687089',
 } as const
 
 /**
@@ -14,7 +17,7 @@ export const palette = {
  * Colours, spacing and type live in src/styles/theme.css (Tailwind @theme).
  */
 export const motion = {
-  duration: { fast: 0.15, base: 0.3, slow: 0.6, reveal: 0.9, cinematic: 1.4 },
+  duration: { fast: 0.15, base: 0.3, slow: 0.45, reveal: 0.5, cinematic: 0.6 },
   /** Cubic-bezier arrays for Framer Motion. */
   ease: {
     outExpo: [0.16, 1, 0.3, 1] as const,
@@ -37,7 +40,7 @@ export const zIndex = {
  * Ladder: PREMIUM = sand (gold), A = bone (light), B = stone (muted).
  */
 export const collectionTone: Record<Collection, { solid: string; soft: string; text: string }> = {
-  PREMIUM: { solid: 'bg-sand text-night', soft: 'bg-sand/12', text: 'text-sand' },
-  'A CATEGORY': { solid: 'bg-bone text-night', soft: 'bg-bone/10', text: 'text-bone' },
-  'B CATEGORY': { solid: 'bg-stone text-night', soft: 'bg-stone/12', text: 'text-stone' },
+  PREMIUM: { solid: 'bg-gold text-brand-navy', soft: 'bg-gold-soft', text: 'text-[#8a6514]' },
+  'A CATEGORY': { solid: 'bg-sand text-white', soft: 'bg-sand-100', text: 'text-sand' },
+  'B CATEGORY': { solid: 'bg-stone text-white', soft: 'bg-surface-sunken', text: 'text-ink-muted' },
 }

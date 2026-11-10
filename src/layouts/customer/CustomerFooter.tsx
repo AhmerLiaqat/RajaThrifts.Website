@@ -1,10 +1,9 @@
-import { ArrowRight, ArrowUpRight } from 'lucide-react'
-import { useRef, useState, type FormEvent } from 'react'
+import { ArrowUpRight, PackageCheck, ShieldCheck, Truck } from 'lucide-react'
+import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
 import { COLLECTION_META } from '@/constants/collections'
-import { useScrollAnimation } from '@/hooks/useScrollAnimation'
-import { gsap } from '@/lib/gsap'
+import { env } from '@/config/env'
 import { UNSPLASH_CREDIT_URL } from '@/mocks/demo-media'
 
 const YEAR = new Date().getFullYear()
@@ -27,29 +26,19 @@ const columns = [
     ],
   },
   {
-    title: 'Account',
+    title: 'Orders',
     links: [
-      { label: 'Sign in', to: paths.login },
-      { label: 'My account', to: paths.account },
-      { label: 'Cart', to: paths.cart },
+      { label: 'Track your order', to: paths.trackOrder },
+      { label: 'Bag', to: paths.cart },
+      { label: 'Wishlist', to: paths.wishlist },
+      { label: 'Staff login', to: paths.login },
     ],
   },
 ]
 
 export function CustomerFooter() {
-  const ref = useRef<HTMLElement>(null)
   const [email, setEmail] = useState('')
   const [notice, setNotice] = useState<string | null>(null)
-
-  useScrollAnimation(ref, () => {
-    gsap.from('[data-footer-letter]', {
-      yPercent: 100,
-      stagger: 0.04,
-      duration: 1.2,
-      ease: 'expo.out',
-      scrollTrigger: { trigger: '[data-footer-wordmark]', start: 'top 95%' },
-    })
-  })
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -59,52 +48,73 @@ export function CustomerFooter() {
   }
 
   return (
-    <footer ref={ref} className="relative overflow-hidden border-t border-white/10 bg-gradient-to-b from-night/30 to-night/80 text-bone backdrop-blur-sm">
-      <div className="mx-auto max-w-[1600px] px-4 pt-20 sm:px-6 lg:px-10 lg:pt-28">
-        <div className="grid gap-16 lg:grid-cols-[1.2fr_2fr]">
+    <footer className="mt-16 bg-brand-navy text-white/80">
+      {/* Service promises */}
+      <div className="border-b border-white/10">
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
+          {[
+            { icon: ShieldCheck, title: 'Hand-inspected', text: 'Every pair checked and honestly graded' },
+            { icon: PackageCheck, title: 'Cleaned & photographed', text: 'What you see is the pair you get' },
+            { icon: Truck, title: 'Nationwide delivery', text: 'Cash on delivery available' },
+          ].map(({ icon: Icon, title, text }) => (
+            <div key={title} className="flex items-start gap-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-white/10 text-gold">
+                <Icon className="size-5" aria-hidden />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-white">{title}</p>
+                <p className="mt-0.5 text-sm text-white/65">{text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
-            <p className="eyebrow">Join the drop list</p>
-            <h2 className="mt-5 max-w-md text-3xl leading-tight font-medium sm:text-4xl">
-              First look at every new shipment, before it hits the store.
-            </h2>
-            <form onSubmit={onSubmit} className="mt-8 max-w-md">
+            <p className="font-display text-xl font-extrabold text-white">
+              Raja<span className="text-gold">Thrifs</span>
+            </p>
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/65">
+              Imported thrift footwear, graded into Premium, A Category and B Category. Get a first look at every
+              new shipment.
+            </p>
+            <form onSubmit={onSubmit} className="mt-6 max-w-md">
               <label htmlFor="footer-email" className="sr-only">
                 Email address
               </label>
-              <div className="flex items-center border-b border-bone/25 transition-colors focus-within:border-sand">
+              <div className="flex gap-2">
                 <input
                   id="footer-email"
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="h-14 flex-1 bg-transparent text-sm text-bone placeholder:text-bone/35 focus:outline-none"
+                  placeholder="Your email address"
+                  className="h-11 min-w-0 flex-1 rounded-lg border border-white/15 bg-white/5 px-3 text-sm text-white placeholder:text-white/40 focus:border-gold focus:outline-none"
                 />
                 <button
                   type="submit"
-                  aria-label="Subscribe"
-                  className="grid size-10 place-items-center text-sand transition-transform hover:translate-x-1"
+                  className="h-11 shrink-0 rounded-lg bg-gold px-4 text-sm font-semibold text-brand-navy transition-colors hover:bg-gold/90"
                 >
-                  <ArrowRight className="size-5" />
+                  Subscribe
                 </button>
               </div>
-              <p role="status" className="mt-3 min-h-5 text-xs text-ink-muted">
+              <p role="status" className="mt-2 min-h-5 text-xs text-white/60">
                 {notice}
               </p>
             </form>
           </div>
 
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             {columns.map((col) => (
               <div key={col.title}>
-                <p className="font-display text-[11px] tracking-[0.28em] text-ink-subtle uppercase">
-                  {col.title}
-                </p>
-                <ul className="mt-5 space-y-3">
+                <p className="text-sm font-semibold text-white">{col.title}</p>
+                <ul className="mt-4 space-y-2.5">
                   {col.links.map((l) => (
                     <li key={l.label}>
-                      <Link to={l.to} className="text-sm text-bone/80 transition-colors hover:text-sand">
+                      <Link to={l.to} className="text-sm text-white/65 transition-colors hover:text-white">
                         {l.label}
                       </Link>
                     </li>
@@ -115,33 +125,18 @@ export function CustomerFooter() {
           </div>
         </div>
 
-        {/* Giant wordmark */}
-        <div
-          data-footer-wordmark
-          aria-hidden
-          className="mt-24 flex select-none justify-between overflow-hidden leading-[0.8] lg:mt-32"
-        >
-          {'RAJATHRIFS'.split('').map((ch, i) => (
-            <span
-              key={i}
-              data-footer-letter
-              className={`inline-block font-display text-[clamp(3.5rem,15.5vw,17rem)] font-semibold ${i >= 4 ? 'text-sand' : 'text-bone'}`}
-            >
-              {ch}
-            </span>
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-4 border-t border-bone/8 py-8 text-xs text-ink-subtle md:flex-row md:items-center md:justify-between">
+        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/55 md:flex-row md:items-center md:justify-between">
           <p>© {YEAR} RajaThrifs. Imported thrift footwear.</p>
           <p className="max-w-xl md:text-right">
-            Design preview: products, prices and reviews shown are sample data, not current inventory.
-            Photography from{' '}
+            {env.useDemoCatalog
+              ? 'Design preview: products, prices and reviews shown are sample data, not current inventory. '
+              : 'Some decorative photography '}
+            from{' '}
             <a
               href={UNSPLASH_CREDIT_URL}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-0.5 text-bone/70 underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-0.5 text-white/75 underline-offset-4 hover:underline"
             >
               Unsplash <ArrowUpRight className="size-3" />
             </a>

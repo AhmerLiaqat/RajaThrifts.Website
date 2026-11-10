@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { Reveal } from '@/components/motion/Reveal'
-import { SparkleIcon } from '@/components/motion/Sparkles'
 import { cn } from '@/lib/utils/cn'
 
 /** Shared homepage section heading: sparkle pill, title with a gold word, optional copy and action. */
@@ -27,24 +26,21 @@ export function HomeHeading({
   return (
     <div
       className={cn(
-        'flex flex-col gap-6',
+        'flex flex-col gap-4',
         center ? 'items-center text-center' : 'lg:flex-row lg:items-end lg:justify-between',
         className,
       )}
     >
       <Reveal className={cn('max-w-3xl', center && 'flex flex-col items-center')}>
-        <span className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-display text-[11px] font-medium tracking-[0.28em] text-sand uppercase">
-          <SparkleIcon className="size-3" />
-          {eyebrow}
-        </span>
+        <span className="eyebrow">{eyebrow}</span>
         <h2
           id={id}
-          className="mt-5 text-[clamp(2.25rem,5.5vw,4.5rem)] leading-[1] font-semibold tracking-[-0.03em]"
+          className="mt-2 text-[clamp(1.75rem,3.5vw,2.5rem)] leading-tight font-bold tracking-tight text-ink"
         >
-          {title} {highlight && <span className="text-gold">{highlight}</span>}
+          {title} {highlight && <span className="text-sand">{highlight}</span>}
         </h2>
         {description && center && (
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-ink-muted">{description}</p>
+          <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted">{description}</p>
         )}
       </Reveal>
       {((description && !center) || action) && (

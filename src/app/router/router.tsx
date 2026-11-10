@@ -22,6 +22,8 @@ const customerRoutes: RouteObject[] = [
   { path: paths.cart, lazy: page(() => import('@/features/cart/pages/CartPage')) },
   { path: paths.checkout, lazy: page(() => import('@/features/cart/pages/CheckoutPage')) },
   { path: paths.wishlist, lazy: page(() => import('@/features/wishlist/WishlistPage')) },
+  { path: paths.orderConfirmed(), lazy: page(() => import('@/features/orders/pages/OrderConfirmedPage')) },
+  { path: paths.trackOrder, lazy: page(() => import('@/features/orders/pages/TrackOrderPage')) },
   { path: paths.login, lazy: page(() => import('@/features/auth/pages/LoginPage')) },
   { path: paths.register, lazy: page(() => import('@/features/auth/pages/RegisterPage')) },
   { path: paths.resetPassword, lazy: page(() => import('@/features/auth/pages/ResetPasswordPage')) },
@@ -52,6 +54,7 @@ const adminRoutes: RouteObject[] = [
   { path: paths.admin.orders, lazy: page(() => import('@/features/admin/orders/pages/OrdersPage')) },
   { path: paths.admin.returns, lazy: page(() => import('@/features/admin/returns/pages/ReturnsPage')) },
   { path: paths.admin.customers, lazy: page(() => import('@/features/admin/customers/pages/CustomersPage')) },
+  { path: paths.admin.reviews, lazy: page(() => import('@/features/admin/reviews/pages/ReviewsPage')) },
   {
     // Admin only. The database enforces the same rule (set_user_role, store_settings RLS).
     element: <RequireRole roles={['admin']} />,

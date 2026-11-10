@@ -25,11 +25,11 @@ export function FilterGroup({ title, badge, onClear, defaultOpen = true, childre
           aria-expanded={open}
           aria-controls={id}
           onClick={() => setOpen((o) => !o)}
-          className="flex flex-1 items-center gap-2 text-left font-display text-[11px] tracking-[0.26em] text-bone uppercase"
+          className="flex flex-1 items-center gap-2 text-left text-sm font-medium text-ink"
         >
           {title}
           {!!badge && (
-            <span className="grid size-5 place-items-center rounded-full bg-sand text-[10px] font-semibold tracking-normal text-night">
+            <span className="grid size-5 place-items-center rounded-full bg-sand text-[11px] font-semibold tracking-normal text-night">
               {badge}
             </span>
           )}
@@ -38,7 +38,7 @@ export function FilterGroup({ title, badge, onClear, defaultOpen = true, childre
           <button
             type="button"
             onClick={onClear}
-            className="text-[11px] text-ink-muted underline-offset-4 hover:text-bone hover:underline"
+            className="text-xs text-ink-muted underline-offset-4 hover:text-bone hover:underline"
           >
             Clear
           </button>

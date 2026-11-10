@@ -6,33 +6,33 @@ export const ORDER_STATUS_META: Record<
 > = {
   pending: {
     label: 'Pending',
-    className: 'border-warning/40 text-warning',
-    description: 'Waiting for our team to confirm.',
+    className: 'border-warning/25 bg-warning/10 text-warning',
+    description: 'Waiting for us to verify your payment and confirm the order.',
   },
   confirmed: {
     label: 'Confirmed',
-    className: 'border-info/40 text-info',
+    className: 'border-info/25 bg-info/10 text-info',
     description: 'Confirmed and reserved for you.',
   },
   processing: {
     label: 'Processing',
-    className: 'border-info/40 text-info',
+    className: 'border-info/25 bg-info/10 text-info',
     description: 'Being cleaned and packed.',
   },
-  shipped: { label: 'Shipped', className: 'border-sand/50 text-sand', description: 'On its way to you.' },
+  shipped: { label: 'Shipped', className: 'border-sand/25 bg-sand/10 text-sand', description: 'On its way to you.' },
   delivered: {
     label: 'Delivered',
-    className: 'border-success/40 text-success',
+    className: 'border-success/25 bg-success/10 text-success',
     description: 'Delivered. Enjoy the pair!',
   },
   cancelled: {
     label: 'Cancelled',
-    className: 'border-bone/20 text-ink-muted',
+    className: 'border-line bg-surface-sunken text-ink-muted',
     description: 'This order was cancelled.',
   },
   refunded: {
     label: 'Refunded',
-    className: 'border-bone/20 text-ink-muted',
+    className: 'border-line bg-surface-sunken text-ink-muted',
     description: 'This order was refunded.',
   },
 }

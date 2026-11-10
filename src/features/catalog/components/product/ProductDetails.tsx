@@ -66,7 +66,7 @@ export function ConditionMeter({ grade }: { grade: ConditionGrade }) {
         ))}
       </div>
       <div
-        className="mt-1.5 grid grid-cols-4 gap-1.5 text-[10px] tracking-wide text-ink-subtle uppercase"
+        className="mt-1.5 grid grid-cols-4 gap-1.5 text-[11px] tracking-wide text-ink-subtle uppercase"
         aria-hidden
       >
         {CONDITION_ORDER.map((g) => (
@@ -110,7 +110,7 @@ export function DefectList({ defects, notes }: { defects: ProductDefect[]; notes
                     <p className="text-sm font-medium text-bone">{d.area}</p>
                     <span
                       className={cn(
-                        'rounded-full border px-2 py-0.5 font-display text-[9px] tracking-[0.2em] uppercase',
+                        'rounded-full border px-2 py-0.5 font-display text-[10px] tracking-wider uppercase',
                         sev.className,
                       )}
                     >
@@ -193,7 +193,7 @@ export function AccordionItem({
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between py-5 text-left font-display text-xs tracking-[0.24em] text-bone uppercase"
+        className="flex w-full items-center justify-between py-5 text-left text-sm font-medium text-ink"
       >
         {title}
         {open ? <Minus className="size-4 text-sand" /> : <Plus className="size-4 text-ink-muted" />}

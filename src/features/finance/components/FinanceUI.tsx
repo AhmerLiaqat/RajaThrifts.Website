@@ -50,7 +50,7 @@ export function PeriodControls({
             value={period.from}
             max={period.to}
             onChange={(e) => e.target.value && period.setRange(e.target.value, period.to)}
-            className="h-9 rounded-md border border-line-strong bg-surface-raised px-2 text-sm [color-scheme:dark] focus:border-sand focus:outline-none"
+            className="h-9 rounded-md border border-line-strong bg-surface-raised px-2 text-sm focus:border-sand focus:outline-none"
           />
           <span className="text-ink-subtle">→</span>
           <input
@@ -59,7 +59,7 @@ export function PeriodControls({
             value={period.to}
             min={period.from}
             onChange={(e) => e.target.value && period.setRange(period.from, e.target.value)}
-            className="h-9 rounded-md border border-line-strong bg-surface-raised px-2 text-sm [color-scheme:dark] focus:border-sand focus:outline-none"
+            className="h-9 rounded-md border border-line-strong bg-surface-raised px-2 text-sm focus:border-sand focus:outline-none"
           />
         </div>
       </div>
@@ -128,8 +128,8 @@ export function ExportButtons({
 }
 
 // ── Single-measure chart (small multiples; one hue, zero line for negatives) ──
-const AXIS = '#9aa5c9'
-const GRID = '#34437a'
+const AXIS = palette.axis
+const GRID = palette.grid
 const compact = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
 
 export function MetricChart({
@@ -155,7 +155,7 @@ export function MetricChart({
   const barSize = Math.max(2, Math.min(24, Math.floor(600 / Math.max(1, data.length)) - 2))
 
   return (
-    <figure className="rounded-md border border-bone/10 bg-carbon/50 p-4">
+    <figure className="rounded-xl border border-line bg-surface-raised shadow-card p-4">
       <figcaption className="mb-3 flex items-baseline justify-between gap-3">
         <span className="text-sm font-semibold text-bone">{title}</span>
         <span className={cn('font-display text-sm tabular-nums', total < 0 ? 'text-danger' : 'text-bone')}>
@@ -185,7 +185,7 @@ export function MetricChart({
               tickLine={false}
               width={44}
             />
-            {hasNegative && <ReferenceLine y={0} stroke="#4a5a96" />}
+            {hasNegative && <ReferenceLine y={0} stroke="#CDD2DE" />}
             <Tooltip
               cursor={{ fill: 'rgba(245,241,232,0.04)' }}
               content={({ active, payload }) =>

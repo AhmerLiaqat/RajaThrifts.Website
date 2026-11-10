@@ -46,8 +46,8 @@ function Section({
   children: ReactNode
 }) {
   return (
-    <section className="rounded-sm border border-bone/10 bg-carbon/40 p-5 sm:p-6">
-      <h2 className="font-display text-xs tracking-[0.24em] uppercase">{title}</h2>
+    <section className="rounded-xl border border-line bg-surface-raised shadow-card p-5 sm:p-6">
+      <h2 className="font-display text-xs tracking-wider uppercase">{title}</h2>
       {description && <p className="mt-1 text-xs text-ink-muted">{description}</p>}
       <div className="mt-5 flex flex-col gap-5">{children}</div>
     </section>
@@ -136,7 +136,7 @@ function MarginPreview({ price, cost }: { price: string; cost: string }) {
   const margin = p - c
   const pct = Math.round((margin / p) * 100)
   return (
-    <p className="flex items-baseline justify-between rounded-sm bg-white/[0.03] px-3 py-2 text-sm">
+    <p className="flex items-baseline justify-between rounded-sm bg-surface-sunken px-3 py-2 text-sm">
       <span className="text-ink-muted">Margin per pair</span>
       <span className={margin < 0 ? 'text-danger tabular-nums' : 'text-bone tabular-nums'}>
         {formatPrice(Math.round(margin * 100))} · {pct}%
@@ -433,7 +433,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
             <option value="archived">Archived (hidden)</option>
           </Select>
           <label className="flex items-center gap-3 text-sm text-bone/85">
-            <input type="checkbox" className="size-4 accent-[#C7B99A]" {...register('isFeatured')} /> Feature
+            <input type="checkbox" className="size-4 accent-sand" {...register('isFeatured')} /> Feature
             on the homepage
           </label>
         </Section>
@@ -455,7 +455,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
             {...register('compareAtPrice')}
           />
           <div className="border-t border-bone/10 pt-5">
-            <p className="mb-3 flex items-center gap-2 text-[11px] tracking-[0.2em] text-ink-subtle uppercase">
+            <p className="mb-3 flex items-center gap-2 text-xs tracking-wider text-ink-subtle uppercase">
               <Lock className="size-3" /> Staff only
             </p>
             <div className="flex flex-col gap-5">

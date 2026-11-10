@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ExternalLink, Truck } from 'lucide-react'
+import { CircleCheck, ExternalLink, ShieldCheck, Truck, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
@@ -17,16 +17,17 @@ import {
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { AdminPageHeader } from '@/layouts/admin/AdminLayout'
 import { queryKeys } from '@/lib/query/queryClient'
-import { formatDate, formatPrice } from '@/lib/utils/format'
+import { formatDate, formatPrice, formatPriceCode } from '@/lib/utils/format'
 import { orderService } from '@/services'
 import type { OrderListFilter } from '@/services/orders/order.service'
 import type { Order, OrderStatus, PaymentStatus } from '@/types/order'
+import { PaymentProofThumb } from '@/features/account/components/PaymentProof'
 import { useOrderReturns } from '../../hooks'
 import { ReturnStatusPill } from '../../returns/ReturnStatusPill'
 
 const FILTERS: Array<{ value: OrderListFilter; label: string }> = [
   { value: 'all', label: 'All' },
-  { value: 'pending', label: 'To confirm' },
+  { value: 'pending', label: 'Awaiting approval' },
   { value: 'to_ship', label: 'To ship' },
   { value: 'shipped', label: 'In transit' },
   { value: 'delivered', label: 'Delivered' },
@@ -66,12 +67,120 @@ function useOrderActions() {
         orderService.recordPayment(id, status, reference),
       onSuccess: done,
     }),
+    approve: useMutation({
+      mutationFn: ({ id, reference }: { id: string; reference?: string }) => orderService.approve(id, reference),
+      onSuccess: done,
+    }),
+    reject: useMutation({
+      mutationFn: ({ id, reason }: { id: string; reason: string }) => orderService.reject(id, reason),
+      onSuccess: done,
+    }),
     fulfilment: useMutation({
       mutationFn: (v: { id: string; courier: string; trackingNumber: string; staffNotes: string }) =>
         orderService.updateFulfilment(v.id, v),
       onSuccess: done,
     }),
   }
+}
+
+/**
+ * Advance-payment orders stay pending until an admin has checked the bank account.
+ * The database enforces the same rule (migration 0011): only admins verify + approve.
+ */
+function ApprovalPanel({ order, actions }: { order: Order; actions: ReturnType<typeof useOrderActions> }) {
+  const { isAdmin } = useAuth()
+  const [checked, setChecked] = useState(false)
+  const [reference, setReference] = useState('')
+  const [rejecting, setRejecting] = useState(false)
+  const [reason, setReason] = useState('Payment not received in our account')
+  const amount = formatPriceCode(order.total)
+
+  return (
+    <section className="rounded-2xl border border-warning/40 bg-warning/5 p-4 sm:p-5">
+      <p className="flex items-center gap-2 font-display text-sm font-semibold text-warning">
+        <ShieldCheck className="size-4" /> Waiting for payment verification
+      </p>
+      <div className="mt-4 flex items-start gap-4">
+        {order.paymentProofPath ? (
+          <PaymentProofThumb path={order.paymentProofPath} className="h-44 w-32 shrink-0" />
+        ) : (
+          <span className="grid h-44 w-32 shrink-0 place-items-center rounded-xl border border-dashed border-warning/50 p-2 text-center text-xs text-warning">
+            No screenshot
+          </span>
+        )}
+        <div className="min-w-0 flex-1 text-sm">
+          <p className="text-ink-muted">Amount to find in your bank account</p>
+          <p className="mt-0.5 font-display text-2xl text-bone tabular-nums">{amount}</p>
+          <p className="mt-2 text-xs text-ink-subtle">
+            From {order.contactName} · {order.contactPhone}
+            <br />
+            Placed {formatDate(order.placedAt)}
+          </p>
+          {order.paymentProofPath && (
+            <p className="mt-2 text-xs text-ink-subtle">Click the screenshot to open it full size.</p>
+          )}
+        </div>
+      </div>
+
+      {!isAdmin ? (
+        <p className="mt-4 text-sm text-ink-muted">
+          An admin checks the bank account and approves this order. You can pack it once it is confirmed.
+        </p>
+      ) : rejecting ? (
+        <div className="mt-5 flex flex-col gap-3">
+          <Input label="Reason (saved in staff notes)" value={reason} onChange={(e) => setReason(e.target.value)} />
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="danger"
+              disabled={!reason.trim()}
+              loading={actions.reject.isPending}
+              onClick={() => actions.reject.mutate({ id: order.id, reason })}
+            >
+              <XCircle className="size-4" /> Reject order
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setRejecting(false)}>
+              Back
+            </Button>
+          </div>
+          <p className="text-xs text-ink-subtle">The order is cancelled and its pairs go back on sale.</p>
+        </div>
+      ) : (
+        <div className="mt-5 flex flex-col gap-3">
+          <label className="flex items-start gap-3 text-sm text-bone">
+            <input
+              type="checkbox"
+              className="mt-0.5 size-4 accent-sand"
+              checked={checked}
+              onChange={(e) => setChecked(e.target.checked)}
+            />
+            I checked my bank account and received {amount}.
+          </label>
+          <Input
+            label="Bank transaction ID (optional)"
+            placeholder="e.g. FT2611100123"
+            value={reference}
+            onChange={(e) => setReference(e.target.value)}
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="accent"
+              disabled={!checked}
+              loading={actions.approve.isPending}
+              onClick={() => actions.approve.mutate({ id: order.id, reference })}
+            >
+              <CircleCheck className="size-4" /> Approve order
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setRejecting(true)}>
+              <XCircle className="size-4" /> Reject
+            </Button>
+          </div>
+          <p className="text-xs text-ink-subtle">Approving marks the payment paid and confirms the order.</p>
+        </div>
+      )}
+    </section>
+  )
 }
 
 function OrderPanel({ order }: { order: Order }) {
@@ -85,7 +194,13 @@ function OrderPanel({ order }: { order: Order }) {
   const [courier, setCourier] = useState(order.courier ?? '')
   const [tracking, setTracking] = useState(order.trackingNumber ?? '')
   const [notes, setNotes] = useState(order.staffNotes ?? '')
-  const error = actions.status.error ?? actions.payment.error ?? actions.fulfilment.error
+  const error =
+    actions.status.error ??
+    actions.payment.error ??
+    actions.fulfilment.error ??
+    actions.approve.error ??
+    actions.reject.error
+  const needsApproval = order.paymentMethod === 'bank_transfer' && order.status === 'pending'
   const payOptions = (Object.keys(PAYMENT_STATUS_META) as PaymentStatus[]).filter(
     (s) => s !== 'refunded' || isAdmin,
   )
@@ -93,6 +208,7 @@ function OrderPanel({ order }: { order: Order }) {
   return (
     <>
       {error && <Alert tone="error">{error.message}</Alert>}
+      {needsApproval && <ApprovalPanel order={order} actions={actions} />}
       <OrderTimeline order={order} />
 
       <DrawerSection title="Move to">
@@ -101,7 +217,8 @@ function OrderPanel({ order }: { order: Order }) {
             <p className="text-sm text-ink-subtle">No further steps.</p>
           )}
           {NEXT_ORDER_STATUSES[order.status]
-            .filter((s) => s !== 'refunded')
+            // Advance-payment orders are confirmed through Approve above, never directly.
+            .filter((s) => s !== 'refunded' && !(needsApproval && s === 'confirmed'))
             .map((s) => (
               <Button
                 key={s}
@@ -212,6 +329,25 @@ function OrderPanel({ order }: { order: Order }) {
       </DrawerSection>
 
       <DrawerSection title={`Payment · ${PAYMENT_METHOD_META[order.paymentMethod].label}`}>
+        {order.paymentMethod === 'bank_transfer' && !needsApproval && (
+          <div className="mb-4 flex items-start gap-4">
+            {order.paymentProofPath ? (
+              <PaymentProofThumb path={order.paymentProofPath} className="h-36 w-28 shrink-0" />
+            ) : (
+              <span className="grid h-36 w-28 shrink-0 place-items-center rounded-xl border border-dashed border-warning/50 p-2 text-center text-xs text-warning">
+                No screenshot yet
+              </span>
+            )}
+            <p className="text-sm text-ink-muted">
+              {order.paymentProofPath
+                ? 'The customer’s transfer screenshot, kept for your records.'
+                : 'The customer has not uploaded a transfer screenshot. Contact them before confirming.'}
+              <span className="mt-2 block">
+                Amount due: <strong className="text-bone">{formatPriceCode(order.total)}</strong>
+              </span>
+            </p>
+          </div>
+        )}
         <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
           <Select
             label="Status"
@@ -341,7 +477,7 @@ export default function OrdersPage() {
       >
         {orders.isPending && <TableMessage colSpan={6}>Loading…</TableMessage>}
         {orders.data?.map((o) => (
-          <tr key={o.id} onClick={() => setSelectedId(o.id)} className="cursor-pointer hover:bg-white/[0.03]">
+          <tr key={o.id} onClick={() => setSelectedId(o.id)} className="cursor-pointer hover:bg-surface-sunken">
             <td className="px-4 py-3">
               <button type="button" className="font-mono text-bone hover:text-sand">
                 {o.orderNumber}
@@ -356,6 +492,11 @@ export default function OrdersPage() {
             </td>
             <td className="px-4 py-3">
               <OrderStatusBadge status={o.status} />
+              {o.status === 'pending' && o.paymentMethod === 'bank_transfer' && (
+                <span className="mt-1 block text-xs text-warning">
+                  {o.paymentProofPath ? 'Check payment' : 'No screenshot'}
+                </span>
+              )}
             </td>
             <td className="px-4 py-3 text-xs text-ink-muted">
               {o.courier || o.trackingNumber ? (

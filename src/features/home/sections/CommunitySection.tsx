@@ -1,7 +1,6 @@
 import { ArrowRight } from 'lucide-react'
 import { paths } from '@/app/router/paths'
 import { Reveal } from '@/components/motion/Reveal'
-import { SparkleIcon, Sparkles } from '@/components/motion/Sparkles'
 import { ButtonLink } from '@/components/ui'
 import { DemoTag } from '@/components/ui/DemoTag'
 import { INSTAGRAM_PHOTOS, unsplash } from '@/mocks/demo-media'
@@ -27,33 +26,26 @@ function InstagramGlyph({ className }: { className?: string }) {
 /** COMMUNITY: a glowing call-to-action panel with the Instagram preview strip. */
 export function CommunitySection() {
   return (
-    <section id="instagram" aria-labelledby="community-title" className="relative py-24 lg:py-32">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10">
+    <section id="instagram" aria-labelledby="community-title" className="relative pt-4 pb-16 lg:pb-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#2d3c86] via-[#26336a] to-[#3a2f72] p-8 ring-1 ring-white/15 sm:p-12 lg:p-16">
-            <div
-              aria-hidden
-              className="absolute -top-32 -right-24 size-96 rounded-full bg-orchid/40 blur-[110px]"
-            />
-            <Sparkles count={16} seed={99} />
+          <div className="relative overflow-hidden rounded-2xl bg-brand-navy p-8 text-white sm:p-12">
 
             <div className="relative grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
               <div>
-                <span className="inline-flex items-center gap-2 font-display text-[11px] tracking-[0.28em] text-sand uppercase">
-                  <SparkleIcon className="size-3" /> Follow the drops
-                </span>
+                <span className="text-xs font-semibold tracking-[0.12em] text-gold uppercase">Follow the drops</span>
                 <h2
                   id="community-title"
-                  className="mt-5 text-[clamp(2.25rem,5vw,4rem)] leading-[1] font-semibold tracking-[-0.03em]"
+                  className="mt-2 text-[clamp(1.75rem,3.5vw,2.5rem)] leading-tight font-bold tracking-tight text-white"
                 >
                   Never miss a <span className="text-gold">perfect pair</span>
                 </h2>
-                <p className="mt-5 max-w-md text-base leading-relaxed text-bone/80">
+                <p className="mt-4 max-w-md text-base leading-relaxed text-white/75">
                   One of each means the good ones go fast. New shipments are posted first on Instagram as{' '}
-                  <span className="font-medium text-bone">@{INSTAGRAM_HANDLE}</span>.
+                  <span className="font-semibold text-white">@{INSTAGRAM_HANDLE}</span>.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <ButtonLink to={paths.shop} variant="accent" size="lg" className="shadow-glow">
+                  <ButtonLink to={paths.shop} size="lg" className="bg-gold text-brand-navy hover:bg-gold/90">
                     Shop the rack <ArrowRight className="size-4" />
                   </ButtonLink>
                   {INSTAGRAM_URL ? (
@@ -61,12 +53,12 @@ export function CommunitySection() {
                       href={INSTAGRAM_URL}
                       target="_blank"
                       rel="noreferrer"
-                      className="glass inline-flex h-14 items-center gap-2 rounded-full px-6 font-display text-xs tracking-[0.2em] uppercase"
+                      className="inline-flex h-12 items-center gap-2 rounded-lg border border-white/25 px-5 text-sm font-semibold text-white hover:bg-white/10"
                     >
                       <InstagramGlyph className="size-4" /> Follow on Instagram
                     </a>
                   ) : (
-                    <span className="glass inline-flex h-14 items-center gap-2 rounded-full px-6 font-display text-xs tracking-[0.2em] text-bone/85 uppercase">
+                    <span className="inline-flex h-12 items-center gap-2 rounded-lg border border-white/20 px-5 text-sm font-medium text-white/70">
                       <InstagramGlyph className="size-4" /> Instagram coming soon
                     </span>
                   )}
@@ -75,26 +67,25 @@ export function CommunitySection() {
 
               <div className="relative">
                 <ul className="grid grid-cols-3 gap-3">
-                  {INSTAGRAM_PHOTOS.map((photo, i) => (
+                  {INSTAGRAM_PHOTOS.map((photo) => (
                     <li
                       key={photo.id}
-                      className={i % 2 ? 'translate-y-6' : ''}
                     >
-                      <div className="group relative aspect-square overflow-hidden rounded-2xl bg-carbon ring-1 ring-white/15">
+                      <div className="group relative aspect-square overflow-hidden rounded-xl bg-white/10">
                         <img
                           src={unsplash(photo.id, 500, 500)}
                           alt={photo.alt}
                           loading="lazy"
-                          className="size-full object-cover transition-transform duration-[1.2s] ease-out-expo group-hover:scale-110"
+                          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                        <span className="absolute inset-0 grid place-items-center bg-night/50 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                          <InstagramGlyph className="size-6 text-bone" />
+                        <span className="absolute inset-0 grid place-items-center bg-brand-navy/50 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                          <InstagramGlyph className="size-6 text-white" />
                         </span>
                       </div>
                     </li>
                   ))}
                 </ul>
-                <DemoTag label="Demo feed" className="absolute -bottom-10 left-0" />
+                <DemoTag label="Demo feed" className="absolute top-2 left-2" />
               </div>
             </div>
           </div>

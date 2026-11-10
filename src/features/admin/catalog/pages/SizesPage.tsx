@@ -46,7 +46,7 @@ function SizeRow({ size, isAdmin }: { size: SizeChartRow; isAdmin: boolean }) {
             type="checkbox"
             checked={draft.isActive}
             onChange={(e) => setDraft({ ...draft, isActive: e.target.checked })}
-            className="accent-[#C7B99A]"
+            className="accent-sand"
           />
           {draft.isActive ? (
             <Pill className="border-success/40 text-success">Active</Pill>
@@ -129,7 +129,7 @@ export default function SizesPage() {
         {sizes.data?.map((s) => (
           <SizeRow key={`${s.id}-${s.eu}-${s.isActive}`} size={s} isAdmin={isAdmin} />
         ))}
-        <tr className="bg-white/[0.02]">
+        <tr className="bg-surface-sunken">
           {FIELDS.map((f) => (
             <td key={f.key} className="px-2 py-2">
               <input

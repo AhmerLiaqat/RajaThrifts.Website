@@ -6,25 +6,25 @@ export const RETURN_STATUS_META: Record<
 > = {
   requested: {
     label: 'Requested',
-    className: 'border-warning/40 text-warning',
+    className: 'border-warning/25 bg-warning/10 text-warning',
     description: 'Waiting for a decision.',
   },
   approved: {
     label: 'Approved',
-    className: 'border-info/40 text-info',
+    className: 'border-info/25 bg-info/10 text-info',
     description: 'Approved. Waiting for the pair to arrive back.',
   },
   rejected: {
     label: 'Rejected',
-    className: 'border-bone/20 text-ink-muted',
+    className: 'border-line bg-surface-sunken text-ink-muted',
     description: 'This return was declined.',
   },
   received: {
     label: 'Received',
-    className: 'border-sand/50 text-sand',
+    className: 'border-sand/25 bg-sand/10 text-sand',
     description: 'Pair received and checked.',
   },
-  refunded: { label: 'Refunded', className: 'border-success/40 text-success', description: 'Refund issued.' },
+  refunded: { label: 'Refunded', className: 'border-success/25 bg-success/10 text-success', description: 'Refund issued.' },
 }
 
 export const RETURN_REASON_LABEL: Record<ReturnReason, string> = {

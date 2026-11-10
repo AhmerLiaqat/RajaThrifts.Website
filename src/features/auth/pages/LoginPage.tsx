@@ -1,49 +1,134 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
 import { Button, Input } from '@/components/ui'
 import { Alert } from '@/components/ui/Field'
+import { authService } from '@/services'
 import { AuthShell } from '../components/AuthShell'
-import { authAvailable, useAuth, useSignIn } from '../hooks/useAuth'
+import { authAvailable, useAuth, useSignIn, useSignOut } from '../hooks/useAuth'
 import { loginSchema, type LoginValues } from '../schemas'
 
+/** Turns Supabase auth errors into something a shop owner can act on. */
+function explain(message: string): { title: string; body: string; unconfirmed?: boolean } {
+  if (/email not confirmed/i.test(message))
+    return {
+      title: 'Email not confirmed yet',
+      body: 'Open the confirmation link Supabase emailed you (check spam), then sign in. You can resend it below.',
+      unconfirmed: true,
+    }
+  if (/invalid login credentials/i.test(message))
+    return {
+      title: 'Email or password is wrong',
+      body: 'Check both and try again. If you never registered this email, register it first.',
+    }
+  if (/too many|rate limit/i.test(message))
+    return { title: 'Too many attempts', body: 'Please wait a minute and try again.' }
+  if (/fetch|network/i.test(message))
+    return {
+      title: 'Cannot reach Supabase',
+      body: 'Check your internet connection and the Supabase URL in .env.local, then restart npm run dev.',
+    }
+  return { title: 'Could not sign in', body: message }
+}
+
+/** Staff sign-in. Customers never need an account (guest checkout). */
 export default function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const [params] = useSearchParams()
-  const { isAuthenticated, isStaff } = useAuth()
+  const { user, isAuthenticated, isStaff } = useAuth()
   const signIn = useSignIn()
+  const signOut = useSignOut()
+  const resend = useMutation({ mutationFn: (email: string) => authService.resendConfirmation(email) })
 
   const from = (location.state as { from?: { pathname: string } } | null)?.from?.pathname
-
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   })
 
-  if (isAuthenticated && !signIn.isPending)
-    return <Navigate to={from ?? (isStaff ? paths.admin.root : paths.account)} replace />
+  if (isAuthenticated && isStaff && !signIn.isPending)
+    return <Navigate to={from?.startsWith('/dashboard') ? from : paths.admin.root} replace />
+
+  // Signed in, but the account has no staff role: say so instead of silently redirecting.
+  if (isAuthenticated && !isStaff && !signIn.isPending) {
+    return (
+      <AuthShell eyebrow="Staff only" title="No staff access yet">
+        <Alert tone="info" title={`Signed in as ${user?.email ?? 'this account'}`}>
+          This account is not an admin or shopkeeper yet, so the dashboard is locked.
+        </Alert>
+        <div className="mt-6 space-y-3 text-sm text-ink-muted">
+          <p>
+            <strong className="text-bone">First admin:</strong> in Supabase → SQL Editor, run:
+          </p>
+          <pre className="overflow-x-auto rounded-xl border border-bone/10 bg-night/50 p-3 font-mono text-xs text-bone">
+            {`update public.profiles set role = 'admin'\nwhere email = '${user?.email ?? 'you@example.com'}';`}
+          </pre>
+          <p>
+            <strong className="text-bone">New staff member:</strong> ask an admin to give you access in Dashboard →
+            Users &amp; roles.
+          </p>
+          <p>Then sign out and sign in again.</p>
+        </div>
+        <Button className="mt-6" variant="outline" loading={signOut.isPending} onClick={() => signOut.mutate()}>
+          Sign out
+        </Button>
+      </AuthShell>
+    )
+  }
 
   const onSubmit = form.handleSubmit((values) =>
     signIn.mutate(values, {
-      onSuccess: (user) =>
-        navigate(from ?? (user.role === 'customer' ? paths.account : paths.admin.root), { replace: true }),
+      onSuccess: (u) => {
+        if (u.role !== 'customer') navigate(from?.startsWith('/dashboard') ? from : paths.admin.root, { replace: true })
+      },
     }),
   )
+  const problem = signIn.error ? explain(signIn.error.message) : null
 
   return (
-    <AuthShell eyebrow="Welcome back" title="Sign in">
+    <AuthShell eyebrow="Staff only" title="Staff login">
+      <p className="-mt-2 mb-6 text-sm text-ink-muted">
+        Shopping? No account needed: just add pairs to your bag and check out.{' '}
+        <Link to={paths.trackOrder} className="text-sand underline-offset-4 hover:underline">
+          Track an order
+        </Link>
+      </p>
+
+      {!authAvailable && (
+        <Alert tone="error" title="Supabase is not connected" className="mb-6">
+          Put VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in the .env.local file (not .env.example), then stop and
+          restart npm run dev.
+        </Alert>
+      )}
       {params.get('confirmed') && (
         <Alert tone="success" title="Email confirmed" className="mb-6">
           Your account is ready. Sign in to continue.
         </Alert>
       )}
-      {signIn.error && (
-        <Alert tone="error" className="mb-6">
-          {signIn.error.message === 'Invalid login credentials'
-            ? 'That email and password do not match. Please try again.'
-            : signIn.error.message}
+      {problem && (
+        <Alert tone="error" title={problem.title} className="mb-6">
+          {problem.body}
+          {problem.unconfirmed && (
+            <span className="mt-3 block">
+              {resend.isSuccess ? (
+                <span className="text-success">Confirmation email sent. Check your inbox and spam folder.</span>
+              ) : (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  loading={resend.isPending}
+                  onClick={() => resend.mutate(form.getValues('email'))}
+                >
+                  Resend confirmation email
+                </Button>
+              )}
+              {resend.error && <span className="mt-2 block">{resend.error.message}</span>}
+            </span>
+          )}
         </Alert>
       )}
 
@@ -75,15 +160,16 @@ export default function LoginPage() {
         </Button>
       </form>
 
-      <p className="mt-8 text-center text-sm text-ink-muted">
-        New to RajaThrifs?{' '}
+      <p className="mt-8 text-center text-xs text-ink-subtle">
+        Setting up a new staff member?{' '}
         <Link
           to={paths.register}
           state={location.state}
-          className="text-sand underline-offset-4 hover:underline"
+          className="text-ink-muted underline-offset-4 hover:text-sand hover:underline"
         >
-          Create an account
+          Register them
         </Link>
+        , then an admin grants access in Users &amp; roles.
       </p>
     </AuthShell>
   )

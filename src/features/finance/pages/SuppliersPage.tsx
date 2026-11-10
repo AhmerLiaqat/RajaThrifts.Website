@@ -79,7 +79,7 @@ function SupplierForm({ initial, onDone }: { initial: Draft; onDone: () => void 
           type="checkbox"
           checked={d.is_active}
           onChange={(e) => set({ is_active: e.target.checked })}
-          className="accent-[#C7B99A]"
+          className="accent-sand"
         />{' '}
         Active supplier
       </label>
@@ -196,7 +196,7 @@ export default function SuppliersPage() {
                   type="button"
                   aria-label={`Edit ${s.name}`}
                   onClick={() => setEditing(s)}
-                  className="rounded p-1.5 text-ink-muted hover:bg-white/5 hover:text-bone"
+                  className="rounded p-1.5 text-ink-muted hover:bg-surface-sunken hover:text-bone"
                 >
                   <Pencil className="size-4" />
                 </button>

@@ -49,7 +49,7 @@ function QueueLink({
         'group flex items-center gap-3 rounded-md border p-4 transition-colors',
         count > 0
           ? 'border-sand/40 bg-sand/[0.04] hover:border-sand'
-          : 'border-bone/10 bg-carbon/50 hover:border-bone/30',
+          : 'border-line bg-surface-raised shadow-card hover:border-line-strong',
       )}
     >
       <Icon className={cn('size-5 shrink-0', count > 0 ? 'text-sand' : 'text-ink-subtle')} aria-hidden />
@@ -136,7 +136,7 @@ export default function DashboardPage() {
             />
           </>
         ) : (
-          Array.from({ length: 6 }, (_, i) => <Skeleton key={i} className="h-[74px] bg-carbon" />)
+          Array.from({ length: 6 }, (_, i) => <Skeleton key={i} className="h-[74px]" />)
         )}
       </section>
 
@@ -177,12 +177,12 @@ export default function DashboardPage() {
               />
             </>
           ) : (
-            Array.from({ length: 5 }, (_, i) => <Skeleton key={i} className="h-28 bg-carbon" />)
+            Array.from({ length: 5 }, (_, i) => <Skeleton key={i} className="h-28" />)
           )}
         </section>
 
         <Panel title="Sales by day" description="Gross sales excluding cancelled and refunded orders.">
-          {s ? <SalesChart daily={s.daily} /> : <Skeleton className="h-64 bg-carbon/60" />}
+          {s ? <SalesChart daily={s.daily} /> : <Skeleton className="h-64" />}
         </Panel>
 
         <div className="grid gap-6 lg:grid-cols-3">
@@ -198,7 +198,7 @@ export default function DashboardPage() {
                 <p className="text-sm text-ink-muted">No orders in this period.</p>
               )
             ) : (
-              <Skeleton className="h-40 bg-carbon/60" />
+              <Skeleton className="h-40" />
             )}
           </Panel>
 
@@ -213,7 +213,7 @@ export default function DashboardPage() {
                 format={(n) => `${n} pairs`}
               />
             ) : (
-              <Skeleton className="h-40 bg-carbon/60" />
+              <Skeleton className="h-40" />
             )}
           </Panel>
 
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                 <p className="text-sm text-ink-muted">No sales yet in this period.</p>
               )
             ) : (
-              <Skeleton className="h-40 bg-carbon/60" />
+              <Skeleton className="h-40" />
             )}
           </Panel>
         </div>
@@ -260,7 +260,7 @@ export default function DashboardPage() {
                 </div>
               </dl>
             ) : (
-              <Skeleton className="h-24 bg-carbon/60" />
+              <Skeleton className="h-24" />
             )}
           </Panel>
 
@@ -274,7 +274,7 @@ export default function DashboardPage() {
             }
           >
             {!inventory.data ? (
-              <Skeleton className="h-24 bg-carbon/60" />
+              <Skeleton className="h-24" />
             ) : lowStock.length === 0 ? (
               <p className="text-sm text-ink-muted">Nothing is running low.</p>
             ) : (
@@ -288,7 +288,7 @@ export default function DashboardPage() {
                       {r.product.imageUrl ? (
                         <img src={r.product.imageUrl} alt="" className="size-9 rounded object-cover" />
                       ) : (
-                        <span className="size-9 rounded bg-carbon" />
+                        <span className="size-9 rounded bg-surface-sunken" />
                       )}
                       <span className="min-w-0 flex-1 truncate text-sm">
                         {r.product.brand} {r.product.name}

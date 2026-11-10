@@ -1,6 +1,21 @@
 import { getSupabase } from '@/lib/supabase/client'
-import type { OrderItemRow, OrderRow, OrderWithRelationsRow, PaymentRow } from '@/types/database'
-import type { Order, OrderItem, OrderStatus, Payment, PaymentStatus, PlaceOrderInput } from '@/types/order'
+import type {
+  OrderItemRow,
+  OrderRow,
+  OrderWithRelationsRow,
+  PaymentRow,
+  TrackedOrderRow,
+} from '@/types/database'
+import type {
+  Order,
+  OrderItem,
+  OrderStatus,
+  Payment,
+  PaymentStatus,
+  PlaceAdvanceOrderInput,
+  PlaceOrderInput,
+  TrackedOrder,
+} from '@/types/order'
 import { check, fromPostgrestError, unwrap } from '../core/errors'
 import { pkrToMinor } from '../core/money'
 import { productImageUrl } from '../core/storage'
@@ -67,6 +82,8 @@ export const mapOrder = (
   shippedAt: r.shipped_at,
   deliveredAt: r.delivered_at,
   cancelledAt: r.cancelled_at,
+  paymentProofPath: r.payment_proof_path ?? null,
+  paymentProofUploadedAt: r.payment_proof_uploaded_at ?? null,
   items: (r.order_items ?? []).map(mapItem),
   payments: [...(r.payments ?? [])].sort((a, b) => b.created_at.localeCompare(a.created_at)).map(mapPayment),
 })
@@ -93,6 +110,94 @@ export const orderService = {
       }),
     )
     return mapOrder(row)
+  },
+
+  /**
+   * Storefront checkout: advance bank transfer. The screenshot must already be uploaded
+   * (uploadPaymentProof); place_order_with_proof() verifies it and attaches it atomically.
+   */
+  async placeWithProof(input: PlaceAdvanceOrderInput): Promise<Order> {
+    const row = unwrap<OrderRow>(
+      await getSupabase().rpc('place_order_with_proof', {
+        p_items: input.items.map((i) => ({ variant_id: i.variantId, quantity: i.quantity })),
+        p_contact: input.contact,
+        p_address: {
+          line1: input.address.line1,
+          line2: input.address.line2,
+          city: input.address.city,
+          province: input.address.province,
+          postal_code: input.address.postalCode,
+        },
+        p_customer_notes: input.notes || null,
+        p_payment_proof: input.paymentProofPath,
+      }),
+    )
+    return mapOrder(row)
+  },
+
+  /** Guest order tracking: order number + the phone used at checkout (public.track_order). */
+  async track(orderNumber: string, phone: string): Promise<TrackedOrder> {
+    const r = unwrap<TrackedOrderRow>(
+      await getSupabase().rpc('track_order', { p_order_number: orderNumber.trim(), p_phone: phone }),
+    )
+    return {
+      orderNumber: r.order_number,
+      status: r.status,
+      paymentStatus: r.payment_status,
+      paymentMethod: r.payment_method,
+      hasPaymentProof: r.has_payment_proof,
+      subtotal: pkrToMinor(r.subtotal),
+      shippingFee: pkrToMinor(r.shipping_fee),
+      discountTotal: pkrToMinor(r.discount_total),
+      total: pkrToMinor(r.total),
+      contactName: r.contact_name,
+      city: r.shipping_city,
+      courier: r.courier,
+      trackingNumber: r.tracking_number,
+      placedAt: r.placed_at,
+      confirmedAt: r.confirmed_at,
+      shippedAt: r.shipped_at,
+      deliveredAt: r.delivered_at,
+      cancelledAt: r.cancelled_at,
+      items: r.items.map((i) => ({
+        productName: i.product_name,
+        brandName: i.brand_name,
+        collection: i.collection,
+        sizeLabel: i.size_label,
+        imageUrl: i.image_path ? productImageUrl(i.image_path) : null,
+        unitPrice: pkrToMinor(i.unit_price),
+        quantity: i.quantity,
+        lineTotal: pkrToMinor(i.line_total),
+      })),
+    }
+  },
+
+  /** Staff: every order from one customer (grouped by the last 10 digits of their phone). */
+  async listByPhoneKey(phoneKey: string): Promise<Order[]> {
+    const { data, error } = await getSupabase()
+      .from('orders')
+      .select(ORDER_SELECT)
+      .eq('phone_key', phoneKey)
+      .order('created_at', { ascending: false })
+    if (error) throw fromPostgrestError(error)
+    return (data as OrderWithRelationsRow[]).map(mapOrder)
+  },
+
+  /** Customer: replace the transfer screenshot while the order is still pending. */
+  async setPaymentProof(orderId: string, path: string): Promise<void> {
+    check(await getSupabase().rpc('set_payment_proof', { p_order_id: orderId, p_payment_proof: path }))
+  },
+
+  /** Staff: orders placed after a timestamp (new-order alerts). */
+  async listSince(sinceIso: string): Promise<Order[]> {
+    const { data, error } = await getSupabase()
+      .from('orders')
+      .select('*')
+      .gt('placed_at', sinceIso)
+      .order('placed_at', { ascending: true })
+      .limit(20)
+    if (error) throw fromPostgrestError(error)
+    return (data as OrderRow[]).map(mapOrder)
   },
 
   /** Customer: own orders (RLS). Staff calling this see all, so pass userId to scope. */
@@ -145,6 +250,16 @@ export const orderService = {
     const { data, error } = await query
     if (error) throw fromPostgrestError(error)
     return (data as OrderWithRelationsRow[]).map(mapOrder)
+  },
+
+  /** Admin: bank transfer verified → payment paid + order confirmed (public.approve_order). */
+  async approve(orderId: string, reference?: string): Promise<void> {
+    check(await getSupabase().rpc('approve_order', { p_order_id: orderId, p_reference: reference?.trim() || null }))
+  },
+
+  /** Admin: payment not received / invalid → order cancelled, pairs restocked (public.reject_order). */
+  async reject(orderId: string, reason: string): Promise<void> {
+    check(await getSupabase().rpc('reject_order', { p_order_id: orderId, p_reason: reason }))
   },
 
   async updateStatus(orderId: string, status: OrderStatus): Promise<void> {

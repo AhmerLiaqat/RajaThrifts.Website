@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test:db": "node supabase/tests/security.test.mjs && node supabase/tests/finance.test.mjs"
+    "test:db": "node supabase/tests/security.test.mjs && node supabase/tests/finance.test.mjs && node supabase/tests/checkout.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.5",

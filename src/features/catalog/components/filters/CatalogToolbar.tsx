@@ -25,7 +25,7 @@ function SearchField({ api }: { api: CatalogFiltersApi }) {
   }
 
   return (
-    <div className="relative flex h-12 min-w-0 flex-1 items-center gap-3 rounded-full border border-bone/15 bg-carbon/60 px-4 focus-within:border-sand">
+    <div className="relative flex h-12 min-w-0 flex-1 items-center gap-3 rounded-lg border border-line-strong bg-white shadow-sm px-4 focus-within:border-sand">
       <Search className="size-4 shrink-0 text-ink-muted" aria-hidden />
       <input
         type="search"
@@ -39,14 +39,14 @@ function SearchField({ api }: { api: CatalogFiltersApi }) {
         }}
         placeholder="Search brand, model, colour or SKU"
         aria-label="Search products"
-        className="h-full min-w-0 flex-1 bg-transparent text-sm text-bone placeholder:text-bone/35 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
+        className="h-full min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none [&::-webkit-search-cancel-button]:hidden"
       />
       {value && (
         <button
           type="button"
           aria-label="Clear search"
           onClick={() => onChange('')}
-          className="text-ink-muted hover:text-bone"
+          className="text-ink-muted hover:text-ink"
         >
           <X className="size-4" />
         </button>
@@ -57,15 +57,15 @@ function SearchField({ api }: { api: CatalogFiltersApi }) {
 
 function SortSelect({ api }: { api: CatalogFiltersApi }) {
   return (
-    <label className="relative flex h-12 items-center rounded-full border border-bone/15 bg-carbon/60 focus-within:border-sand">
+    <label className="relative flex h-12 items-center rounded-lg border border-line-strong bg-white shadow-sm focus-within:border-sand">
       <span className="sr-only">Sort by</span>
       <select
         value={api.state.sort}
         onChange={(e) => api.update({ sort: e.target.value as SortOption })}
-        className="h-full cursor-pointer appearance-none bg-transparent pr-10 pl-4 font-display text-xs tracking-[0.14em] text-bone uppercase focus:outline-none"
+        className="h-full cursor-pointer appearance-none bg-transparent pr-10 pl-4 text-sm font-medium text-ink focus:outline-none"
       >
         {SORT_OPTIONS.map((o) => (
-          <option key={o.value} value={o.value} className="bg-carbon text-bone normal-case">
+          <option key={o.value} value={o.value} className="normal-case">
             {o.label}
           </option>
         ))}
@@ -88,12 +88,12 @@ export function CatalogToolbar({ api, onOpenFilters }: CatalogToolbarProps) {
         <button
           type="button"
           onClick={onOpenFilters}
-          className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full border border-bone/15 bg-carbon/60 px-5 font-display text-xs tracking-[0.14em] text-bone uppercase hover:border-bone/40 lg:hidden"
+          className="flex h-12 flex-1 items-center justify-center gap-2 rounded-lg border border-line-strong bg-white shadow-sm px-5 text-sm font-medium text-ink hover:border-bone/40 lg:hidden"
         >
           <SlidersHorizontal className="size-4" />
           Filters
           {api.activeCount > 0 && (
-            <span className="grid size-5 place-items-center rounded-full bg-sand text-[10px] font-semibold text-night">
+            <span className="grid size-5 place-items-center rounded-full bg-sand text-[11px] font-semibold text-night">
               {api.activeCount}
             </span>
           )}
