@@ -41,6 +41,10 @@ const adminRoutes: RouteObject[] = [
   { index: true, lazy: page(() => import('@/features/admin/dashboard/pages/DashboardPage')) },
   { path: paths.admin.products, lazy: page(() => import('@/features/admin/products/pages/ProductListPage')) },
   {
+    path: paths.admin.productImport,
+    lazy: page(() => import('@/features/admin/products/import/BulkImportPage')),
+  },
+  {
     path: paths.admin.productNew,
     lazy: page(() => import('@/features/admin/products/pages/ProductEditorPage')),
   },

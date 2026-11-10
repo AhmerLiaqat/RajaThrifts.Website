@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react'
+import { FileUp, Plus } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
@@ -85,9 +85,14 @@ export default function ProductListPage() {
         title="Products"
         description="Create, edit and archive listings. Assign each pair to PREMIUM, A CATEGORY or B CATEGORY."
         actions={
-          <ButtonLink to={paths.admin.productNew} variant="accent" size="sm">
-            <Plus className="size-4" /> New product
-          </ButtonLink>
+          <>
+            <ButtonLink to={paths.admin.productImport} variant="outline" size="sm">
+              <FileUp className="size-4" /> Bulk import
+            </ButtonLink>
+            <ButtonLink to={paths.admin.productNew} variant="accent" size="sm">
+              <Plus className="size-4" /> New product
+            </ButtonLink>
+          </>
         }
       />
 

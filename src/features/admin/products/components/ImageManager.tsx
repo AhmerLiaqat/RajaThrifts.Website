@@ -27,6 +27,8 @@ export function ImageManager({
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(0)
   const [dragging, setDragging] = useState(false)
+  // Same studio treatment as Bulk import, so single uploads match the rest of the catalogue.
+  const [clean, setClean] = useState(true)
 
   const used = new Set(images.map((i) => i.view))
   const missing = REQUIRED_IMAGE_VIEWS.filter((v) => !used.has(v))
@@ -36,11 +38,14 @@ export function ImageManager({
     setError(null)
     const queue = [...missing]
     let position = images.length
-    for (const file of Array.from(files)) {
+    const list = Array.from(files)
+    for (const raw of list) {
       // Fill missing standard angles first, then add as detail shots.
       const view: ProductImageView = queue.shift() ?? 'detail'
       setBusy((n) => n + 1)
       try {
+        const { processPhoto } = await import('../import/photoStudio')
+        const { file } = await processPhoto(raw, clean ? 'studio' : 'original', `${productId}-${position + 1}`)
         await upload.mutateAsync({
           file,
           view,
@@ -100,6 +105,10 @@ export function ImageManager({
           sole photos sell best.
         </p>
       )}
+      <label className="flex cursor-pointer items-center gap-2 text-sm text-ink">
+        <input type="checkbox" className="size-4 accent-sand" checked={clean} onChange={(e) => setClean(e.target.checked)} />
+        Clean background automatically (light studio backdrop, same size as other photos)
+      </label>
       {(error || update.error || remove.error) && (
         <Alert tone="error">{error ?? update.error?.message ?? remove.error?.message}</Alert>
       )}
@@ -195,13 +204,13 @@ export function ImageManager({
             {busy > 0 ? <Spinner /> : <ImagePlus className="size-6" />}
             {busy > 0 ? `Uploading ${busy}…` : dragging ? 'Drop to upload' : 'Add or drop photos'}
             <span className="text-[11px] text-ink-subtle">
-              Multiple files · JPG, PNG, WebP · max 5 MB each
+              Multiple files · JPG, PNG, WebP, HEIC
             </span>
           </button>
           <input
             ref={input}
             type="file"
-            accept={ALLOWED_IMAGE_TYPES.join(',')}
+            accept={[...ALLOWED_IMAGE_TYPES, '.heic', '.heif'].join(',')}
             multiple
             hidden
             onChange={(e) => onFiles(e.target.files)}
