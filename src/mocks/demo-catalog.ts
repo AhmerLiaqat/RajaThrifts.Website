@@ -1,6 +1,6 @@
 /**
  * DEMO CATALOG. Sample listings for previewing the storefront.
- * These are NOT real RajaThrifs inventory, prices, stock levels or defects.
+ * These are NOT real Raja Thrifts inventory, prices, stock levels or defects.
  *
  * Products use the full `Product` type, so the demo product service can run the
  * exact same filter/sort/facet logic the Supabase service uses.
@@ -124,7 +124,7 @@ const build = (s: Seed): Product => {
     brand: s.brand,
     brandId: null,
     model: s.model ?? null,
-    description: `${label} in ${s.color.toLowerCase()}. Imported from ${s.origin}, inspected and graded ${s.collection} by the RajaThrifs team.`,
+    description: `${label} in ${s.color.toLowerCase()}. Imported from ${s.origin}, inspected and graded ${s.collection} by the Raja Thrifts team.`,
     collection: s.collection,
     category: {
       id: `demo-cat-${s.type ?? 'sneakers'}`,

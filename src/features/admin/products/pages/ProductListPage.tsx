@@ -11,7 +11,7 @@ import { CollectionBadge } from '@/features/catalog/components/CollectionBadge'
 import { AdminPageHeader } from '@/layouts/admin/AdminLayout'
 import { cn } from '@/lib/utils/cn'
 import { formatPrice } from '@/lib/utils/format'
-import type { ProductStatus } from '@/types/product'
+import { MIN_PRODUCT_IMAGES, type ProductStatus } from '@/types/product'
 import { useAdminProducts, useBulkUpdateProducts } from '../hooks'
 
 const STATUS_STYLE: Record<ProductStatus, string> = {
@@ -60,8 +60,24 @@ export default function ProductListPage() {
       return next
     })
 
-  const applyBulk = (patch: { collection?: Collection; status?: ProductStatus }) =>
-    bulk.mutate({ ids: selectedVisible, patch }, { onSuccess: () => setSelected(new Set()) })
+  const [bulkNotice, setBulkNotice] = useState<string | null>(null)
+  const applyBulk = (patch: { collection?: Collection; status?: ProductStatus }) => {
+    let ids = selectedVisible
+    setBulkNotice(null)
+    // Publishing needs MIN_PRODUCT_IMAGES photos per listing; skip the ones that are not ready.
+    if (patch.status === 'active') {
+      const notReady = rows.filter((p) => ids.includes(p.id) && p.images.length < MIN_PRODUCT_IMAGES)
+      ids = ids.filter((id) => !notReady.some((p) => p.id === id))
+      if (notReady.length)
+        setBulkNotice(
+          `${notReady.length} ${notReady.length === 1 ? 'listing was' : 'listings were'} not published because ${
+            notReady.length === 1 ? 'it has' : 'they have'
+          } fewer than ${MIN_PRODUCT_IMAGES} photos: ${notReady.map((p) => p.name).join(', ')}.`,
+        )
+      if (!ids.length) return
+    }
+    bulk.mutate({ ids, patch }, { onSuccess: () => setSelected(new Set()) })
+  }
 
   return (
     <>
@@ -96,9 +112,15 @@ export default function ProductListPage() {
         </Select>
       </div>
 
+      {bulkNotice && (
+        <Alert tone="info" className="mb-4">
+          {bulkNotice}
+        </Alert>
+      )}
+
       {/* Bulk actions */}
       {selectedVisible.length > 0 && (
-        <div className="sticky top-14 z-20 mb-4 flex flex-wrap items-center gap-2 rounded-md border border-sand/40 bg-night/95 p-3 backdrop-blur lg:top-2">
+        <div className="sticky top-14 z-20 mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-sand/30 bg-white/95 p-3 shadow-pop backdrop-blur lg:top-2">
           <span className="mr-2 text-sm">
             <span className="font-semibold tabular-nums">{selectedVisible.length}</span> selected
           </span>
@@ -209,6 +231,15 @@ export default function ProductListPage() {
                     <span className="block max-w-72 truncate text-bone hover:text-sand">{p.name}</span>
                     <span className="block font-mono text-xs text-ink-subtle">
                       {p.variants.map((v) => v.sku).join(' · ')}
+                    </span>
+                    <span
+                      className={cn(
+                        'mt-0.5 block text-xs',
+                        p.images.length < MIN_PRODUCT_IMAGES ? 'font-medium text-warning' : 'text-ink-subtle',
+                      )}
+                    >
+                      {p.images.length} {p.images.length === 1 ? 'photo' : 'photos'}
+                      {p.images.length < MIN_PRODUCT_IMAGES && ` · needs ${MIN_PRODUCT_IMAGES - p.images.length} more to publish`}
                     </span>
                   </span>
                 </Link>

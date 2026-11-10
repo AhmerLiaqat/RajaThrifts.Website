@@ -88,7 +88,7 @@ export default function FinanceOverviewPage() {
         actions={
           r && (
             <ExportButtons
-              filename={`rajathrifs-finance-${period.from}-to-${period.to}`}
+              filename={`rajathrifts-finance-${period.from}-to-${period.to}`}
               sheets={() => exportSheets(r)}
             />
           )

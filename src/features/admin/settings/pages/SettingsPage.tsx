@@ -81,13 +81,13 @@ function SettingsForm({ settings }: { settings: StoreSettings }) {
           </p>
           <div className="grid gap-5 sm:grid-cols-2">
             <Input label="Bank name" placeholder="Meezan Bank" {...field('bankName')} />
-            <Input label="Account title" placeholder="Raja Thrifs" {...field('bankAccountTitle')} />
+            <Input label="Account title" placeholder="Raja Thrifts" {...field('bankAccountTitle')} />
             <Input label="Account number" {...field('bankAccountNumber')} />
             <Input label="IBAN (optional)" placeholder="PK36 SCBL 0000 0011 2345 6702" {...field('bankIban')} />
           </div>
           <Textarea
             label="Extra payment instructions (optional)"
-            placeholder="You can also send to our Easypaisa / JazzCash: 0300 1234567 (Raja Thrifs)"
+            placeholder="You can also send to our Easypaisa / JazzCash: 0300 1234567 (Raja Thrifts)"
             {...field('paymentInstructions')}
           />
         </div>

@@ -38,7 +38,7 @@ export function CatalogView({ meta }: { meta?: CollectionMeta }) {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[280px_1fr] lg:gap-14 lg:px-8 lg:py-14">
         {/* Desktop sidebar */}
         <aside aria-label="Filters" className="hidden lg:block">
-          <div className="sticky top-28 max-h-[calc(100dvh-8rem)] overflow-y-auto pr-2 pb-10">
+          <div className="sticky top-[172px] max-h-[calc(100dvh-11rem)] overflow-y-auto pr-2 pb-10">
             <div className="flex items-center justify-between border-b border-bone/10 pb-4">
               <p className="text-sm font-semibold text-ink">Filters</p>
               {api.activeCount > 0 && (

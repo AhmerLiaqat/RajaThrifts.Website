@@ -32,7 +32,7 @@ export default function RefundsPage() {
         description="Every rupee paid back to customers. Return refunds reduce net sales; refunds of cancelled prepaid orders only affect cash."
         actions={
           <ExportButtons
-            filename={`rajathrifs-refunds-${period.from}-to-${period.to}`}
+            filename={`rajathrifts-refunds-${period.from}-to-${period.to}`}
             disabled={!rows.length}
             sheets={() => [
               sheet({

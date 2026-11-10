@@ -20,7 +20,7 @@ export function CustomerLayout() {
     <div className="relative isolate flex min-h-dvh flex-col bg-surface">
       <CustomerHeader />
       {/* Every page clears the fixed navbar. */}
-      <main className="flex-1 pt-16 lg:pt-[7.5rem]">
+      <main className="flex-1 pt-[100px] lg:pt-[156px]">
         <Suspense fallback={<PageLoader />}>
           <Outlet />
         </Suspense>

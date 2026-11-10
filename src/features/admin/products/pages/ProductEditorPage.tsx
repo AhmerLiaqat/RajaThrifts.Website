@@ -14,6 +14,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { AdminPageHeader } from '@/layouts/admin/AdminLayout'
 import { slugify } from '@/services/products/admin-product.service'
 import type { AdminProduct } from '@/types/dashboard'
+import { MIN_PRODUCT_IMAGES } from '@/types/product'
 import { useSizeChart } from '@/features/admin/catalog/hooks'
 import { formatPrice } from '@/lib/utils/format'
 import { ImageManager } from '../components/ImageManager'
@@ -176,15 +177,25 @@ function ProductForm({ product }: { product?: AdminProduct }) {
   const variants = useFieldArray({ control, name: 'variants' })
   const defects = useFieldArray({ control, name: 'defects' })
 
-  const onSubmit = form.handleSubmit((values) =>
+  const imageCount = product?.images.length ?? 0
+  const onSubmit = form.handleSubmit((values) => {
+    // Customers need at least MIN_PRODUCT_IMAGES real photos before a pair goes live.
+    if (values.status === 'active' && imageCount < MIN_PRODUCT_IMAGES) {
+      form.setError('status', {
+        message: product
+          ? `Add at least ${MIN_PRODUCT_IMAGES} photos before publishing (${imageCount} so far). Save as Draft for now.`
+          : `Save as Draft first, then add at least ${MIN_PRODUCT_IMAGES} photos before publishing.`,
+      })
+      return
+    }
     save.mutate(formToValues(values, product?.id), {
       onSuccess: (id) => {
         setSaved(true)
         form.reset(values)
         if (!product) navigate(paths.admin.productEdit(id), { replace: true, state: { created: true } })
       },
-    }),
-  )
+    })
+  })
 
   const fillSkus = () => {
     const { collection, name } = form.getValues()
@@ -409,7 +420,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
 
         <Section
           title="Photos"
-          description="Front, side, back and sole views of the actual pair, plus on-foot and close-ups of any defects."
+          description={`At least ${MIN_PRODUCT_IMAGES} photos of the actual pair (front, side, back and sole work best), plus close-ups of any defects.`}
         >
           {product ? (
             <ImageManager productId={product.id} productName={product.name} images={product.images} />
@@ -424,7 +435,8 @@ function ProductForm({ product }: { product?: AdminProduct }) {
         <Section title="Publishing">
           <Select
             label="Status"
-            hint="Active listings with no stock show as sold out automatically."
+            hint={`Needs at least ${MIN_PRODUCT_IMAGES} photos to be Active. Active listings with no stock show as sold out automatically.`}
+            error={e.status?.message}
             {...register('status')}
           >
             <option value="draft">Draft (hidden)</option>

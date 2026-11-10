@@ -392,7 +392,7 @@ export default function PurchasesPage() {
         actions={
           <>
             <ExportButtons
-              filename="rajathrifs-stock-purchases"
+              filename="rajathrifts-stock-purchases"
               disabled={!rows.length}
               sheets={() => [
                 sheet({

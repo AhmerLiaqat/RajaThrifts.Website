@@ -1,0 +1,30 @@
+# Netlify build settings for the RajaThrifs storefront (Vite + React SPA).
+#
+# IMPORTANT: .env.local is NOT uploaded to GitHub, so Netlify never sees it.
+# Add these in Netlify → Site configuration → Environment variables, then
+# trigger "Clear cache and deploy site":
+#   VITE_SUPABASE_URL        = https://<project-ref>.supabase.co
+#   VITE_SUPABASE_ANON_KEY   = <anon / publishable key>   (never the service_role key)
+#   VITE_APP_URL             = https://rajathrifts.netlify.app
+#   VITE_USE_DEMO_CATALOG    = false
+# Vite bakes VITE_* values in at build time, so a redeploy is required after any change.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Single-page app: let React Router handle every path (/shop, /dashboard, ...)
+# instead of Netlify returning 404 on refresh or direct links.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Long-lived caching for fingerprinted build assets.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

@@ -35,8 +35,8 @@ export function CollectionTabs() {
             cn(
               'shrink-0 rounded-lg border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors',
               isActive
-                ? 'border-sand bg-sand text-white'
-                : 'border-line-strong bg-white text-ink-muted hover:border-ink-subtle hover:text-ink',
+                ? 'border-gold bg-gold font-semibold text-brand-navy'
+                : 'border-white/20 bg-white/5 text-white/85 hover:bg-white/15 hover:text-white',
             )
           }
         >
@@ -59,7 +59,8 @@ export function CatalogHero({ meta, total, isDemo }: CatalogHeroProps) {
   const title = meta?.label ?? 'Shop all'
 
   return (
-    <section className="relative isolate overflow-hidden border-b border-line bg-surface-sunken">
+    <section className="hero-navy relative isolate overflow-hidden text-white">
+      <div aria-hidden className="dot-grid absolute inset-0 -z-10 opacity-50" />
       {photo && (
         <>
           <motion.img
@@ -75,29 +76,29 @@ export function CatalogHero({ meta, total, isDemo }: CatalogHeroProps) {
           />
           <div
             aria-hidden
-            className="absolute inset-y-0 right-0 -z-10 hidden w-1/2 bg-gradient-to-r from-surface-sunken via-surface-sunken/60 to-transparent lg:block"
+            className="absolute inset-y-0 right-0 -z-10 hidden w-1/2 bg-gradient-to-r from-[#141c45] via-[#141c45]/60 to-transparent lg:block"
           />
         </>
       )}
 
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <div className="flex max-w-2xl flex-col gap-3">
           <div>
-            <p className="eyebrow">
+            <p className="eyebrow text-gold">
               {meta ? 'Collection' : 'The full rack'}
-              {total != null && <span className="font-medium tracking-normal text-ink-subtle normal-case"> · {total} in stock</span>}
+              {total != null && <span className="font-medium tracking-normal text-white/70 normal-case"> · {total} in stock</span>}
             </p>
             <h1
               key={title}
               className={cn(
-                'mt-2 text-3xl leading-tight font-extrabold tracking-tight text-ink sm:text-4xl',
+                'mt-2 text-3xl leading-tight font-extrabold tracking-tight text-white sm:text-5xl',
               )}
             >
               <MaskedText immediate lines={[{ text: title }]} />
             </h1>
           </div>
           <div className="max-w-lg">
-            <p className="text-sm leading-relaxed text-ink-muted">
+            <p className="text-sm leading-relaxed text-white/75 sm:text-base">
               {meta?.tagline ??
                 'Every pair in stock across PREMIUM, A CATEGORY and B CATEGORY. Filter by brand, size, price and availability.'}
             </p>

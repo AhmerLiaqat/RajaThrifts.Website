@@ -1,5 +1,5 @@
 /**
- * DEMO MEDIA. Not RajaThrifs inventory.
+ * DEMO MEDIA. Not Raja Thrifts inventory.
  *
  * Stock photography from Unsplash (https://unsplash.com/license), hot-linked
  * as Unsplash's guidelines require. It is used only to preview the design.

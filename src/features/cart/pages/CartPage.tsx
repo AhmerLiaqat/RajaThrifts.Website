@@ -102,7 +102,7 @@ export default function CartPage() {
             ))}
           </ul>
 
-          <aside className="h-fit rounded-xl border border-line bg-surface-raised shadow-card p-6 lg:sticky lg:top-28">
+          <aside className="h-fit rounded-xl border border-line bg-surface-raised shadow-card p-6 lg:sticky lg:top-[172px]">
             <p className="font-display text-xs tracking-wider uppercase">Summary</p>
             <dl className="mt-6 space-y-3 text-sm">
               <div className="flex justify-between">

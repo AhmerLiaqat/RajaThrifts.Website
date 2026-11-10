@@ -9,7 +9,7 @@ import { INSTAGRAM_PHOTOS, unsplash } from '@/mocks/demo-media'
  * Placeholder handle. Set INSTAGRAM_URL once the real account is confirmed;
  * until then nothing links out, so we never send visitors to someone else's profile.
  */
-const INSTAGRAM_HANDLE = 'rajathrifs'
+const INSTAGRAM_HANDLE = 'rajathrifts'
 const INSTAGRAM_URL: string | null = null
 
 /** Lucide 1.x dropped brand icons, so this is a minimal inline glyph. */

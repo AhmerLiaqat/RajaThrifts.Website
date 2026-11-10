@@ -20,9 +20,9 @@ export default function ProductDetailPage() {
   const isDemo = env.useDemoCatalog
 
   useEffect(() => {
-    if (product) document.title = `${product.brand} ${product.name} · RajaThrifs`
+    if (product) document.title = `${product.brand} ${product.name} · Raja Thrifts`
     return () => {
-      document.title = 'RajaThrifs — Imported Thrift Footwear'
+      document.title = 'Raja Thrifts — Imported Thrift Footwear'
     }
   }, [product])
 
@@ -58,7 +58,7 @@ export default function ProductDetailPage() {
         </nav>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
-          <div className="lg:sticky lg:top-28 lg:self-start">
+          <div className="lg:sticky lg:top-[172px] lg:self-start">
             <ProductGallery
               images={product.images}
               productName={`${product.brand} ${product.name}`}

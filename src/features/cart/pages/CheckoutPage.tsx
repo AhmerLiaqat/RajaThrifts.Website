@@ -190,7 +190,7 @@ function ProofPicker({
 function Summary({ delivery }: { delivery: number | null }) {
   const { items, subtotal } = useCart()
   return (
-    <aside className="glass h-fit rounded-2xl p-6 lg:sticky lg:top-28">
+    <aside className="glass h-fit rounded-2xl p-6 lg:sticky lg:top-[172px]">
       <p className="font-display text-xs tracking-wider uppercase">Order summary</p>
       <ul className="mt-5 divide-y divide-bone/10">
         {items.map((i) => (

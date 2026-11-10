@@ -39,6 +39,9 @@ export interface ShoeSize {
  */
 export type ProductImageView = 'front' | 'side' | 'back' | 'sole' | 'top' | 'detail' | 'on_foot'
 
+/** A listing cannot be published (status "active") with fewer photos than this. */
+export const MIN_PRODUCT_IMAGES = 3
+
 export const REQUIRED_IMAGE_VIEWS = [
   'front',
   'side',

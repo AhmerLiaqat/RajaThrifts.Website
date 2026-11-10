@@ -10,7 +10,7 @@ import { z } from 'zod'
 const schema = z.object({
   VITE_SUPABASE_URL: z.url().optional(),
   VITE_SUPABASE_ANON_KEY: z.string().min(1).optional(),
-  VITE_APP_NAME: z.string().default('RajaThrifs'),
+  VITE_APP_NAME: z.string().default('Raja Thrifts'),
   VITE_APP_URL: z.url().default('http://localhost:5173'),
   VITE_CURRENCY: z.string().length(3).default('PKR'),
   VITE_LOCALE: z.string().default('en-PK'),
@@ -62,6 +62,14 @@ function assertPublicKey(key: string | undefined) {
   }
 }
 assertPublicKey(e.VITE_SUPABASE_ANON_KEY)
+
+// Hosted builds (e.g. Netlify) only see variables set in the host's dashboard, never .env.local.
+if (!import.meta.env.DEV && !(e.VITE_SUPABASE_URL && e.VITE_SUPABASE_ANON_KEY)) {
+  console.warn(
+    '[Raja Thrifts] VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY were not set when this build was made, ' +
+      'so the demo catalog is shown. Add them in your hosting provider\'s environment variables and redeploy.',
+  )
+}
 
 export const env = {
   supabaseUrl: e.VITE_SUPABASE_URL,

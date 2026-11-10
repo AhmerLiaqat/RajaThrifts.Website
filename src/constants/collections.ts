@@ -1,5 +1,5 @@
 /**
- * The three RajaThrifs product collections.
+ * The three Raja Thrifts product collections.
  * These string values are canonical: they are stored in the database exactly as written.
  * Do not add, rename or re-case them without a matching database migration.
  */

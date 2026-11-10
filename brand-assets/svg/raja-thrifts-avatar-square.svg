@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Raja Thrifts">
+  <defs>
+    <linearGradient id="sq-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#25347c"/>
+      <stop offset="1" stop-color="#0c1230"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="0" fill="url(#sq-bg)"/>
+  <rect x="1.5" y="1.5" width="125" height="125" rx="0" fill="none" stroke="#d4a63a" stroke-opacity="0" stroke-width="1.5"/>
+<g transform="translate(64 64) scale(0.8) translate(-65 -60)">
+  <defs>
+    <linearGradient id="sq-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2d27c"/>
+      <stop offset="1" stop-color="#d4a63a"/>
+    </linearGradient>
+  </defs>
+  <!-- Crown -->
+  <path d="M43 50 L39.5 28 L52.5 38.5 L64 22 L75.5 38.5 L88.5 28 L85 50 Z" fill="url(#sq-gold)"/>
+  <rect x="42" y="49" width="44" height="5.5" rx="2" fill="url(#sq-gold)"/>
+  <circle cx="39.5" cy="26.5" r="3.8" fill="#f2d27c"/>
+  <circle cx="64" cy="20" r="4.2" fill="#f2d27c"/>
+  <circle cx="88.5" cy="26.5" r="3.8" fill="#f2d27c"/>
+  <path d="M61 42.5 L64 38.5 L67 42.5 L64 46.5 Z" fill="#0c1230" opacity="0.55"/>
+  <!-- Sneaker (low-top runner, toe to the right) -->
+  <path d="M22 91 L22 69 C22 62.5 25.5 58.5 31.5 58.5 L37 58.5 C40.5 58.5 42.5 60.5 43.8 63.8 C45.8 68.5 49.5 70.8 54.5 70.6 L58.5 70.2 C62.5 73 66.5 76.5 72.5 78.2 L96 82 C104 83.4 108.5 86.6 108.5 91 Z" fill="#ffffff"/>
+  <!-- heel counter -->
+  <path d="M22 91 L22 69 C22 62.5 25.5 58.5 31.5 58.5 L33.5 58.5 C33 71 35.5 82.5 41 91 Z" fill="url(#sq-gold)"/>
+  <!-- toe cap -->
+  <path d="M88 80.8 L96 82 C104 83.4 108.5 86.6 108.5 91 L86 91 C86.5 87 87 83.5 88 80.8 Z" fill="#dfe3f0"/>
+  <!-- laces -->
+  <path d="M55.5 74.6 L60 70.8 M60.8 78.4 L65.6 74.6 M66.6 81.2 L71.4 77.6" stroke="#0c1230" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- side stripe (generic, not any brand's logo) -->
+  <path d="M42 87.5 C55 82 70 81.5 84 86" stroke="#25347c" stroke-width="3.2" stroke-linecap="round" fill="none" opacity="0.45"/>
+  <!-- sole with toe spring -->
+  <path d="M17 91 H109 C112 91 113.6 93.2 112.6 96 C111.4 99.4 108.6 101.5 104.6 101.5 H22.5 C19 101.5 17 99.5 17 96.5 Z" fill="url(#sq-gold)"/>
+  <path d="M25 96.6 H103" stroke="#a77a1c" stroke-width="1.6" stroke-dasharray="3 4" stroke-linecap="round" opacity="0.65"/>
+</g>
+</svg>

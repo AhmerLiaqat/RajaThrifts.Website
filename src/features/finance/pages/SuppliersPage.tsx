@@ -114,7 +114,7 @@ export default function SuppliersPage() {
         actions={
           <>
             <ExportButtons
-              filename="rajathrifs-suppliers"
+              filename="rajathrifts-suppliers"
               disabled={!rows.length}
               sheets={() => [
                 sheet({

@@ -5,6 +5,7 @@ import { paths } from '@/app/router/paths'
 import { env } from '@/config/env'
 import { useDashboardSummary } from '@/features/admin/hooks'
 import { useAuth, useSignOut } from '@/features/auth/hooks/useAuth'
+import { LogoMark, LogoWordmarkDark } from '@/components/brand/Logo'
 import { cn } from '@/lib/utils/cn'
 import { DASHBOARD_NAV, type NavBadgeKey, type NavItem } from './adminNav'
 
@@ -134,13 +135,9 @@ export function DashboardNav({ onNavigate }: { onNavigate?: () => void }) {
           onClick={onNavigate}
           className="flex items-center gap-3 rounded-xl p-1.5 transition-colors hover:bg-white/5 max-lg:mr-8"
         >
-          <span className="grid size-10 place-items-center rounded-xl bg-gradient-to-br from-[#f0cf7a] to-gold font-display text-sm font-extrabold text-brand-navy shadow-[0_6px_18px_-6px_rgb(201_154_46/0.7)]">
-            RT
-          </span>
+          <LogoMark title="" className="size-12" />
           <span className="min-w-0 leading-tight">
-            <span className="block font-display text-[17px] font-bold text-white">
-              Raja<span className="text-gold">Thrifs</span>
-            </span>
+            <LogoWordmarkDark className="h-9" />
             <span className="mt-0.5 flex items-center gap-1.5 text-xs text-admin-sidebar-text/70">
               <span className="relative flex size-1.5">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-60" />

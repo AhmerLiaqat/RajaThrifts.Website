@@ -5,20 +5,39 @@ import { Reveal } from '@/components/motion/Reveal'
 import { DemoTag } from '@/components/ui/DemoTag'
 import { COLLECTION_META } from '@/constants/collections'
 import { cn } from '@/lib/utils/cn'
+import { formatPrice } from '@/lib/utils/format'
 import { COLLECTION_PHOTOS, unsplash, unsplashSrcSet } from '@/mocks/demo-media'
 import { HomeHeading } from '../components/HomeHeading'
 import { useHomeProducts } from '../useHomeProducts'
 
 /** Copy per tier. One visual style for all three, so no tier looks like a different site. */
 const DETAIL = {
-  PREMIUM: { kicker: 'The top tier', condition: 3, points: ['Near-new uppers & soles', 'Deep-cleaned and restored'] },
-  'A CATEGORY': { kicker: 'Everyday excellence', condition: 2, points: ['Light signs of wear', 'Ready for daily rotation'] },
-  'B CATEGORY': { kicker: 'Honest value', condition: 1, points: ['Visible, disclosed wear', 'Priced for weekend miles'] },
+  PREMIUM: {
+    kicker: 'The top tier',
+    condition: 3,
+    points: ['Near-new uppers & soles', 'Deep-cleaned and restored'],
+    tint: 'from-[#5a4210]/95 via-[#8a6514]/55',
+    chip: 'bg-gold text-brand-navy',
+  },
+  'A CATEGORY': {
+    kicker: 'Everyday excellence',
+    condition: 2,
+    points: ['Light signs of wear', 'Ready for daily rotation'],
+    tint: 'from-navy-950/95 via-navy-800/55',
+    chip: 'bg-white text-brand-navy',
+  },
+  'B CATEGORY': {
+    kicker: 'Honest value',
+    condition: 1,
+    points: ['Visible, disclosed wear', 'Priced for weekend miles'],
+    tint: 'from-[#1f2937]/95 via-[#374151]/55',
+    chip: 'bg-white text-ink',
+  },
 } as const
 
 const collections = Object.values(COLLECTION_META).sort((a, b) => a.rank - b.rank)
 
-/** SHOP BY GRADE: three matching glass cards, one per collection. */
+/** SHOP BY GRADE: three photographic tiles, tinted per tier. */
 export function CollectionsSection() {
   const { items, isPending, isDemo } = useHomeProducts()
   return (
@@ -27,74 +46,83 @@ export function CollectionsSection() {
         <HomeHeading
           id="collections-title"
           eyebrow="Shop by grade"
-          title="Three tiers,"
-          highlight="one standard"
-          description="Every pair is graded by condition, then priced to match. Pick the tier that fits how you wear."
-          center
+          title="Pick your"
+          highlight="grade"
+          description="Every pair is graded by condition, then priced to match. Choose the tier that fits how you wear."
+          action={
+            <Link to={paths.shop} className="inline-flex items-center gap-1.5 text-sm font-semibold text-sand hover:underline">
+              Compare all pairs <ArrowRight className="size-4" />
+            </Link>
+          }
         />
 
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
           {collections.map((c, i) => {
             const d = DETAIL[c.value]
             const inCollection = items.filter((p) => p.collection === c.value)
             const count = inCollection.filter((p) => p.totalStock > 0).length
+            const from = inCollection.filter((p) => p.totalStock > 0).reduce<number | null>(
+              (min, p) => (min == null || p.price < min ? p.price : min),
+              null,
+            )
             // Live mode: the newest real photo in this tier; demo photography only as a labelled fallback.
             const cover = isDemo ? null : inCollection.find((p) => p.primaryImage)?.primaryImage
             const photo = COLLECTION_PHOTOS[c.value]
-            const demoPhoto = !cover
             return (
-              <Reveal key={c.slug} delay={i * 0.05}>
+              <Reveal key={c.slug} delay={i * 0.06}>
                 <Link
                   to={paths.collection(c.slug)}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-surface-raised shadow-card transition-[border-color,box-shadow] duration-200 hover:border-sand/30 hover:shadow-glow"
+                  className="group relative isolate flex aspect-[5/4.4] flex-col justify-end overflow-hidden rounded-3xl bg-brand-navy p-6 text-white shadow-[0_20px_40px_-24px_rgb(17_26_51/0.6)] transition-transform duration-300 hover:-translate-y-1 md:aspect-[4/4.8]"
                 >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-surface-sunken">
-                    <img
-                      src={cover ? cover.url : unsplash(photo.id, 900)}
-                      srcSet={cover ? undefined : unsplashSrcSet(photo.id, [600, 900, 1200])}
-                      sizes="(min-width: 768px) 33vw, 100vw"
-                      alt={cover ? cover.alt : photo.alt}
-                      loading="lazy"
-                      className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                    />
-                    {demoPhoto && <DemoTag className="absolute top-4 right-4" label={isDemo ? 'Demo' : 'Demo photo'} />}
+                  <img
+                    src={cover ? cover.url : unsplash(photo.id, 900)}
+                    srcSet={cover ? undefined : unsplashSrcSet(photo.id, [600, 900, 1200])}
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    alt={cover ? cover.alt : photo.alt}
+                    loading="lazy"
+                    className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                  />
+                  <div aria-hidden className={cn('absolute inset-0 -z-10 bg-gradient-to-t to-transparent', d.tint)} />
+                  {!cover && (
+                    <DemoTag className="absolute top-5 right-5" label={isDemo ? 'Demo' : 'Demo photo'} />
+                  )}
+
+                  <span className={cn('absolute top-5 left-5 rounded-lg px-2.5 py-1 text-xs font-extrabold tracking-wide', d.chip)}>
+                    {c.label}
+                  </span>
+
+                  <p className="text-xs font-semibold tracking-[0.12em] text-white/70 uppercase">{d.kicker}</p>
+                  <h3 className="mt-1 text-3xl font-extrabold tracking-tight text-white">{c.label}</h3>
+                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/80">{c.tagline}</p>
+
+                  <div className="mt-3 flex items-center gap-1.5" role="img" aria-label={`Condition ${d.condition} of 3`}>
+                    {[1, 2, 3].map((n) => (
+                      <span key={n} className={cn('h-1.5 w-7 rounded-full', n <= d.condition ? 'bg-gold' : 'bg-white/25')} />
+                    ))}
+                    <span className="ml-2 text-xs text-white/70">Condition</span>
                   </div>
 
-                  <div className="flex flex-1 flex-col p-5">
-                    <span className="text-xs font-semibold text-sand">{d.kicker}</span>
-                    <div className="mt-1 flex items-center justify-between">
-                      <h3 className="text-xl font-bold tracking-tight text-ink">{c.label}</h3>
-                      <span
-                        className="flex gap-1"
-                        role="img"
-                        aria-label={`Condition ${d.condition} of 3`}
-                      >
-                        {[1, 2, 3].map((n) => (
-                          <span
-                            key={n}
-                            className={cn('h-1.5 w-5 rounded-full', n <= d.condition ? 'bg-gold' : 'bg-line')}
-                          />
-                        ))}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm leading-relaxed text-ink-muted">{c.tagline}</p>
-                    <ul className="mt-4 mb-5 space-y-1.5 text-sm text-ink">
-                      {d.points.map((pt) => (
-                        <li key={pt} className="flex items-center gap-2">
-                          <span className="size-1.5 rounded-full bg-sand" aria-hidden />
-                          {pt}
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-auto flex items-center justify-between border-t border-line pt-4">
-                      <span className="text-sm text-ink-subtle">
-                        {isPending ? '…' : count === 0 ? 'New pairs soon' : `${count} ${isDemo ? 'sample ' : ''}${count === 1 ? 'pair' : 'pairs'} in stock`}
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-sand">
-                        Shop
-                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                      </span>
-                    </div>
+                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/15 pt-4">
+                    <span className="text-sm">
+                      {isPending ? (
+                        '…'
+                      ) : count === 0 ? (
+                        'New pairs soon'
+                      ) : (
+                        <>
+                          <span className="font-bold">{count}</span> {count === 1 ? 'pair' : 'pairs'}
+                          {from != null && (
+                            <span className="text-white/70">
+                              {' '}
+                              · from <span className="font-semibold text-white">{formatPrice(from)}</span>
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </span>
+                    <span className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-white px-4 text-sm font-bold text-brand-navy transition-colors group-hover:bg-gold">
+                      Shop <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                    </span>
                   </div>
                 </Link>
               </Reveal>

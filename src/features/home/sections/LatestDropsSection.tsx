@@ -91,7 +91,7 @@ export function LatestDropsSection() {
                 className="relative"
               >
                 {isNew(p) && (
-                  <span className="pointer-events-none absolute top-10 left-3 z-10 rounded-md bg-gold px-2 py-0.5 text-[11px] font-bold text-brand-navy uppercase shadow-sm">
+                  <span className="pointer-events-none absolute top-4.5 right-14 z-10 rounded-md bg-gold px-2 py-0.5 text-[11px] font-extrabold text-brand-navy uppercase shadow-sm">
                     New
                   </span>
                 )}

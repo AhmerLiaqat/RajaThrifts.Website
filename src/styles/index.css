@@ -88,6 +88,19 @@
     background: rgb(255 255 255 / 0.15);
   }
 
+  /* Hero backdrop: layered navy gradient with soft brand glows. */
+  .hero-navy {
+    background:
+      radial-gradient(40rem 28rem at 85% 10%, rgb(52 72 176 / 0.55), transparent 60%),
+      radial-gradient(30rem 22rem at 10% 110%, rgb(201 154 46 / 0.22), transparent 60%),
+      linear-gradient(135deg, #1e2a66 0%, #141c45 55%, #0c1230 100%);
+  }
+  /* Subtle dotted texture for dark blocks. */
+  .dot-grid {
+    background-image: radial-gradient(rgb(255 255 255 / 0.09) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
   .no-scrollbar {
     scrollbar-width: none;
   }

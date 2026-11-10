@@ -165,7 +165,7 @@ export default function ExpensesPage() {
         actions={
           <>
             <ExportButtons
-              filename={`rajathrifs-expenses-${period.from}-to-${period.to}`}
+              filename={`rajathrifts-expenses-${period.from}-to-${period.to}`}
               disabled={!rows.length}
               sheets={() => [
                 sheet({

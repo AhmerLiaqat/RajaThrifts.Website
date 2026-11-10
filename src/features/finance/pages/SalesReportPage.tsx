@@ -27,7 +27,7 @@ export default function SalesReportPage() {
         description="Revenue recognised on delivery. Placed, cancelled and courier-returned orders are tracked separately and never count as sales."
         actions={
           <ExportButtons
-            filename={`rajathrifs-sales-${period.from}-to-${period.to}`}
+            filename={`rajathrifts-sales-${period.from}-to-${period.to}`}
             disabled={!rows.length && !r}
             sheets={() => [
               sheet({

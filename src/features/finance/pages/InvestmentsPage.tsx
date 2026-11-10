@@ -109,7 +109,7 @@ export default function InvestmentsPage() {
         actions={
           <>
             <ExportButtons
-              filename="rajathrifs-investments"
+              filename="rajathrifts-investments"
               disabled={!rows.length}
               sheets={() => [
                 sheet({

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion'
-import { ChevronRight, Heart, LayoutDashboard, Menu, PackageSearch, Search, ShoppingBag, X } from 'lucide-react'
+import { ChevronRight, Heart, Sparkles, Tag, Truck, LayoutDashboard, Menu, PackageSearch, Search, ShoppingBag, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
@@ -8,6 +8,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useCart } from '@/features/cart/store/cart-store'
 import { useWishlist } from '@/features/wishlist/useWishlist'
 import { SearchOverlay } from '@/features/search/SearchOverlay'
+import { Logo } from '@/components/brand/Logo'
 import { cn } from '@/lib/utils/cn'
 import { motion as m } from '@/theme/tokens'
 
@@ -19,11 +20,7 @@ const primaryLinks = [
 ]
 
 export function Wordmark({ className }: { className?: string }) {
-  return (
-    <span className={cn('font-display font-extrabold tracking-tight', className)}>
-      Raja<span className="text-sand">Thrifs</span>
-    </span>
-  )
+  return <Logo className={className} tagline />
 }
 
 export function CustomerHeader() {
@@ -72,10 +69,29 @@ export function CustomerHeader() {
     <>
       <motion.header
         initial={false}
-        animate={{ y: hidden ? -120 : 0 }}
+        animate={{ y: hidden ? -160 : 0 }}
         transition={{ duration: 0.3, ease: m.ease.outExpo }}
         className="fixed inset-x-0 top-0 z-30"
       >
+        {/* Announcement bar */}
+        <div className="hero-navy text-white">
+          <div className="mx-auto flex h-9 max-w-7xl items-center justify-center gap-8 overflow-hidden px-4 text-xs font-medium sm:px-6 lg:justify-between lg:px-8">
+            <p className="flex items-center gap-2 whitespace-nowrap">
+              <Truck className="size-3.5 text-gold" aria-hidden />
+              Nationwide delivery · Orders confirmed on WhatsApp
+            </p>
+            <p className="hidden items-center gap-2 whitespace-nowrap md:flex">
+              <Sparkles className="size-3.5 text-gold" aria-hidden />
+              New shipment added every week. Every pair is one of a kind
+            </p>
+            <Link
+              to={paths.trackOrder}
+              className="hidden items-center gap-1.5 whitespace-nowrap text-white/80 transition-colors hover:text-white lg:flex"
+            >
+              <PackageSearch className="size-3.5" aria-hidden /> Track your order
+            </Link>
+          </div>
+        </div>
         <div
           className={cn(
             'border-b border-line bg-white/95 backdrop-blur-md transition-shadow duration-300',
@@ -94,8 +110,8 @@ export function CustomerHeader() {
               {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
 
-            <Link to={paths.home} aria-label="RajaThrifs home" className="shrink-0">
-              <Wordmark className="text-lg text-ink sm:text-xl" />
+            <Link to={paths.home} aria-label="Raja Thrifts home" className="shrink-0">
+              <Wordmark />
             </Link>
 
             {/* Desktop search field: opens the full search overlay */}
@@ -183,9 +199,12 @@ export function CustomerHeader() {
                   {l.label}
                 </NavLink>
               ))}
-              <span className="ml-auto text-sm text-ink-subtle">
-                Imported thrift footwear · Hand-graded · Delivered nationwide
-              </span>
+              <Link
+                to={`${paths.shop}?sort=price_asc`}
+                className="ml-auto flex items-center gap-1.5 rounded-full bg-deal-soft px-3 py-1 text-xs font-semibold text-deal transition-colors hover:bg-deal hover:text-white"
+              >
+                <Tag className="size-3.5" aria-hidden /> Best prices
+              </Link>
             </div>
           </nav>
         </div>
@@ -202,7 +221,7 @@ export function CustomerHeader() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-20 flex flex-col overflow-y-auto bg-white px-4 pt-20 pb-8 sm:px-6 lg:hidden"
+            className="fixed inset-0 z-20 flex flex-col overflow-y-auto bg-white px-4 pt-28 pb-8 sm:px-6 lg:hidden"
           >
             <nav aria-label="Mobile" className="flex flex-col gap-2">
               {primaryLinks.map((l, i) => (

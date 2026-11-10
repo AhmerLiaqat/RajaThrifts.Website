@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
 import { COLLECTION_META } from '@/constants/collections'
+import { Logo } from '@/components/brand/Logo'
 import { env } from '@/config/env'
 import { UNSPLASH_CREDIT_URL } from '@/mocks/demo-media'
 
@@ -55,7 +56,7 @@ export function CustomerFooter() {
           {[
             { icon: ShieldCheck, title: 'Hand-inspected', text: 'Every pair checked and honestly graded' },
             { icon: PackageCheck, title: 'Cleaned & photographed', text: 'What you see is the pair you get' },
-            { icon: Truck, title: 'Nationwide delivery', text: 'Cash on delivery available' },
+            { icon: Truck, title: 'Nationwide delivery', text: 'Tracked shipping across Pakistan' },
           ].map(({ icon: Icon, title, text }) => (
             <div key={title} className="flex items-start gap-3">
               <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-white/10 text-gold">
@@ -73,9 +74,7 @@ export function CustomerFooter() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
-            <p className="font-display text-xl font-extrabold text-white">
-              Raja<span className="text-gold">Thrifs</span>
-            </p>
+            <Logo tone="dark" tagline size="lg" />
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/65">
               Imported thrift footwear, graded into Premium, A Category and B Category. Get a first look at every
               new shipment.
@@ -126,7 +125,7 @@ export function CustomerFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/55 md:flex-row md:items-center md:justify-between">
-          <p>© {YEAR} RajaThrifs. Imported thrift footwear.</p>
+          <p>© {YEAR} Raja Thrifts. Imported thrift footwear.</p>
           <p className="max-w-xl md:text-right">
             {env.useDemoCatalog
               ? 'Design preview: products, prices and reviews shown are sample data, not current inventory. '

@@ -62,7 +62,7 @@ export function WhatsAppOrderButton({ order, className }: { order: WhatsAppOrder
   const number = settings.data?.whatsappNumber
   if (!number) return null
   const lines = [
-    `Assalam o Alaikum! I just placed order ${order.orderNumber} on RajaThrifs.`,
+    `Assalam o Alaikum! I just placed order ${order.orderNumber} on Raja Thrifts.`,
     ...order.items.map((i) => `• ${i.brandName} ${i.productName} (${i.sizeLabel}) × ${i.quantity}`),
     `Total: ${formatPriceCode(order.total)}`,
     `Name: ${order.contactName}`,

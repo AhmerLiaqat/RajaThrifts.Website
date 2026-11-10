@@ -1,5 +1,5 @@
 /*
- * RajaThrifs design tokens: clean light theme with a deep navy brand and a gold highlight.
+ * Raja Thrifts design tokens: clean light theme with a deep navy brand and a gold highlight.
  * Tailwind v4 turns every token in @theme into utilities
  * (e.g. --color-sand becomes bg-sand, text-sand, border-sand/30).
  * JavaScript-side tokens (motion, palette for charts) live in src/theme/tokens.ts.
@@ -26,6 +26,12 @@
   --color-gold: #c99a2e;
   --color-gold-soft: #fbf3e0;
   --color-brand-navy: #1b2550;
+  --color-navy-950: #0c1230;
+  --color-navy-800: #1e2a66;
+  --color-navy-600: #3448b0;
+  /* Deal / urgency accent: discounts and "only one left" (text-safe on white, 4.6:1) */
+  --color-deal: #c2410c;
+  --color-deal-soft: #fff1e8;
 
   /* Accent scale (navy) */
   --color-sand-100: #eceffa;

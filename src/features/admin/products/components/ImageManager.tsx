@@ -1,10 +1,10 @@
-import { ArrowDown, ArrowUp, ImagePlus, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, CheckCircle2, ImagePlus, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Alert, Select } from '@/components/ui/Field'
 import { Spinner } from '@/components/ui/Spinner'
 import { IMAGE_VIEW_LABEL } from '@/constants/product'
 import { ALLOWED_IMAGE_TYPES } from '@/services/core/storage'
-import { REQUIRED_IMAGE_VIEWS, type ProductImage, type ProductImageView } from '@/types/product'
+import { MIN_PRODUCT_IMAGES, REQUIRED_IMAGE_VIEWS, type ProductImage, type ProductImageView } from '@/types/product'
 import { useImageMutations } from '../hooks'
 
 const VIEWS = Object.keys(IMAGE_VIEW_LABEL) as ProductImageView[]
@@ -66,10 +66,38 @@ export function ImageManager({
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Minimum photo requirement */}
+      <div
+        className={`flex items-center gap-3 rounded-lg border p-3 ${
+          images.length >= MIN_PRODUCT_IMAGES ? 'border-success/25 bg-success/10' : 'border-warning/25 bg-warning/10'
+        }`}
+        role="status"
+      >
+        {images.length >= MIN_PRODUCT_IMAGES ? (
+          <CheckCircle2 className="size-5 shrink-0 text-success" aria-hidden />
+        ) : (
+          <ImagePlus className="size-5 shrink-0 text-warning" aria-hidden />
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-ink">
+            {images.length >= MIN_PRODUCT_IMAGES
+              ? `${images.length} photos added: ready to publish`
+              : `${images.length} of ${MIN_PRODUCT_IMAGES} photos: add ${MIN_PRODUCT_IMAGES - images.length} more to publish`}
+          </p>
+          <div className="mt-1.5 flex gap-1" aria-hidden>
+            {Array.from({ length: MIN_PRODUCT_IMAGES }, (_, i) => (
+              <span
+                key={i}
+                className={`h-1.5 flex-1 rounded-full ${i < images.length ? (images.length >= MIN_PRODUCT_IMAGES ? 'bg-success' : 'bg-warning') : 'bg-line-strong'}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
       {missing.length > 0 && (
-        <p className="text-xs text-warning">
-          Missing standard views: {missing.map((v) => IMAGE_VIEW_LABEL[v]).join(', ')}. Customers expect
-          front, side, back and sole photos.
+        <p className="text-xs text-ink-muted">
+          Tip: missing {missing.map((v) => IMAGE_VIEW_LABEL[v].toLowerCase()).join(', ')} view. Front, side, back and
+          sole photos sell best.
         </p>
       )}
       {(error || update.error || remove.error) && (
@@ -123,7 +151,13 @@ export function ImageManager({
                 <button
                   type="button"
                   aria-label="Delete photo"
-                  onClick={() => window.confirm('Delete this photo?') && remove.mutate(img)}
+                  onClick={() =>
+                    window.confirm(
+                      images.length <= MIN_PRODUCT_IMAGES
+                        ? `Delete this photo? This listing will have fewer than ${MIN_PRODUCT_IMAGES} photos and cannot be published until you add more.`
+                        : 'Delete this photo?',
+                    ) && remove.mutate(img)
+                  }
                   className="rounded p-1.5 text-danger hover:bg-danger/10"
                 >
                   <Trash2 className="size-3.5" />
@@ -152,10 +186,10 @@ export function ImageManager({
               setDragging(false)
               onFiles(e.dataTransfer.files)
             }}
-            className={`flex aspect-[4/5] w-full flex-col items-center justify-center gap-2 rounded-sm border border-dashed px-2 text-center text-sm transition-colors ${
+            className={`flex aspect-[4/5] w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-2 text-center text-sm transition-colors ${
               dragging
                 ? 'border-sand bg-sand/10 text-sand'
-                : 'border-bone/20 text-ink-muted hover:border-sand hover:text-sand'
+                : 'border-line-strong text-ink-muted hover:border-sand hover:text-sand'
             }`}
           >
             {busy > 0 ? <Spinner /> : <ImagePlus className="size-6" />}

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { MaskedText } from '@/components/motion/MaskedText'
 import { authAvailable } from '../hooks/useAuth'
 import { SupabaseNotice } from '@/components/feedback/SupabaseNotice'
+import { Logo } from '@/components/brand/Logo'
 import { unsplash } from '@/mocks/demo-media'
 import { motion as m } from '@/theme/tokens'
 
@@ -29,8 +30,9 @@ export function AuthShell({
           transition={{ duration: 2, ease: m.ease.outExpo }}
           className="absolute inset-0 size-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-night via-night/30 to-night/50" />
-        <p className="absolute bottom-10 left-10 max-w-xs font-display text-3xl leading-tight font-medium text-bone">
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/40 to-navy-950/70" />
+        <Logo tone="dark" tagline size="lg" className="absolute top-10 left-10" />
+        <p className="absolute bottom-10 left-10 max-w-xs font-display text-3xl leading-tight font-bold text-white">
           Every pair, honestly graded. Every order, tracked to your door.
         </p>
       </div>

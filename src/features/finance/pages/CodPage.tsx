@@ -274,7 +274,7 @@ export default function CodPage() {
       <div className="mt-10 mb-4 flex items-end justify-between gap-4">
         <h2 className="text-lg font-semibold">Settlement history</h2>
         <ExportButtons
-          filename="rajathrifs-courier-settlements"
+          filename="rajathrifts-courier-settlements"
           disabled={!settlements.data?.length}
           sheets={() => [
             sheet({

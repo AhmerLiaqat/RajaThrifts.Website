@@ -5,6 +5,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
 import { PageLoader } from '@/components/feedback/PageLoader'
 import { SupabaseNotice } from '@/components/feedback/SupabaseNotice'
+import { Logo } from '@/components/brand/Logo'
 import { env } from '@/config/env'
 import { motion as m } from '@/theme/tokens'
 import { AdminSidebar, DashboardNav } from './AdminSidebar'
@@ -39,8 +40,9 @@ export function AdminLayout() {
           >
             <Menu className="size-5" />
           </button>
-          <Link to={paths.admin.root} className="font-display text-sm font-bold tracking-wide text-white">
-            Raja<span className="text-gold">Thrifs</span> <span className="font-medium text-admin-sidebar-text/70">· Dashboard</span>
+          <Link to={paths.admin.root} className="flex items-center gap-2 font-display text-sm font-extrabold text-white">
+            <Logo tone="dark" size="sm" className="h-8" />
+            <span className="font-medium text-admin-sidebar-text/70">Dashboard</span>
           </Link>
           <span className="w-7" />
         </header>

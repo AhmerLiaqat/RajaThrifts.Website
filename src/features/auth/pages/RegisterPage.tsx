@@ -49,7 +49,7 @@ export default function RegisterPage() {
 
   const e = form.formState.errors
   return (
-    <AuthShell eyebrow="Join RajaThrifs" title="Register">
+    <AuthShell eyebrow="Join Raja Thrifts" title="Register">
       {signUp.error && (
         <Alert tone="error" className="mb-6">
           {signUp.error.message}
