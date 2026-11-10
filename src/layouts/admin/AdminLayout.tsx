@@ -62,13 +62,13 @@ export function AdminLayout() {
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{ duration: 0.4, ease: m.ease.outExpo }}
-                className="absolute inset-y-0 left-0 w-72 bg-admin-sidebar text-admin-sidebar-text"
+                className="absolute inset-y-0 left-0 w-[288px] bg-admin-sidebar text-admin-sidebar-text shadow-pop"
               >
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Close menu"
-                  className="absolute top-5 right-3 rounded-md p-1.5 text-white hover:bg-white/10"
+                  className="absolute top-3 right-3 z-10 rounded-lg p-1.5 text-white/80 hover:bg-white/10 hover:text-white"
                 >
                   <X className="size-5" />
                 </button>
