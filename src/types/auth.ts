@@ -5,7 +5,10 @@ export const USER_ROLES = ['customer', 'shopkeeper', 'admin'] as const
 export type UserRole = (typeof USER_ROLES)[number]
 
 /** Roles that can open the back office. */
-export const STAFF_ROLES: readonly UserRole[] = ['shopkeeper', 'admin']
+/** Back-office access is admin only (the shopkeeper portal was retired). */
+export const STAFF_ROLES: readonly UserRole[] = ['admin']
+/** Roles an admin can assign from Users & roles. Customers shop as guests and never sign in. */
+export const ASSIGNABLE_ROLES: readonly UserRole[] = ['customer', 'admin']
 
 export interface Address {
   line1: string | null

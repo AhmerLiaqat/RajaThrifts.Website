@@ -68,8 +68,8 @@ function SetNewPassword() {
     <AuthShell eyebrow="Account recovery" title="New password">
       {update.isSuccess ? (
         <Alert tone="success" title="Password updated">
-          <Link to={paths.account} className="underline underline-offset-4">
-            Go to your account
+          <Link to={paths.login} className="underline underline-offset-4">
+            Sign in
           </Link>
         </Alert>
       ) : (

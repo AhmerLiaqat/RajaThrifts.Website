@@ -6,7 +6,9 @@ import { paths } from '@/app/router/paths'
 import { DataTable, Drawer, DrawerSection, SearchBox, TableMessage, Tabs } from '@/components/admin/AdminUI'
 import { Button, Input } from '@/components/ui'
 import { Alert, Select, Textarea } from '@/components/ui/Field'
-import { NEXT_ORDER_STATUSES, PAYMENT_METHOD_META, PAYMENT_STATUS_META } from '@/constants/order'
+import { NEXT_ORDER_STATUSES, ORDER_STATUS_META, PAYMENT_METHOD_META, PAYMENT_STATUS_META } from '@/constants/order'
+import { WhatsAppGlyph } from '@/components/feedback/WhatsAppFloat'
+import { customerWhatsappUrl } from '../whatsappMessage'
 import { RETURN_REASON_LABEL } from '@/constants/returns'
 import {
   OrderItemsList,
@@ -27,9 +29,9 @@ import { ReturnStatusPill } from '../../returns/ReturnStatusPill'
 
 const FILTERS: Array<{ value: OrderListFilter; label: string }> = [
   { value: 'all', label: 'All' },
-  { value: 'pending', label: 'Awaiting approval' },
-  { value: 'to_ship', label: 'To ship' },
-  { value: 'shipped', label: 'In transit' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'to_ship', label: 'Approved' },
+  { value: 'shipped', label: 'Dispatched' },
   { value: 'delivered', label: 'Delivered' },
   { value: 'unpaid', label: 'Delivered, unpaid' },
   { value: 'cancelled', label: 'Cancelled' },
@@ -40,9 +42,9 @@ const FILTERS: Array<{ value: OrderListFilter; label: string }> = [
 /** Buttons say what they do; badges say what the order is. */
 const ORDER_ACTION_LABEL: Record<OrderStatus, string> = {
   pending: 'Mark pending',
-  confirmed: 'Confirm order',
-  processing: 'Start packing',
-  shipped: 'Mark shipped',
+  confirmed: 'Approve order',
+  processing: 'Approve order',
+  shipped: 'Mark dispatched',
   delivered: 'Mark delivered',
   cancelled: 'Cancel order',
   refunded: 'Mark refunded',
@@ -240,6 +242,21 @@ function OrderPanel({ order }: { order: Order }) {
         )}
       </DrawerSection>
 
+      <a
+        href={customerWhatsappUrl(order)}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-3 rounded-xl bg-[#25D366] px-4 py-3 text-white shadow-sm transition-transform hover:scale-[1.01]"
+      >
+        <WhatsAppGlyph className="size-6 shrink-0" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-bold">Send WhatsApp message</span>
+          <span className="block text-xs text-white/85">
+            Order {order.orderNumber} · {ORDER_STATUS_META[order.status].label} · to {order.contactPhone}
+          </span>
+        </span>
+      </a>
+
       <DrawerSection title="Customer">
         <p className="text-sm text-bone">
           {order.contactName} ·{' '}
@@ -320,7 +337,7 @@ function OrderPanel({ order }: { order: Order }) {
             Save delivery details
           </Button>
           {order.shippedAt && (
-            <span className="text-xs text-ink-subtle">Shipped {formatDate(order.shippedAt)}</span>
+            <span className="text-xs text-ink-subtle">Dispatched {formatDate(order.shippedAt)}</span>
           )}
           {order.deliveredAt && (
             <span className="text-xs text-ink-subtle">Delivered {formatDate(order.deliveredAt)}</span>
@@ -472,10 +489,11 @@ export default function OrdersPage() {
             <th className="px-4 py-3 font-medium">Delivery</th>
             <th className="px-4 py-3 font-medium">Payment</th>
             <th className="px-4 py-3 text-right font-medium">Total</th>
+            <th className="px-4 py-3 text-right font-medium">Message</th>
           </tr>
         }
       >
-        {orders.isPending && <TableMessage colSpan={6}>Loading…</TableMessage>}
+        {orders.isPending && <TableMessage colSpan={7}>Loading…</TableMessage>}
         {orders.data?.map((o) => (
           <tr key={o.id} onClick={() => setSelectedId(o.id)} className="cursor-pointer hover:bg-surface-sunken">
             <td className="px-4 py-3">
@@ -515,9 +533,21 @@ export default function OrdersPage() {
               <p className="text-ink-subtle">{PAYMENT_METHOD_META[o.paymentMethod].label}</p>
             </td>
             <td className="px-4 py-3 text-right tabular-nums">{formatPrice(o.total)}</td>
+            <td className="px-4 py-3 text-right">
+              <a
+                href={customerWhatsappUrl(o)}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                title={`Send order ${o.orderNumber} (${ORDER_STATUS_META[o.status].label}) to ${o.contactPhone} on WhatsApp`}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#25D366] px-3 text-xs font-semibold text-white hover:bg-[#1ebe5a]"
+              >
+                <WhatsAppGlyph className="size-4" /> Send
+              </a>
+            </td>
           </tr>
         ))}
-        {orders.data?.length === 0 && <TableMessage colSpan={6}>No orders here.</TableMessage>}
+        {orders.data?.length === 0 && <TableMessage colSpan={7}>No orders here.</TableMessage>}
       </DataTable>
 
       <Drawer

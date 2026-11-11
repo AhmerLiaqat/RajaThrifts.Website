@@ -10,16 +10,21 @@ export const ORDER_STATUS_META: Record<
     description: 'Waiting for us to verify your payment and confirm the order.',
   },
   confirmed: {
-    label: 'Confirmed',
+    label: 'Approved',
     className: 'border-info/25 bg-info/10 text-info',
-    description: 'Confirmed and reserved for you.',
+    description: 'Payment verified and order approved. We are packing your pair.',
   },
+  // Legacy step, shown as Approved: the store now uses Pending → Approved → Dispatched → Delivered.
   processing: {
-    label: 'Processing',
+    label: 'Approved',
     className: 'border-info/25 bg-info/10 text-info',
-    description: 'Being cleaned and packed.',
+    description: 'Payment verified and order approved. We are packing your pair.',
   },
-  shipped: { label: 'Shipped', className: 'border-sand/25 bg-sand/10 text-sand', description: 'On its way to you.' },
+  shipped: {
+    label: 'Dispatched',
+    className: 'border-sand/25 bg-sand/10 text-sand',
+    description: 'Handed to the courier and on its way to you.',
+  },
   delivered: {
     label: 'Delivered',
     className: 'border-success/25 bg-success/10 text-success',
@@ -40,7 +45,7 @@ export const ORDER_STATUS_META: Record<
 /** Next statuses staff may move an order to. Mirrors public.update_order_status(). */
 export const NEXT_ORDER_STATUSES: Record<OrderStatus, OrderStatus[]> = {
   pending: ['confirmed', 'cancelled'],
-  confirmed: ['processing', 'shipped', 'cancelled'],
+  confirmed: ['shipped', 'cancelled'],
   processing: ['shipped', 'cancelled'],
   shipped: ['delivered'],
   delivered: ['refunded'],
@@ -48,7 +53,8 @@ export const NEXT_ORDER_STATUSES: Record<OrderStatus, OrderStatus[]> = {
   refunded: [],
 }
 
-export const ORDER_TIMELINE: OrderStatus[] = ['pending', 'confirmed', 'processing', 'shipped', 'delivered']
+/** The four steps customers see when tracking an order. */
+export const ORDER_TIMELINE: OrderStatus[] = ['pending', 'confirmed', 'shipped', 'delivered']
 
 export const PAYMENT_METHOD_META: Record<
   PaymentMethod,

@@ -29,6 +29,7 @@ export const toSummary = (p: Product): ProductSummary => {
     price: p.price,
     compareAtPrice: p.compareAtPrice,
     status: inStock.length === 0 && p.status === 'active' ? 'sold_out' : p.status,
+    isFeatured: p.isFeatured,
     primaryImage: p.images[0] ?? null,
     availableSizes: inStock.map((v) => v.size),
     totalStock: inStock.reduce((sum, v) => sum + v.quantity, 0),

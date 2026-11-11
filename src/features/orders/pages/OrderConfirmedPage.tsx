@@ -3,9 +3,9 @@ import { Check, Copy, PackageCheck, Search, ShieldCheck, Truck } from 'lucide-re
 import { useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
-import { Sparkles } from '@/components/motion/Sparkles'
 import { ButtonLink } from '@/components/ui'
-import { WhatsAppOrderButton, type WhatsAppOrder } from '@/features/account/components/PaymentProof'
+import type { WhatsAppOrder } from '@/features/account/components/PaymentProof'
+import { CONTACT, shopPhoneUrl, shopWhatsappUrl } from '@/constants/contact'
 import { formatPrice, formatPriceCode } from '@/lib/utils/format'
 
 /** Navigation state passed by checkout (the guest cannot read the order back from the database). */
@@ -19,8 +19,8 @@ export interface OrderConfirmedState {
 
 const NEXT_STEPS = [
   { icon: ShieldCheck, title: 'We verify your payment', body: 'We match your screenshot with our bank account.' },
-  { icon: PackageCheck, title: 'We confirm & pack', body: 'You get a confirmation call or WhatsApp message.' },
-  { icon: Truck, title: 'On its way', body: 'Your pair is shipped with a tracking number.' },
+  { icon: PackageCheck, title: 'Approved & packed', body: 'We approve the order and message you on WhatsApp.' },
+  { icon: Truck, title: 'Dispatched', body: 'Your pair goes out with a courier tracking number.' },
 ]
 
 /** Thank-you page after a guest (or signed-in) checkout. */
@@ -32,17 +32,16 @@ export default function OrderConfirmedPage() {
 
   return (
     <div className="relative mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:py-20">
-      <Sparkles count={14} seed={77} />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="relative text-center"
       >
-        <span className="mx-auto grid size-16 place-items-center rounded-full bg-sand text-night shadow-glow">
+        <span className="mx-auto grid size-16 place-items-center rounded-full bg-success text-white shadow-glow">
           <Check className="size-8" strokeWidth={2.5} />
         </span>
-        <h1 className="mt-6 text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
+        <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
           Thank you{order ? `, ${order.contactName.split(' ')[0]}` : ''}! <span className="text-sand">Order placed</span>
         </h1>
         <p className="mx-auto mt-4 max-w-lg text-ink-muted">
@@ -70,7 +69,6 @@ export default function OrderConfirmedPage() {
         </div>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {order && <WhatsAppOrderButton order={order} />}
           <ButtonLink
             to={`${paths.trackOrder}?order=${encodeURIComponent(orderNumber)}`}
             variant="outline"
@@ -79,11 +77,18 @@ export default function OrderConfirmedPage() {
             <Search className="size-4" /> Track this order
           </ButtonLink>
         </div>
-        {order && (
-          <p className="mt-3 text-xs text-ink-subtle">
-            Sending the order on WhatsApp helps us confirm it faster.
-          </p>
-        )}
+        <p className="mt-4 text-sm text-ink-muted">
+          We&apos;ll send your order updates on WhatsApp to the number you entered. Questions? WhatsApp{' '}
+          {CONTACT.whatsapp.map((n, i) => (
+            <span key={n}>
+              {i > 0 && ' or '}
+              <a href={shopWhatsappUrl(n)} target="_blank" rel="noreferrer" className="font-semibold text-sand hover:underline">
+                {n}
+              </a>
+            </span>
+          ))}{' '}
+          or call <a href={shopPhoneUrl()} className="font-semibold text-sand hover:underline">{CONTACT.phone}</a>.
+        </p>
       </motion.div>
 
       <ol className="relative mt-14 grid gap-4 sm:grid-cols-3">

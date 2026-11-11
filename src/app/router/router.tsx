@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate, type RouteObject } from 'react-router-do
 import { RouteError } from '@/components/feedback/RouteError'
 import { AdminLayout } from '@/layouts/admin/AdminLayout'
 import { CustomerLayout } from '@/layouts/customer/CustomerLayout'
-import { RequireAdmin, RequireAuth, RequireRole } from './guards/RequireAdmin'
+import { RequireAdmin, RequireRole } from './guards/RequireAdmin'
 import { paths } from './paths'
 
 /**
@@ -25,15 +25,11 @@ const customerRoutes: RouteObject[] = [
   { path: paths.orderConfirmed(), lazy: page(() => import('@/features/orders/pages/OrderConfirmedPage')) },
   { path: paths.trackOrder, lazy: page(() => import('@/features/orders/pages/TrackOrderPage')) },
   { path: paths.login, lazy: page(() => import('@/features/auth/pages/LoginPage')) },
-  { path: paths.register, lazy: page(() => import('@/features/auth/pages/RegisterPage')) },
+  // Customers shop as guests: no sign-up or customer account pages.
+  { path: paths.register, element: <Navigate to={paths.home} replace /> },
   { path: paths.resetPassword, lazy: page(() => import('@/features/auth/pages/ResetPasswordPage')) },
-  {
-    element: <RequireAuth />,
-    children: [
-      { path: paths.account, lazy: page(() => import('@/features/account/pages/AccountPage')) },
-      { path: paths.accountOrder(), lazy: page(() => import('@/features/account/pages/OrderDetailPage')) },
-    ],
-  },
+  { path: paths.account, element: <Navigate to={paths.trackOrder} replace /> },
+  { path: paths.accountOrder(), element: <Navigate to={paths.trackOrder} replace /> },
   { path: '*', lazy: page(() => import('@/pages/NotFoundPage')) },
 ]
 

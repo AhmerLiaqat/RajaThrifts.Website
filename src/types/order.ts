@@ -93,6 +93,11 @@ export interface TrackedOrder {
   discountTotal: MinorUnits
   total: MinorUnits
   contactName: string
+  contactPhone: string | null
+  /** House / street / area, then city and province (null until migration 0012 is applied). */
+  addressLine1: string | null
+  addressLine2: string | null
+  province: string | null
   city: string
   courier: string | null
   trackingNumber: string | null

@@ -22,13 +22,19 @@ const TRUST = [
   { icon: Truck, label: 'Nationwide delivery', sub: 'Tracked to your door' },
 ]
 
-/** HERO: bold navy banner with the newest premium pair, then a quick-shop bar and trust row. */
+/** HERO: bold navy banner with ONE showcase pair (the one marked "Feature on the homepage"), then a quick-shop bar and trust row. */
 export function HeroSection() {
   const { items, isDemo } = useHomeProducts()
   const inStock = items.filter((p) => p.totalStock > 0)
-  const featured = inStock.find((p) => p.collection === 'PREMIUM') ?? inStock[0]
-  // Live mode: a real product photo; demo photography is only a labelled fallback.
-  const showcase = isDemo ? undefined : inStock.find((p) => p.primaryImage)
+  // One pair only: the newest in-stock pair marked "Feature on the homepage" (premium first),
+  // falling back to the newest premium pair, then the newest pair.
+  const featured =
+    inStock.find((p) => p.isFeatured && p.collection === 'PREMIUM') ??
+    inStock.find((p) => p.isFeatured) ??
+    inStock.find((p) => p.collection === 'PREMIUM') ??
+    inStock[0]
+  // The big photo and the price card always show the same pair. Demo mode uses labelled stock photography.
+  const showcase = !isDemo && featured?.primaryImage ? featured : undefined
   const off = featured ? discountPercent(featured.price, featured.compareAtPrice) : 0
 
   // Quick-shop shortcuts built from what is actually in stock.

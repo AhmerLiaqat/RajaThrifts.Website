@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { CONTACT, shopWhatsappUrl } from '@/constants/contact'
 import { usePublicSettings } from '@/features/store/usePublicSettings'
 
 /** Official-style WhatsApp glyph (lucide has no brand icons). */
@@ -16,15 +17,15 @@ export function WhatsAppGlyph({ className }: { className?: string }) {
  */
 export function WhatsAppFloat() {
   const { data } = usePublicSettings()
-  const url = data?.whatsappGroupUrl
-  if (!url) return null
+  // The WhatsApp group from Store settings, otherwise a chat with the main shop number.
+  const url = data?.whatsappGroupUrl || shopWhatsappUrl(CONTACT.whatsapp[0], 'Assalam o Alaikum! I have a question about a pair on Raja Thrifts.')
 
   return (
     <motion.a
       href={url}
       target="_blank"
       rel="noreferrer"
-      aria-label="Join our WhatsApp group"
+      aria-label={data?.whatsappGroupUrl ? 'Join our WhatsApp group' : 'Chat with us on WhatsApp'}
       initial={{ opacity: 0, scale: 0.6 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 1.2, type: 'spring', stiffness: 260, damping: 18 }}
@@ -35,7 +36,7 @@ export function WhatsAppFloat() {
         <WhatsAppGlyph className="relative size-7" />
       </span>
       <span className="glass hidden rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap text-bone opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:block">
-        Join our WhatsApp group
+        {data?.whatsappGroupUrl ? 'Join our WhatsApp group' : 'Chat with us on WhatsApp'}
       </span>
     </motion.a>
   )

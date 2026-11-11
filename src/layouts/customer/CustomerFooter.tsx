@@ -1,9 +1,11 @@
-import { ArrowUpRight, PackageCheck, ShieldCheck, Truck } from 'lucide-react'
-import { useState, type FormEvent } from 'react'
+import { ArrowUpRight, PackageCheck, Phone, ShieldCheck, Truck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
 import { COLLECTION_META } from '@/constants/collections'
 import { Logo } from '@/components/brand/Logo'
+import { InstagramIcon, TikTokIcon } from '@/components/brand/SocialIcons'
+import { WhatsAppGlyph } from '@/components/feedback/WhatsAppFloat'
+import { CONTACT, shopPhoneUrl, shopWhatsappUrl } from '@/constants/contact'
 import { env } from '@/config/env'
 import { UNSPLASH_CREDIT_URL } from '@/mocks/demo-media'
 
@@ -18,36 +20,17 @@ const columns = [
     ],
   },
   {
-    title: 'Help',
-    links: [
-      { label: 'Grading guide', to: paths.shop },
-      { label: 'Size guide', to: paths.shop },
-      { label: 'Shipping & returns', to: paths.shop },
-      { label: 'Contact', to: paths.shop },
-    ],
-  },
-  {
     title: 'Orders',
     links: [
       { label: 'Track your order', to: paths.trackOrder },
       { label: 'Bag', to: paths.cart },
       { label: 'Wishlist', to: paths.wishlist },
-      { label: 'Staff login', to: paths.login },
+      { label: 'Admin login', to: paths.login },
     ],
   },
 ]
 
 export function CustomerFooter() {
-  const [email, setEmail] = useState('')
-  const [notice, setNotice] = useState<string | null>(null)
-
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    // No newsletter backend yet. Be honest about it instead of faking success.
-    setNotice('Newsletter sign-up is coming soon. Nothing was submitted.')
-    setEmail('')
-  }
-
   return (
     <footer className="mt-16 bg-brand-navy text-white/80">
       {/* Service promises */}
@@ -79,31 +62,27 @@ export function CustomerFooter() {
               Imported thrift footwear, graded into Premium, A Category and B Category. Get a first look at every
               new shipment.
             </p>
-            <form onSubmit={onSubmit} className="mt-6 max-w-md">
-              <label htmlFor="footer-email" className="sr-only">
-                Email address
-              </label>
-              <div className="flex gap-2">
-                <input
-                  id="footer-email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Your email address"
-                  className="h-11 min-w-0 flex-1 rounded-lg border border-white/15 bg-white/5 px-3 text-sm text-white placeholder:text-white/40 focus:border-gold focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="h-11 shrink-0 rounded-lg bg-gold px-4 text-sm font-semibold text-brand-navy transition-colors hover:bg-gold/90"
-                >
-                  Subscribe
-                </button>
-              </div>
-              <p role="status" className="mt-2 min-h-5 text-xs text-white/60">
-                {notice}
-              </p>
-            </form>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <a
+                href={CONTACT.instagram.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-11 items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:bg-white/15"
+              >
+                <InstagramIcon className="size-4" /> Instagram
+              </a>
+              <a
+                href={CONTACT.tiktok.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-11 items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:bg-white/15"
+              >
+                <TikTokIcon className="size-4" /> TikTok
+              </a>
+            </div>
+            <p className="mt-3 text-xs text-white/55">
+              Follow {CONTACT.instagram.handle} for every new shipment first.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
@@ -121,6 +100,32 @@ export function CustomerFooter() {
                 </ul>
               </div>
             ))}
+            <div>
+              <p className="text-sm font-semibold text-white">Contact us</p>
+              <ul className="mt-4 space-y-2.5 text-sm">
+                {CONTACT.whatsapp.map((n) => (
+                  <li key={n}>
+                    <a
+                      href={shopWhatsappUrl(n)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 text-white/65 transition-colors hover:text-white"
+                    >
+                      <WhatsAppGlyph className="size-4 text-[#25D366]" />
+                      {n}
+                    </a>
+                  </li>
+                ))}
+                <li className="text-xs text-white/45">WhatsApp only (messages)</li>
+                <li>
+                  <a href={shopPhoneUrl()} className="inline-flex items-center gap-2 text-white/65 transition-colors hover:text-white">
+                    <Phone className="size-4 text-gold" />
+                    {CONTACT.phone}
+                  </a>
+                </li>
+                <li className="text-xs text-white/45">Calls</li>
+              </ul>
+            </div>
           </div>
         </div>
 

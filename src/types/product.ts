@@ -115,7 +115,7 @@ export interface Product extends Timestamps {
 /** Lightweight shape for grids and lists. */
 export type ProductSummary = Pick<
   Product,
-  'id' | 'slug' | 'name' | 'brand' | 'collection' | 'condition' | 'price' | 'compareAtPrice' | 'status'
+  'id' | 'slug' | 'name' | 'brand' | 'collection' | 'condition' | 'price' | 'compareAtPrice' | 'status' | 'isFeatured'
 > & {
   primaryImage: ProductImage | null
   /** In-stock sizes only. */

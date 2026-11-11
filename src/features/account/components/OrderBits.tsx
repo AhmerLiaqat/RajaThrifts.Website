@@ -24,21 +24,22 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   )
 }
 
-/** Progress rail: Pending → Confirmed → Processing → Shipped → Delivered. */
+/** Progress rail: Pending → Approved → Dispatched → Delivered. */
 export function OrderTimeline({ order }: { order: Pick<Order, 'status'> }) {
   if (order.status === 'cancelled' || order.status === 'refunded') {
     return <p className="text-sm text-ink-muted">{ORDER_STATUS_META[order.status].description}</p>
   }
-  const current = ORDER_TIMELINE.indexOf(order.status)
+  // Legacy "processing" orders sit on the Approved step.
+  const current = ORDER_TIMELINE.indexOf(order.status === 'processing' ? 'confirmed' : order.status)
   return (
-    <ol className="grid grid-cols-5 gap-2">
+    <ol className="grid grid-cols-4 gap-2">
       {ORDER_TIMELINE.map((s, i) => (
         <li key={s} className="flex flex-col gap-2">
-          <span className={cn('h-1 rounded-full', i <= current ? 'bg-sand' : 'bg-bone/10')} />
+          <span className={cn('h-1.5 rounded-full', i <= current ? 'bg-sand' : 'bg-line')} />
           <span
             className={cn(
-              'flex items-center gap-1 text-[11px] tracking-wide uppercase',
-              i <= current ? 'text-bone' : 'text-ink-subtle',
+              'flex items-center gap-1 text-xs font-semibold',
+              i <= current ? 'text-ink' : 'text-ink-subtle',
             )}
           >
             {i < current && <Check className="size-3 text-sand" />}

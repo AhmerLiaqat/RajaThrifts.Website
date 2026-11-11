@@ -33,7 +33,7 @@ export function RequireRole({ roles }: { roles: readonly UserRole[] }) {
   return <Outlet />
 }
 
-/** Back office: shopkeepers and admins. */
+/** Back office: admins only. */
 export function RequireAdmin() {
   return <RequireRole roles={STAFF_ROLES} />
 }

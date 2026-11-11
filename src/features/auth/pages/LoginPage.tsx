@@ -55,9 +55,9 @@ export default function LoginPage() {
   // Signed in, but the account has no staff role: say so instead of silently redirecting.
   if (isAuthenticated && !isStaff && !signIn.isPending) {
     return (
-      <AuthShell eyebrow="Staff only" title="No staff access yet">
+      <AuthShell eyebrow="Admin only" title="No admin access">
         <Alert tone="info" title={`Signed in as ${user?.email ?? 'this account'}`}>
-          This account is not an admin or shopkeeper yet, so the dashboard is locked.
+          This account is not an admin, so the dashboard is locked.
         </Alert>
         <div className="mt-6 space-y-3 text-sm text-ink-muted">
           <p>
@@ -66,10 +66,6 @@ export default function LoginPage() {
           <pre className="overflow-x-auto rounded-xl border border-bone/10 bg-night/50 p-3 font-mono text-xs text-bone">
             {`update public.profiles set role = 'admin'\nwhere email = '${user?.email ?? 'you@example.com'}';`}
           </pre>
-          <p>
-            <strong className="text-bone">New staff member:</strong> ask an admin to give you access in Dashboard →
-            Users &amp; roles.
-          </p>
           <p>Then sign out and sign in again.</p>
         </div>
         <Button className="mt-6" variant="outline" loading={signOut.isPending} onClick={() => signOut.mutate()}>
@@ -89,7 +85,7 @@ export default function LoginPage() {
   const problem = signIn.error ? explain(signIn.error.message) : null
 
   return (
-    <AuthShell eyebrow="Staff only" title="Staff login">
+    <AuthShell eyebrow="Admin only" title="Admin login">
       <p className="-mt-2 mb-6 text-sm text-ink-muted">
         Shopping? No account needed: just add pairs to your bag and check out.{' '}
         <Link to={paths.trackOrder} className="text-sand underline-offset-4 hover:underline">
@@ -161,15 +157,7 @@ export default function LoginPage() {
       </form>
 
       <p className="mt-8 text-center text-xs text-ink-subtle">
-        Setting up a new staff member?{' '}
-        <Link
-          to={paths.register}
-          state={location.state}
-          className="text-ink-muted underline-offset-4 hover:text-sand hover:underline"
-        >
-          Register them
-        </Link>
-        , then an admin grants access in Users &amp; roles.
+        This sign-in is for the store admin only. Customers don&apos;t need an account: just shop and check out.
       </p>
     </AuthShell>
   )

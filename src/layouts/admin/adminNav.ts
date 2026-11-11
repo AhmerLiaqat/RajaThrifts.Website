@@ -34,7 +34,8 @@ export interface NavItem {
   badge?: NavBadgeKey
 }
 
-const STAFF: UserRole[] = ['shopkeeper', 'admin']
+// Admin only: there is no separate shopkeeper portal any more.
+const STAFF: UserRole[] = ['admin']
 const ADMIN: UserRole[] = ['admin']
 
 /** Dashboard navigation, grouped. Filtered by role in the sidebar and mobile drawer. */

@@ -2,15 +2,13 @@ import { ArrowRight } from 'lucide-react'
 import { paths } from '@/app/router/paths'
 import { Reveal } from '@/components/motion/Reveal'
 import { ButtonLink } from '@/components/ui'
+import { TikTokIcon } from '@/components/brand/SocialIcons'
+import { CONTACT } from '@/constants/contact'
 import { DemoTag } from '@/components/ui/DemoTag'
 import { INSTAGRAM_PHOTOS, unsplash } from '@/mocks/demo-media'
 
-/**
- * Placeholder handle. Set INSTAGRAM_URL once the real account is confirmed;
- * until then nothing links out, so we never send visitors to someone else's profile.
- */
-const INSTAGRAM_HANDLE = 'rajathrifts'
-const INSTAGRAM_URL: string | null = null
+const INSTAGRAM_HANDLE = CONTACT.instagram.handle.replace('@', '')
+const INSTAGRAM_URL: string = CONTACT.instagram.url
 
 /** Lucide 1.x dropped brand icons, so this is a minimal inline glyph. */
 function InstagramGlyph({ className }: { className?: string }) {
@@ -41,37 +39,43 @@ export function CommunitySection() {
                   Never miss a <span className="text-gold">perfect pair</span>
                 </h2>
                 <p className="mt-4 max-w-md text-base leading-relaxed text-white/75">
-                  One of each means the good ones go fast. New shipments are posted first on Instagram as{' '}
+                  One of each means the good ones go fast. New shipments are posted first on Instagram and TikTok as{' '}
                   <span className="font-semibold text-white">@{INSTAGRAM_HANDLE}</span>.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center gap-3">
                   <ButtonLink to={paths.shop} size="lg" className="bg-gold text-brand-navy hover:bg-gold/90">
                     Shop the rack <ArrowRight className="size-4" />
                   </ButtonLink>
-                  {INSTAGRAM_URL ? (
-                    <a
-                      href={INSTAGRAM_URL}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex h-12 items-center gap-2 rounded-lg border border-white/25 px-5 text-sm font-semibold text-white hover:bg-white/10"
-                    >
-                      <InstagramGlyph className="size-4" /> Follow on Instagram
-                    </a>
-                  ) : (
-                    <span className="inline-flex h-12 items-center gap-2 rounded-lg border border-white/20 px-5 text-sm font-medium text-white/70">
-                      <InstagramGlyph className="size-4" /> Instagram coming soon
-                    </span>
-                  )}
+                  <a
+                    href={INSTAGRAM_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex h-12 items-center gap-2 rounded-lg border border-white/25 px-5 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    <InstagramGlyph className="size-4" /> Instagram
+                  </a>
+                  <a
+                    href={CONTACT.tiktok.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex h-12 items-center gap-2 rounded-lg border border-white/25 px-5 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    <TikTokIcon className="size-4" /> TikTok
+                  </a>
                 </div>
               </div>
 
               <div className="relative">
                 <ul className="grid grid-cols-3 gap-3">
                   {INSTAGRAM_PHOTOS.map((photo) => (
-                    <li
-                      key={photo.id}
-                    >
-                      <div className="group relative aspect-square overflow-hidden rounded-xl bg-white/10">
+                    <li key={photo.id}>
+                      <a
+                        href={INSTAGRAM_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="Open Raja Thrifts on Instagram"
+                        className="group relative block aspect-square overflow-hidden rounded-xl bg-white/10"
+                      >
                         <img
                           src={unsplash(photo.id, 500, 500)}
                           alt={photo.alt}
@@ -81,7 +85,7 @@ export function CommunitySection() {
                         <span className="absolute inset-0 grid place-items-center bg-brand-navy/50 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                           <InstagramGlyph className="size-6 text-white" />
                         </span>
-                      </div>
+                      </a>
                     </li>
                   ))}
                 </ul>

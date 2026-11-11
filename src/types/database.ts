@@ -209,6 +209,11 @@ export interface TrackedOrderRow {
   discount_total: NumericPkr
   total: NumericPkr
   contact_name: string
+  /** Added in migration 0012; absent until it is applied. */
+  contact_phone?: string
+  shipping_address_line1?: string
+  shipping_address_line2?: string | null
+  shipping_province?: string | null
   shipping_city: string
   courier: string | null
   tracking_number: string | null

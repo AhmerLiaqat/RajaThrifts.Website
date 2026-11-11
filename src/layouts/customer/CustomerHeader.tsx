@@ -9,6 +9,9 @@ import { useCart } from '@/features/cart/store/cart-store'
 import { useWishlist } from '@/features/wishlist/useWishlist'
 import { SearchOverlay } from '@/features/search/SearchOverlay'
 import { Logo } from '@/components/brand/Logo'
+import { InstagramIcon, TikTokIcon } from '@/components/brand/SocialIcons'
+import { WhatsAppGlyph } from '@/components/feedback/WhatsAppFloat'
+import { CONTACT, shopWhatsappUrl } from '@/constants/contact'
 import { cn } from '@/lib/utils/cn'
 import { motion as m } from '@/theme/tokens'
 
@@ -84,12 +87,22 @@ export function CustomerHeader() {
               <Sparkles className="size-3.5 text-gold" aria-hidden />
               New shipment added every week. Every pair is one of a kind
             </p>
-            <Link
-              to={paths.trackOrder}
-              className="hidden items-center gap-1.5 whitespace-nowrap text-white/80 transition-colors hover:text-white lg:flex"
-            >
-              <PackageSearch className="size-3.5" aria-hidden /> Track your order
-            </Link>
+            <span className="hidden items-center gap-4 whitespace-nowrap lg:flex">
+              <a
+                href={shopWhatsappUrl()}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 text-white/85 transition-colors hover:text-white"
+              >
+                <WhatsAppGlyph className="size-3.5 text-[#25D366]" /> {CONTACT.whatsapp[0]}
+              </a>
+              <a href={CONTACT.instagram.url} target="_blank" rel="noreferrer" aria-label="Instagram" className="text-white/80 hover:text-white">
+                <InstagramIcon className="size-3.5" />
+              </a>
+              <a href={CONTACT.tiktok.url} target="_blank" rel="noreferrer" aria-label="TikTok" className="text-white/80 hover:text-white">
+                <TikTokIcon className="size-3.5" />
+              </a>
+            </span>
           </div>
         </div>
         <div

@@ -7,12 +7,12 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { AdminPageHeader } from '@/layouts/admin/AdminLayout'
 import { queryKeys } from '@/lib/query/queryClient'
 import { profileService } from '@/services'
-import { USER_ROLES, type UserRole } from '@/types/auth'
+import { ASSIGNABLE_ROLES, type UserRole } from '@/types/auth'
 import { formatDate } from '@/lib/utils/format'
 
 const ROLE_HELP: Record<UserRole, string> = {
-  customer: 'Shops, places orders, manages own profile and wishlist.',
-  shopkeeper: 'Manages products, photos, stock and orders. Cannot delete products or change roles.',
+  customer: 'No dashboard access.',
+  shopkeeper: 'Retired role: no dashboard access. Change it to Admin or Customer.',
   admin: 'Everything, including deleting products and assigning roles.',
 }
 
@@ -34,11 +34,11 @@ export default function UsersPage() {
     <>
       <AdminPageHeader
         title="Users & roles"
-        description="Grant back-office access by promoting an account to shopkeeper or admin."
+        description="Only admins can open the dashboard. Promote an account to Admin to give access, or set it back to Customer to remove it."
       />
 
-      <dl className="mb-6 grid gap-3 sm:grid-cols-3">
-        {USER_ROLES.map((r) => (
+      <dl className="mb-6 grid gap-3 sm:grid-cols-2">
+        {ASSIGNABLE_ROLES.map((r) => (
           <div key={r} className="rounded-sm border border-bone/10 p-4">
             <dt className="font-display text-xs tracking-wider text-sand uppercase">{r}</dt>
             <dd className="mt-1 text-xs text-ink-muted">{ROLE_HELP[r]}</dd>
@@ -101,11 +101,16 @@ export default function UsersPage() {
                     }}
                     className="h-9"
                   >
-                    {USER_ROLES.map((r) => (
+                    {ASSIGNABLE_ROLES.map((r) => (
                       <option key={r} value={r}>
                         {r}
                       </option>
                     ))}
+                    {!ASSIGNABLE_ROLES.includes(u.role) && (
+                      <option value={u.role} disabled>
+                        {u.role} (retired)
+                      </option>
+                    )}
                   </Select>
                 </td>
               </tr>
