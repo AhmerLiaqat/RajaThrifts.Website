@@ -8,7 +8,7 @@ import { CONDITION_META } from '@/constants/product'
 import type { ImportRow } from './spreadsheet'
 import type { StudioResult } from './photoStudio'
 
-const VIEWS: ProductImageView[] = ['front', 'side', 'back', 'sole']
+export const VIEWS: ProductImageView[] = ['front', 'side', 'back', 'sole']
 const toMinor = (pkr: number) => Math.round(pkr * 100)
 
 /** Batch stamp used in SKUs, e.g. 261110 for 10 Nov 2026. Keeps SKUs unique across shipments. */

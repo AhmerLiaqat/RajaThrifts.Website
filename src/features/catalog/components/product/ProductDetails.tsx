@@ -5,6 +5,7 @@ import { CONDITION_META, CONDITION_ORDER, DEFECT_SEVERITY_META } from '@/constan
 import { cn } from '@/lib/utils/cn'
 import { motion as m } from '@/theme/tokens'
 import type { ConditionGrade, ProductDefect, ProductVariant } from '@/types/product'
+import { useSizeConversions } from '../../hooks/useSizeConversions'
 
 /* ── Size selector ────────────────────────────────────────────────────── */
 
@@ -15,28 +16,37 @@ interface SizeSelectorProps {
 }
 
 export function SizeSelector({ variants, selectedId, onSelect }: SizeSelectorProps) {
+  const sizes = useSizeConversions()
   const sorted = [...variants].sort((a, b) => Number(a.size.value) - Number(b.size.value))
   return (
-    <div role="radiogroup" aria-label="Size (EU)" className="flex flex-wrap gap-2">
+    <div role="radiogroup" aria-label="Size (EU / UK)" className="flex flex-wrap gap-2">
       {sorted.map((v) => {
         const soldOut = v.quantity === 0
         const selected = v.id === selectedId
+        const uk = sizes.uk(v.size.value)
+        const label = sizes.label(v.size.value, ', ')
         return (
           <button
             key={v.id}
             type="button"
             role="radio"
             aria-checked={selected}
+            aria-label={label}
             disabled={soldOut}
             onClick={() => onSelect(v.id)}
-            title={soldOut ? `EU ${v.size.value} has sold` : `EU ${v.size.value}`}
+            title={soldOut ? `${label} has sold` : label}
             className={cn(
-              'relative h-12 min-w-16 rounded-sm border px-4 font-display text-sm tabular-nums transition-colors',
+              'relative flex h-14 min-w-20 flex-col items-center justify-center rounded-sm border px-4 font-display tabular-nums transition-colors',
               selected ? 'border-sand bg-sand text-night' : 'border-bone/20 text-bone hover:border-bone/60',
               soldOut && 'cursor-not-allowed border-bone/10 text-bone/25 line-through hover:border-bone/10',
             )}
           >
-            EU {v.size.value}
+            <span className="text-sm leading-tight">EU {v.size.value}</span>
+            {uk && (
+              <span className={cn('text-[11px] leading-tight', selected ? 'text-night/75' : 'text-ink-muted', soldOut && 'text-bone/25')}>
+                UK {uk}
+              </span>
+            )}
           </button>
         )
       })}
@@ -131,6 +141,8 @@ export function DefectList({ defects, notes }: { defects: ProductDefect[]; notes
 /* ── Stock status ─────────────────────────────────────────────────────── */
 
 export function StockStatus({ variant, totalStock }: { variant: ProductVariant | null; totalStock: number }) {
+  const sizes = useSizeConversions()
+  const size = variant ? sizes.label(variant.size.value, ' / ') : ''
   let tone: 'ok' | 'low' | 'out'
   let text: string
   if (totalStock === 0) {
@@ -141,13 +153,13 @@ export function StockStatus({ variant, totalStock }: { variant: ProductVariant |
     text = `${totalStock} ${totalStock === 1 ? 'pair' : 'pairs'} in stock. Select a size.`
   } else if (variant.quantity === 0) {
     tone = 'out'
-    text = `EU ${variant.size.value} has sold.`
+    text = `${size} has sold.`
   } else if (variant.quantity === 1) {
     tone = 'low'
-    text = `In stock. Only one pair in EU ${variant.size.value}, it won’t be restocked.`
+    text = `In stock. Only one pair in ${size}, it won’t be restocked.`
   } else {
     tone = 'ok'
-    text = `In stock: ${variant.quantity} pairs in EU ${variant.size.value}.`
+    text = `In stock: ${variant.quantity} pairs in ${size}.`
   }
 
   return (

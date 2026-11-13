@@ -3,6 +3,9 @@ import type { ID, MinorUnits, PageParams, SortDirection, Timestamps } from './co
 
 export type Gender = 'men' | 'women' | 'unisex' | 'kids'
 
+/** The storefront "Shop for" filter. Each audience covers several genders (see AUDIENCE_GENDERS). */
+export type Audience = 'men' | 'women' | 'kids'
+
 /** A staff-managed footwear category (Sneakers, Boots…). Distinct from the collection tier. */
 export interface CategoryRef {
   id: ID
@@ -134,6 +137,8 @@ export type SortOption = 'newest' | 'price_asc' | 'price_desc' | 'name_asc'
 export interface ProductFilters extends PageParams {
   collection?: Collection
   gender?: Gender
+  /** Storefront "Shop for" filter (women also shows kids' pairs; kids only shows sizes under EU 41). */
+  audience?: Audience
   /** Category slug. */
   category?: string
   condition?: ConditionGrade
@@ -160,6 +165,8 @@ export interface ProductFacets {
   sizes: FacetCount[]
   price: { min: MinorUnits; max: MinorUnits }
   availability: Record<Exclude<Availability, 'all'>, number>
+  /** Matching pairs per "Shop for" option, ignoring the current audience choice. */
+  audiences: Record<Audience, number>
   total: number
 }
 

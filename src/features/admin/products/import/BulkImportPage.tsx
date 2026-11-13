@@ -29,7 +29,9 @@ import { cn } from '@/lib/utils/cn'
 import { formatPrice } from '@/lib/utils/format'
 import { adminProductService } from '@/services'
 import { MIN_PRODUCT_IMAGES } from '@/types/product'
+import { isAiStudioEnabled } from './aiStudio'
 import { isSupportedImage, loadStudioModel, processPhoto, type StudioMode, type StudioResult } from './photoStudio'
+import { VIEWS } from './runImport'
 import { batchStamp, brandResolver, importOne } from './runImport'
 import { downloadTemplate, normalizeCode, readImportSheet, type ImportRow } from './spreadsheet'
 
@@ -229,13 +231,19 @@ export default function BulkImportPage() {
     update(it.row.code, { status: 'processing', message: undefined })
     const out: StudioResult[] = []
     for (let i = 0; i < it.photos.length; i++) {
-      out.push(await processPhoto(it.photos[i], it.mode, `${it.row.code}-${i + 1}`))
+      // Same angle order the importer assigns (front, side, back, sole, then details), for framing.
+      out.push(await processPhoto(it.photos[i], it.mode, `${it.row.code}-${i + 1}`, { view: VIEWS[i] ?? 'detail' }))
     }
-    const notCleaned = it.mode === 'studio' ? out.filter((r) => !r.backgroundRemoved).length : 0
+    const notCleaned = it.mode !== 'original' ? out.filter((r) => !r.backgroundRemoved).length : 0
+    const aiFallback = it.mode === 'ai' ? out.filter((r) => r.engine === 'local').length : 0
+    const notes = [
+      notCleaned && `${notCleaned} photo(s) kept their original background (the shoe could not be separated).`,
+      aiFallback && `${aiFallback} photo(s) used the local studio because the AI studio was unavailable.`,
+    ].filter(Boolean)
     update(it.row.code, {
       processed: out,
       status: 'ready',
-      message: notCleaned ? `${notCleaned} photo(s) kept their original background (the shoe could not be separated).` : undefined,
+      message: notes.length ? notes.join(' ') : undefined,
     })
     return out
   }
@@ -502,6 +510,7 @@ export default function BulkImportPage() {
                           className="h-9 rounded-lg border border-line-strong bg-white px-2 text-xs text-ink"
                         >
                           <option value="studio">Clean background</option>
+                          {isAiStudioEnabled && <option value="ai">AI studio</option>}
                           <option value="original">Keep original</option>
                         </select>
                         <StatusChip status={errors.length ? 'invalid' : it.status} />
@@ -541,10 +550,13 @@ export default function BulkImportPage() {
               <legend className="mb-2 text-sm font-semibold text-ink">Photo background</legend>
               {(
                 [
-                  ['studio', 'Clean studio background', 'Removes the background and places the pair on a soft light-grey backdrop.'],
+                  ['studio', 'Clean studio background', 'Removes the background in your browser and places the pair on a soft light-grey backdrop with a contact shadow. Free and private.'],
+                  ['ai', 'AI studio', 'Best lighting and backdrop, made by an AI image model (paid per photo, slower). Check every photo against the real pair.'],
                   ['original', 'Keep original photos', 'Only crops them to the same shape.'],
                 ] as const
-              ).map(([value, label, hint]) => (
+              )
+                .filter(([value]) => value !== 'ai' || isAiStudioEnabled)
+                .map(([value, label, hint]) => (
                 <label
                   key={value}
                   className={cn(

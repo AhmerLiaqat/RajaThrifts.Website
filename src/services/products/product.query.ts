@@ -4,21 +4,54 @@
  * so both backends behave identically. No I/O in this file.
  */
 import type {
+  Audience,
   Availability,
   FacetCount,
+  Gender,
   Product,
   ProductFacets,
   ProductFilters,
   ProductSummary,
+  ProductVariant,
 } from '@/types/product'
 
-export const isInStock = (p: Product) => p.status === 'active' && p.variants.some((v) => v.quantity > 0)
+/** Kids' pairs must be smaller than EU 41 (UK 7). */
+export const KIDS_MAX_EU_EXCLUSIVE = 41
+
+/**
+ * Which listing genders each "Shop for" option shows.
+ * Women also shows kids' pairs and kids also shows women's pairs (small sizes overlap);
+ * unisex pairs (the default for most listings) show everywhere.
+ */
+export const AUDIENCE_GENDERS: Record<Audience, readonly Gender[]> = {
+  men: ['men', 'unisex'],
+  women: ['women', 'kids', 'unisex'],
+  kids: ['kids', 'women', 'unisex'],
+}
+
+export const AUDIENCES: Audience[] = ['men', 'women', 'kids']
+
+/** True when this size suits the audience (only kids restricts sizes). */
+export const fitsAudience = (v: ProductVariant, audience?: Audience) =>
+  audience !== 'kids' || Number(v.size.value) < KIDS_MAX_EU_EXCLUSIVE
+
+/** In stock in a size that suits the audience. */
+export const isInStock = (p: Product, audience?: Audience) =>
+  p.status === 'active' && p.variants.some((v) => v.quantity > 0 && fitsAudience(v, audience))
+
+const matchesAudience = (p: Product, audience: Audience) =>
+  AUDIENCE_GENDERS[audience].includes(p.gender) && p.variants.some((v) => fitsAudience(v, audience))
 
 /** Only listings a customer may see. */
 export const isPublic = (p: Product) => p.status === 'active' || p.status === 'sold_out'
 
-export const toSummary = (p: Product): ProductSummary => {
-  const inStock = p.variants.filter((v) => v.quantity > 0)
+export const toSummary = (p: Product): ProductSummary => summarize(p)
+
+/** Summary mapper for a filtered list: in the kids view, cards only show kids' sizes. */
+export const summaryFor = (audience?: Audience) => (p: Product) => summarize(p, audience)
+
+function summarize(p: Product, audience?: Audience): ProductSummary {
+  const inStock = p.variants.filter((v) => v.quantity > 0 && fitsAudience(v, audience))
   return {
     id: p.id,
     slug: p.slug,
@@ -49,10 +82,10 @@ const matchesSearch = (p: Product, term: string) => {
     .every((word) => haystack.includes(word))
 }
 
-const matchesAvailability = (p: Product, availability: Availability = 'all') =>
-  availability === 'all' ? true : availability === 'in_stock' ? isInStock(p) : !isInStock(p)
+const matchesAvailability = (p: Product, availability: Availability = 'all', audience?: Audience) =>
+  availability === 'all' ? true : availability === 'in_stock' ? isInStock(p, audience) : !isInStock(p, audience)
 
-type FilterKey = 'brands' | 'sizes' | 'price' | 'availability'
+type FilterKey = 'brands' | 'sizes' | 'price' | 'availability' | 'audience'
 
 /**
  * Applies filters. `ignore` skips one dimension, which is how facet counts are
@@ -61,10 +94,12 @@ type FilterKey = 'brands' | 'sizes' | 'price' | 'availability'
 export function filterProducts(products: Product[], f: ProductFilters, ignore?: FilterKey): Product[] {
   const brands = f.brands?.map(norm)
   const sizes = f.sizes
+  const audience = ignore === 'audience' ? undefined : f.audience
   return products.filter((p) => {
     if (!isPublic(p)) return false
     if (f.collection && p.collection !== f.collection) return false
     if (f.gender && p.gender !== f.gender) return false
+    if (audience && !matchesAudience(p, audience)) return false
     if (f.category && p.category?.slug !== f.category) return false
     if (f.condition && p.condition !== f.condition) return false
     if (f.search && !matchesSearch(p, f.search)) return false
@@ -72,14 +107,14 @@ export function filterProducts(products: Product[], f: ProductFilters, ignore?: 
     if (
       ignore !== 'sizes' &&
       sizes?.length &&
-      !p.variants.some((v) => v.quantity > 0 && sizes.includes(v.size.value))
+      !p.variants.some((v) => v.quantity > 0 && fitsAudience(v, audience) && sizes.includes(v.size.value))
     )
       return false
     if (ignore !== 'price') {
       if (f.minPrice != null && p.price < f.minPrice) return false
       if (f.maxPrice != null && p.price > f.maxPrice) return false
     }
-    if (ignore !== 'availability' && !matchesAvailability(p, f.availability)) return false
+    if (ignore !== 'availability' && !matchesAvailability(p, f.availability, audience)) return false
     return true
   })
 }
@@ -89,7 +124,7 @@ export function sortProducts(products: Product[], f: ProductFilters): Product[] 
   const by = f.sortBy ?? 'createdAt'
   return [...products].sort((a, b) => {
     // Sold-out pairs always sink below available ones.
-    const stock = Number(isInStock(b)) - Number(isInStock(a))
+    const stock = Number(isInStock(b, f.audience)) - Number(isInStock(a, f.audience))
     if (stock !== 0) return stock
     if (by === 'price') return (a.price - b.price) * dir
     if (by === 'name') return a.name.localeCompare(b.name) * dir
@@ -111,7 +146,7 @@ export function computeFacets(products: Product[], f: ProductFilters): ProductFa
   )
   const sizes = countBy(
     filterProducts(products, f, 'sizes').flatMap((p) => [
-      ...new Set(p.variants.filter((v) => v.quantity > 0).map((v) => v.size.value)),
+      ...new Set(p.variants.filter((v) => v.quantity > 0 && fitsAudience(v, f.audience)).map((v) => v.size.value)),
     ]),
   ).sort((a, b) => Number(a.value) - Number(b.value))
   const forAvailability = filterProducts(products, f, 'availability')
@@ -122,9 +157,12 @@ export function computeFacets(products: Product[], f: ProductFilters): ProductFa
     sizes,
     price: { min: prices.length ? Math.min(...prices) : 0, max: prices.length ? Math.max(...prices) : 0 },
     availability: {
-      in_stock: forAvailability.filter(isInStock).length,
-      sold_out: forAvailability.filter((p) => !isInStock(p)).length,
+      in_stock: forAvailability.filter((p) => isInStock(p, f.audience)).length,
+      sold_out: forAvailability.filter((p) => !isInStock(p, f.audience)).length,
     },
+    audiences: Object.fromEntries(
+      AUDIENCES.map((a) => [a, filterProducts(products, { ...f, audience: a }).length]),
+    ) as Record<Audience, number>,
     total: filterProducts(products, f).length,
   }
 }

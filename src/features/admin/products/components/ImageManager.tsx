@@ -6,6 +6,8 @@ import { IMAGE_VIEW_LABEL } from '@/constants/product'
 import { ALLOWED_IMAGE_TYPES } from '@/services/core/storage'
 import { MIN_PRODUCT_IMAGES, REQUIRED_IMAGE_VIEWS, type ProductImage, type ProductImageView } from '@/types/product'
 import { useImageMutations } from '../hooks'
+import { isAiStudioEnabled } from '../import/aiStudio'
+import type { StudioMode } from '../import/photoStudio'
 
 const VIEWS = Object.keys(IMAGE_VIEW_LABEL) as ProductImageView[]
 
@@ -28,7 +30,8 @@ export function ImageManager({
   const [busy, setBusy] = useState(0)
   const [dragging, setDragging] = useState(false)
   // Same studio treatment as Bulk import, so single uploads match the rest of the catalogue.
-  const [clean, setClean] = useState(true)
+  const [mode, setMode] = useState<StudioMode>('studio')
+  const [notice, setNotice] = useState<string | null>(null)
 
   const used = new Set(images.map((i) => i.view))
   const missing = REQUIRED_IMAGE_VIEWS.filter((v) => !used.has(v))
@@ -36,6 +39,7 @@ export function ImageManager({
   const onFiles = async (files: FileList | null) => {
     if (!files?.length) return
     setError(null)
+    setNotice(null)
     const queue = [...missing]
     let position = images.length
     const list = Array.from(files)
@@ -45,7 +49,12 @@ export function ImageManager({
       setBusy((n) => n + 1)
       try {
         const { processPhoto } = await import('../import/photoStudio')
-        const { file } = await processPhoto(raw, clean ? 'studio' : 'original', `${productId}-${position + 1}`)
+        const res = await processPhoto(raw, mode, `${productId}-${position + 1}`, { view })
+        URL.revokeObjectURL(res.previewUrl)
+        if (res.note) setNotice(res.note)
+        else if (mode !== 'original' && !res.backgroundRemoved)
+          setNotice('The shoe could not be separated in one photo, so it kept its original background.')
+        const file = res.file
         await upload.mutateAsync({
           file,
           view,
@@ -105,10 +114,26 @@ export function ImageManager({
           sole photos sell best.
         </p>
       )}
-      <label className="flex cursor-pointer items-center gap-2 text-sm text-ink">
-        <input type="checkbox" className="size-4 accent-sand" checked={clean} onChange={(e) => setClean(e.target.checked)} />
-        Clean background automatically (light studio backdrop, same size as other photos)
+      <label className="flex flex-col gap-1.5 text-sm text-ink sm:flex-row sm:items-center sm:gap-3">
+        <span className="font-medium">Photo background</span>
+        <Select
+          aria-label="Photo background"
+          value={mode}
+          onChange={(e) => setMode(e.target.value as StudioMode)}
+          className="h-9 text-sm sm:w-auto"
+        >
+          <option value="studio">Clean background (studio backdrop, runs in your browser)</option>
+          {isAiStudioEnabled && <option value="ai">AI studio (best lighting, check the result)</option>}
+          <option value="original">Keep original photo (crop only)</option>
+        </Select>
       </label>
+      {mode === 'ai' && (
+        <p className="text-xs text-ink-muted">
+          AI studio re-lights the photo on the studio backdrop. Always compare it with the real pair: if any
+          scuff, mark or logo changed, delete it and re-upload with the clean background option.
+        </p>
+      )}
+      {notice && <Alert tone="info">{notice}</Alert>}
       {(error || update.error || remove.error) && (
         <Alert tone="error">{error ?? update.error?.message ?? remove.error?.message}</Alert>
       )}

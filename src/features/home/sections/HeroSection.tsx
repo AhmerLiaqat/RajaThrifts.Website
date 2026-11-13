@@ -7,6 +7,7 @@ import { CollectionBadge } from '@/features/catalog/components/CollectionBadge'
 import { discountPercent, formatPrice } from '@/lib/utils/format'
 import { HERO_SHOWCASE_PHOTO, unsplash, unsplashSrcSet } from '@/mocks/demo-media'
 import { motion as m } from '@/theme/tokens'
+import { useSizeConversions } from '@/features/catalog/hooks/useSizeConversions'
 import { useHomeProducts } from '../useHomeProducts'
 
 const rise = (delay: number) => ({
@@ -25,6 +26,7 @@ const TRUST = [
 /** HERO: bold navy banner with ONE showcase pair (the one marked "Feature on the homepage"), then a quick-shop bar and trust row. */
 export function HeroSection() {
   const { items, isDemo } = useHomeProducts()
+  const conv = useSizeConversions()
   const inStock = items.filter((p) => p.totalStock > 0)
   // One pair only: the newest in-stock pair marked "Feature on the homepage" (premium first),
   // falling back to the newest premium pair, then the newest pair.
@@ -194,15 +196,21 @@ export function HeroSection() {
           className="relative z-10 mx-auto -mt-14 grid max-w-6xl gap-5 rounded-2xl border border-line bg-white p-5 shadow-[0_20px_50px_-25px_rgb(17_26_51/0.35)] sm:mx-6 md:grid-cols-2 md:p-6 lg:mx-auto"
         >
           <div>
-            <p className="text-sm font-bold text-ink">Shop by size (EU)</p>
+            <p className="text-sm font-bold text-ink">Shop by size (EU / UK)</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {(sizes.length ? sizes : ['39', '40', '41', '42', '43', '44']).map((s) => (
                 <Link
                   key={s}
                   to={`${paths.shop}?size=${encodeURIComponent(s)}&stock=in_stock`}
-                  className="grid h-10 min-w-11 place-items-center rounded-lg border border-line-strong px-2 text-sm font-semibold text-ink transition-all hover:-translate-y-0.5 hover:border-sand hover:bg-sand hover:text-white"
+                  aria-label={conv.label(s, ', ')}
+                  className="group/size flex h-12 min-w-12 flex-col items-center justify-center rounded-lg border border-line-strong px-2 text-sm leading-tight font-semibold text-ink transition-all hover:-translate-y-0.5 hover:border-sand hover:bg-sand hover:text-white"
                 >
-                  {s}
+                  <span>{s}</span>
+                  {conv.uk(s) && (
+                    <span className="text-[10px] font-medium text-ink-subtle group-hover/size:text-white/80">
+                      UK {conv.uk(s)}
+                    </span>
+                  )}
                 </Link>
               ))}
             </div>

@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion'
 import { ChevronRight, Heart, Sparkles, Tag, Truck, LayoutDashboard, Menu, PackageSearch, Search, ShoppingBag, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
 import { COLLECTION_META } from '@/constants/collections'
 import { useAuth } from '@/features/auth/hooks/useAuth'
@@ -12,14 +12,20 @@ import { Logo } from '@/components/brand/Logo'
 import { InstagramIcon, TikTokIcon } from '@/components/brand/SocialIcons'
 import { WhatsAppGlyph } from '@/components/feedback/WhatsAppFloat'
 import { CONTACT, shopWhatsappUrl } from '@/constants/contact'
+import { AUDIENCE_LABEL } from '@/constants/product'
 import { cn } from '@/lib/utils/cn'
+import type { Audience } from '@/types/product'
 import { motion as m } from '@/theme/tokens'
 
 const collections = Object.values(COLLECTION_META).sort((a, b) => a.rank - b.rank)
 
-const primaryLinks = [
+/** `audience` links open the shop with the "Shop for" filter (women includes kids; kids is under EU 41 / UK 7). */
+const primaryLinks: Array<{ to: string; label: string; audience?: Audience | null }> = [
   ...collections.map((c) => ({ to: paths.collection(c.slug), label: c.label })),
-  { to: paths.shop, label: 'Shop all' },
+  { to: `${paths.shop}?for=women`, label: AUDIENCE_LABEL.women, audience: 'women' },
+  { to: `${paths.shop}?for=kids`, label: AUDIENCE_LABEL.kids, audience: 'kids' },
+  { to: `${paths.shop}?for=men`, label: AUDIENCE_LABEL.men, audience: 'men' },
+  { to: paths.shop, label: 'Shop all', audience: null },
 ]
 
 export function Wordmark({ className }: { className?: string }) {
@@ -27,7 +33,12 @@ export function Wordmark({ className }: { className?: string }) {
 }
 
 export function CustomerHeader() {
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
+  const currentAudience = new URLSearchParams(search).get('for')
+  const isLinkActive = (l: (typeof primaryLinks)[number]) =>
+    l.audience === undefined
+      ? pathname === l.to
+      : pathname === paths.shop && (currentAudience ?? null) === l.audience
   const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
@@ -46,10 +57,10 @@ export function CustomerHeader() {
     setHidden(y > prev && y > 400 && !menuOpen)
   })
 
-  // Close the mobile menu on navigation.
-  const [lastPath, setLastPath] = useState(pathname)
-  if (pathname !== lastPath) {
-    setLastPath(pathname)
+  // Close the mobile menu on navigation (including /shop?for=women → /shop?for=kids).
+  const [lastPath, setLastPath] = useState(pathname + search)
+  if (pathname + search !== lastPath) {
+    setLastPath(pathname + search)
     setMenuOpen(false)
   }
 
@@ -197,20 +208,19 @@ export function CustomerHeader() {
           <nav aria-label="Primary" className="hidden border-t border-line lg:block">
             <div className="mx-auto flex h-12 max-w-7xl items-center gap-1 px-4 sm:px-6 lg:px-8">
               {primaryLinks.map((l) => (
-                <NavLink
+                <Link
                   key={l.to}
                   to={l.to}
-                  className={({ isActive }) =>
-                    cn(
-                      'relative flex h-full items-center px-3 text-sm font-medium transition-colors',
-                      isActive
-                        ? 'text-sand after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:bg-sand'
-                        : 'text-ink-muted hover:text-ink',
-                    )
-                  }
+                  aria-current={isLinkActive(l) ? 'page' : undefined}
+                  className={cn(
+                    'relative flex h-full items-center px-3 text-sm font-medium transition-colors',
+                    isLinkActive(l)
+                      ? 'text-sand after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:bg-sand'
+                      : 'text-ink-muted hover:text-ink',
+                  )}
                 >
                   {l.label}
-                </NavLink>
+                </Link>
               ))}
               <Link
                 to={`${paths.shop}?sort=price_asc`}

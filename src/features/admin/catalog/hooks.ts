@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { SIZE_CHART_QUERY_KEY } from '@/features/catalog/hooks/useSizeConversions'
 import { brandService, sizeService, type SizeInput } from '@/services/dashboard/dashboard.service'
 
 const KEYS = {
@@ -30,7 +31,11 @@ export const useSizeChart = () =>
 
 export function useSizeMutations() {
   const qc = useQueryClient()
-  const done = () => qc.invalidateQueries({ queryKey: KEYS.sizes })
+  const done = () => {
+    qc.invalidateQueries({ queryKey: KEYS.sizes })
+    // Storefront EU → UK labels read the same chart.
+    qc.invalidateQueries({ queryKey: SIZE_CHART_QUERY_KEY })
+  }
   return {
     create: useMutation({ mutationFn: (s: SizeInput) => sizeService.create(s), onSuccess: done }),
     update: useMutation({

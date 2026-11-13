@@ -1,13 +1,63 @@
 import { Check } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { cn } from '@/lib/utils/cn'
-import type { Availability, ProductFacets } from '@/types/product'
+import { KIDS_MAX_EU_EXCLUSIVE } from '@/services/products/product.query'
+import type { Audience, Availability, ProductFacets } from '@/types/product'
 import type { CatalogFiltersApi } from '../../hooks/useCatalogFilters'
+import { useSizeConversions } from '../../hooks/useSizeConversions'
 import { FilterGroup } from './FilterGroup'
 
 interface FilterProps {
   api: CatalogFiltersApi
   facets?: ProductFacets
+}
+
+/* ── Shop for (audience) ──────────────────────────────────────────────── */
+
+export function AudienceFilter({ api, facets }: FilterProps) {
+  const options: Array<{ value: Audience | null; label: string; hint?: string; count?: number }> = [
+    { value: null, label: 'Everyone' },
+    { value: 'men', label: 'Men', count: facets?.audiences.men },
+    { value: 'women', label: 'Women', hint: 'Includes kids’ pairs', count: facets?.audiences.women },
+    { value: 'kids', label: 'Kids', hint: `Sizes under EU ${KIDS_MAX_EU_EXCLUSIVE} / UK 7`, count: facets?.audiences.kids },
+  ]
+  return (
+    <FilterGroup title="Shop for" badge={api.state.audience ? 1 : 0} onClear={() => api.update({ audience: null })}>
+      <div role="radiogroup" aria-label="Shop for" className="flex flex-col gap-1">
+        {options.map((o) => {
+          const active = api.state.audience === o.value
+          return (
+            <button
+              key={o.value ?? 'all'}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => api.update({ audience: o.value })}
+              className="group flex items-center justify-between rounded-sm py-1.5 text-left text-sm"
+            >
+              <span className="flex items-center gap-3">
+                <span
+                  className={cn(
+                    'grid size-4 shrink-0 place-items-center rounded-full border transition-colors',
+                    active ? 'border-sand' : 'border-bone/30 group-hover:border-bone/60',
+                  )}
+                >
+                  {active && <span className="size-2 rounded-full bg-sand" />}
+                </span>
+                <span>
+                  <span className={cn('block', active ? 'text-bone' : 'text-bone/70 group-hover:text-bone')}>
+                    {o.label}
+                  </span>
+                  {o.hint && <span className="block text-[11px] text-ink-subtle">{o.hint}</span>}
+                </span>
+              </span>
+              {o.count != null && <span className="text-xs text-ink-subtle tabular-nums">{o.count}</span>}
+            </button>
+          )
+        })}
+      </div>
+    </FilterGroup>
+  )
 }
 
 /* ── Availability ─────────────────────────────────────────────────────── */
@@ -118,20 +168,23 @@ export function BrandFilter({ api, facets }: FilterProps) {
 
 /* ── Size ─────────────────────────────────────────────────────────────── */
 
-/** EU sizes the store carries. Sizes with no matching stock render disabled. */
+/** EU sizes the store carries (UK shown underneath). Sizes with no matching stock render disabled. */
 const SIZE_RANGE = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']
 
 export function SizeFilter({ api, facets }: FilterProps) {
   const counts = new Map(facets?.sizes.map((s) => [s.value, s.count]))
+  const conv = useSizeConversions()
   const sizes = [...new Set([...SIZE_RANGE, ...counts.keys()])].sort((a, b) => Number(a) - Number(b))
 
   return (
-    <FilterGroup title="Size (EU)" badge={api.state.sizes.length} onClear={() => api.update({ sizes: [] })}>
+    <FilterGroup title="Size (EU / UK)" badge={api.state.sizes.length} onClear={() => api.update({ sizes: [] })}>
       <div className="grid grid-cols-4 gap-2" role="group" aria-label="Shoe sizes">
         {sizes.map((size) => {
           const selected = api.state.sizes.includes(size)
           const count = counts.get(size) ?? 0
           const disabled = !selected && count === 0
+          const uk = conv.uk(size)
+          const label = conv.label(size, ' / ')
           return (
             <button
               key={size}
@@ -139,18 +192,20 @@ export function SizeFilter({ api, facets }: FilterProps) {
               aria-pressed={selected}
               disabled={disabled}
               title={
-                disabled ? `No pairs in EU ${size}` : `${count} pair${count === 1 ? '' : 's'} in EU ${size}`
+                disabled ? `No pairs in ${label}` : `${count} pair${count === 1 ? '' : 's'} in ${label}`
               }
+              aria-label={label}
               onClick={() => api.toggle('sizes', size)}
               className={cn(
-                'h-10 rounded-sm border font-display text-sm tabular-nums transition-colors',
+                'flex h-12 flex-col items-center justify-center rounded-sm border font-display text-sm leading-tight tabular-nums transition-colors',
                 selected
                   ? 'border-sand bg-sand text-night'
                   : 'border-bone/15 text-bone/80 hover:border-bone/50 hover:text-bone',
                 disabled && 'cursor-not-allowed border-bone/5 text-bone/20 line-through hover:border-bone/5',
               )}
             >
-              {size}
+              <span>{size}</span>
+              {uk && <span className="text-[10px] opacity-70">UK {uk}</span>}
             </button>
           )
         })}
@@ -262,6 +317,7 @@ export function PriceFilter({ api, facets }: FilterProps) {
 export function FilterPanel({ api, facets }: FilterProps) {
   return (
     <div>
+      <AudienceFilter api={api} facets={facets} />
       <AvailabilityFilter api={api} facets={facets} />
       <BrandFilter api={api} facets={facets} />
       <SizeFilter api={api} facets={facets} />

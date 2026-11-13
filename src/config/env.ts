@@ -23,6 +23,10 @@ const schema = z.object({
     .enum(['true', 'false'])
     .default('false')
     .transform((v) => v === 'true'),
+  VITE_AI_PHOTO_STUDIO: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
 })
 
 // Treat empty strings from .env files as "not set".
@@ -82,6 +86,8 @@ export const env = {
   productImagesBucket: e.VITE_PRODUCT_IMAGES_BUCKET,
   /** Serve the in-memory demo catalog. Forced on until Supabase is configured. */
   useDemoCatalog: e.VITE_USE_DEMO_CATALOG || !(e.VITE_SUPABASE_URL && e.VITE_SUPABASE_ANON_KEY),
+  /** Offer the AI photo studio (needs the `photo-studio` Edge Function + OPENAI_API_KEY secret). */
+  aiPhotoStudio: e.VITE_AI_PHOTO_STUDIO,
   /** Only honoured in dev builds. */
   devAdminBypass: import.meta.env.DEV && e.VITE_DEV_ADMIN_BYPASS,
   isDev: import.meta.env.DEV,

@@ -1,4 +1,7 @@
-import type { ConditionGrade, DefectSeverity, ProductImageView } from '@/types/product'
+import type { Audience, ConditionGrade, DefectSeverity, ProductImageView } from '@/types/product'
+
+/** Storefront "Shop for" options. */
+export const AUDIENCE_LABEL: Record<Audience, string> = { men: 'Men', women: 'Women', kids: 'Kids' }
 
 /** Customer-facing explanation of each condition grade, best to worst. */
 export const CONDITION_META: Record<ConditionGrade, { label: string; description: string; rank: number }> = {

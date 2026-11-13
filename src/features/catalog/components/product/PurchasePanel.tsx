@@ -8,6 +8,7 @@ import { cartStore, useCart } from '@/features/cart/store/cart-store'
 import { WishlistButton } from '@/features/wishlist/WishlistButton'
 import { discountPercent, formatPrice, formatPriceCode } from '@/lib/utils/format'
 import type { Product } from '@/types/product'
+import { useSizeConversions } from '../../hooks/useSizeConversions'
 import { CollectionBadge } from '../CollectionBadge'
 import { ConditionMeter, DefectList, SizeSelector, StockStatus } from './ProductDetails'
 
@@ -19,6 +20,7 @@ interface PurchasePanelProps {
 export function PurchasePanel({ product, isDemo }: PurchasePanelProps) {
   const navigate = useNavigate()
   const cart = useCart()
+  const sizes = useSizeConversions()
 
   const inStock = product.variants.filter((v) => v.quantity > 0)
   const totalStock = inStock.reduce((n, v) => n + v.quantity, 0)
@@ -49,7 +51,7 @@ export function PurchasePanel({ product, isDemo }: PurchasePanelProps) {
       brand: product.brand,
       collection: product.collection,
       imageUrl: product.images[0]?.url ?? null,
-      sizeLabel: `EU ${variant.size.value}`,
+      sizeLabel: sizes.label(variant.size.value, ' / '),
       sku: variant.sku,
       unitPrice: price,
       maxQuantity: variant.quantity,
@@ -114,9 +116,9 @@ export function PurchasePanel({ product, isDemo }: PurchasePanelProps) {
       <div className="mt-8 border-t border-bone/10 pt-6">
         <div className="mb-3 flex items-baseline justify-between">
           <h2 id="size-heading" className="text-sm font-medium text-ink">
-            Size <span className="text-ink-subtle">(EU)</span>
+            Size <span className="text-ink-subtle">(EU / UK)</span>
           </h2>
-          {variant && <span className="text-xs text-ink-muted">Selected: EU {variant.size.value}</span>}
+          {variant && <span className="text-xs text-ink-muted">Selected: {sizes.label(variant.size.value)}</span>}
         </div>
         <SizeSelector
           variants={product.variants}

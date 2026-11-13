@@ -4,7 +4,7 @@ import type { ProductWithRelationsRow } from '@/types/database'
 import type { Product, ProductFacets, ProductFilters, ProductSummary } from '@/types/product'
 import { fromPostgrestError, unwrap } from '../core/errors'
 import { mapProduct, PRODUCT_SELECT } from './product.mappers'
-import { computeFacets, filterProducts, relatedTo, sortProducts, toSummary } from './product.query'
+import { computeFacets, filterProducts, relatedTo, sortProducts, summaryFor, toSummary } from './product.query'
 
 export const DEFAULT_PAGE_SIZE = 24
 
@@ -46,7 +46,7 @@ export const productService: ProductService = {
   async list(filters = {}) {
     const scope = await loadScope(filters)
     const rows = sortProducts(filterProducts(scope, filters), filters)
-    return paginate(rows.map(toSummary), filters.page, filters.pageSize)
+    return paginate(rows.map(summaryFor(filters.audience)), filters.page, filters.pageSize)
   },
 
   async getFacets(filters = {}) {

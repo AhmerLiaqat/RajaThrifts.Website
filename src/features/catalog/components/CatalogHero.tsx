@@ -7,6 +7,7 @@ import { COLLECTION_META, type CollectionMeta } from '@/constants/collections'
 import { cn } from '@/lib/utils/cn'
 import { COLLECTION_PHOTOS, unsplash, unsplashSrcSet } from '@/mocks/demo-media'
 import { motion as m } from '@/theme/tokens'
+import type { Audience } from '@/types/product'
 
 const TABS = [
   { to: paths.shop, label: 'All' },
@@ -47,16 +48,35 @@ export function CollectionTabs() {
   )
 }
 
+/** Shop page copy when a "Shop for" option is picked from the menu or filters. */
+const AUDIENCE_HERO: Record<Audience, { title: string; tagline: string }> = {
+  women: {
+    title: 'Women',
+    tagline: 'Women’s, kids’ and unisex pairs, every size. Filter by brand, size, price and availability.',
+  },
+  kids: {
+    title: 'Kids',
+    tagline: 'Kids’, women’s and unisex pairs in sizes under EU 41 / UK 7. Filter by brand, size, price and availability.',
+  },
+  men: {
+    title: 'Men',
+    tagline: 'Men’s and unisex pairs. Filter by brand, size, price and availability.',
+  },
+}
+
 interface CatalogHeroProps {
   meta?: CollectionMeta
+  /** Active "Shop for" choice on the shop page. */
+  audience?: Audience | null
   total?: number
   isDemo?: boolean
 }
 
 /** Cinematic banner: photographic for collections, typographic for Shop All. */
-export function CatalogHero({ meta, total, isDemo }: CatalogHeroProps) {
+export function CatalogHero({ meta, audience, total, isDemo }: CatalogHeroProps) {
   const photo = meta ? COLLECTION_PHOTOS[meta.value] : null
-  const title = meta?.label ?? 'Shop all'
+  const forAudience = !meta && audience ? AUDIENCE_HERO[audience] : null
+  const title = meta?.label ?? forAudience?.title ?? 'Shop all'
 
   return (
     <section className="hero-navy relative isolate overflow-hidden text-white">
@@ -100,6 +120,7 @@ export function CatalogHero({ meta, total, isDemo }: CatalogHeroProps) {
           <div className="max-w-lg">
             <p className="text-sm leading-relaxed text-white/75 sm:text-base">
               {meta?.tagline ??
+                forAudience?.tagline ??
                 'Every pair in stock across PREMIUM, A CATEGORY and B CATEGORY. Filter by brand, size, price and availability.'}
             </p>
             {isDemo && <DemoTag className="mt-4" label="Sample listings" />}

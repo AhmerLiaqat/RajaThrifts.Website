@@ -31,6 +31,7 @@ export function CatalogView({ meta }: { meta?: CollectionMeta }) {
     <>
       <CatalogHero
         meta={meta}
+        audience={api.state.audience}
         total={facets.data ? facets.data.availability.in_stock : undefined}
         isDemo={isDemo}
       />

@@ -1,6 +1,6 @@
 import { DEMO_PRODUCTS } from '@/mocks/demo-catalog'
 import { ServiceError } from '../core/errors'
-import { computeFacets, filterProducts, isInStock, relatedTo, sortProducts, toSummary } from './product.query'
+import { computeFacets, filterProducts, isInStock, relatedTo, sortProducts, summaryFor, toSummary } from './product.query'
 import { paginate, type ProductService } from './product.service'
 
 /** Small artificial latency so loading states are exercised during development. */
@@ -20,7 +20,7 @@ export const demoProductService: ProductService = {
   async list(filters = {}) {
     await delay()
     const rows = sortProducts(filterProducts(DEMO_PRODUCTS, filters), filters)
-    return paginate(rows.map(toSummary), filters.page, filters.pageSize)
+    return paginate(rows.map(summaryFor(filters.audience)), filters.page, filters.pageSize)
   },
 
   async getFacets(filters = {}) {
