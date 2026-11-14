@@ -20,7 +20,15 @@ const STATIC_PAGES = [
 ]
 
 function readEnvFile() {
-  const here = path.dirname(fileURLToPath(import.meta.url))
+  // Netlify may bundle this file as CommonJS, where import.meta.url is undefined: never let that crash.
+  let here = process.cwd()
+  try {
+    // eslint-disable-next-line no-undef
+    if (typeof __dirname === 'string') here = __dirname
+    else if (import.meta && import.meta.url) here = path.dirname(fileURLToPath(import.meta.url))
+  } catch {
+    // keep process.cwd()
+  }
   const candidates = [
     path.join(process.cwd(), '.env.production'),
     path.join(process.env.LAMBDA_TASK_ROOT ?? '', '.env.production'),
@@ -110,9 +118,10 @@ export function buildSitemap(cfg, products) {
 }
 
 export const handler = async (event) => {
-  const cfg = config(event)
+  let cfg = { site: 'https://rajathrifts.com', supabaseUrl: '', key: '', bucket: 'product-images' }
   let products = []
   try {
+    cfg = config(event)
     products = await fetchProducts(cfg)
   } catch (e) {
     // Still serve the shop pages so Google never sees a broken sitemap.
