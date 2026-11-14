@@ -5,6 +5,7 @@ import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react
 import { paths } from '@/app/router/paths'
 import { Button, Input } from '@/components/ui'
 import { Alert } from '@/components/ui/Field'
+import { useSeo } from '@/lib/seo/useSeo'
 import { authService } from '@/services'
 import { AuthShell } from '../components/AuthShell'
 import { authAvailable, useAuth, useSignIn, useSignOut } from '../hooks/useAuth'
@@ -35,6 +36,7 @@ function explain(message: string): { title: string; body: string; unconfirmed?: 
 
 /** Staff sign-in. Customers never need an account (guest checkout). */
 export default function LoginPage() {
+  useSeo({ title: 'Admin login', noindex: true })
   const navigate = useNavigate()
   const location = useLocation()
   const [params] = useSearchParams()

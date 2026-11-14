@@ -5,7 +5,7 @@
 # trigger "Clear cache and deploy site":
 #   VITE_SUPABASE_URL        = https://<project-ref>.supabase.co
 #   VITE_SUPABASE_ANON_KEY   = <anon / publishable key>   (never the service_role key)
-#   VITE_APP_URL             = https://rajathrifts.netlify.app
+#   VITE_APP_URL             = https://rajathrifts.com
 #   VITE_USE_DEMO_CATALOG    = false
 # Vite bakes VITE_* values in at build time, so a redeploy is required after any change.
 
@@ -16,12 +16,46 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# Serverless functions (the live sitemap). .env.production is bundled so the function
+# can read the public Supabase URL + publishable key without extra Netlify settings.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  included_files = [".env.production"]
+
+# One address for Google: the old Netlify address moves permanently to https://rajathrifts.com
+# (www → rajathrifts.com is handled by Netlify once rajathrifts.com is the primary domain).
+[[redirects]]
+  from = "https://rajathrifts.netlify.app/*"
+  to = "https://rajathrifts.com/:splat"
+  status = 301
+  force = true
+
+# Google sitemap, generated live from the products in Supabase.
+# Must stay ABOVE the single-page-app rule below.
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/.netlify/functions/sitemap"
+  status = 200
+  force = true
+
 # Single-page app: let React Router handle every path (/shop, /dashboard, ...)
 # instead of Netlify returning 404 on refresh or direct links.
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Keep the admin dashboard and sign-in pages out of search results.
+[[headers]]
+  for = "/dashboard/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/login"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
 
 # Long-lived caching for fingerprinted build assets.
 [[headers]]

@@ -1,0 +1,14 @@
+# Raja Thrifts: let search engines index the shop, keep private pages out.
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /account
+Disallow: /cart
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /order-confirmed/
+
+Sitemap: https://rajathrifts.com/sitemap.xml

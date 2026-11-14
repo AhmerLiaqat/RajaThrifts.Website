@@ -5,7 +5,6 @@ import { paths } from '@/app/router/paths'
 import { DemoTag } from '@/components/ui/DemoTag'
 import { CollectionBadge } from '@/features/catalog/components/CollectionBadge'
 import { discountPercent, formatPrice } from '@/lib/utils/format'
-import { formatSize } from '@/lib/utils/sizes'
 import { HERO_SHOWCASE_PHOTO, unsplash, unsplashSrcSet } from '@/mocks/demo-media'
 import { sizeOptions } from '@/services/products/product.query'
 import { motion as m } from '@/theme/tokens'
@@ -40,9 +39,16 @@ export function HeroSection() {
   const off = featured ? discountPercent(featured.price, featured.compareAtPrice) : 0
 
   // Quick-shop shortcuts built from what is actually in stock.
-  // EU sizes with the UK / US most often entered for them (they vary by brand).
-  const sizes = sizeOptions(inStock.flatMap((p) => p.availableSizes))
-  const fallbackSizes = ['39', '40', '41', '42', '43', '44'].map((value) => ({ value, uk: null, us: null }))
+  // EU and UK sizes are listed separately, each as entered by staff per pair.
+  const inStockSizes = inStock.flatMap((p) => p.availableSizes)
+  const euSizes = sizeOptions(inStockSizes).map((s) => s.value)
+  const ukSizes = [...new Set(inStockSizes.map((s) => s.uk).filter((v): v is string => !!v))].sort(
+    (a, b) => Number(a) - Number(b),
+  )
+  const sizeRows = [
+    { system: 'EU', param: 'size', values: euSizes.length ? euSizes : ['39', '40', '41', '42', '43', '44'] },
+    { system: 'UK', param: 'uk', values: ukSizes.length ? ukSizes : ['6', '7', '8', '9', '10'] },
+  ] as const
   const brandCounts = inStock.reduce<Record<string, number>>((acc, p) => {
     acc[p.brand] = (acc[p.brand] ?? 0) + 1
     return acc
@@ -196,24 +202,24 @@ export function HeroSection() {
           className="relative z-10 mx-auto -mt-14 grid max-w-6xl gap-5 rounded-2xl border border-line bg-white p-5 shadow-[0_20px_50px_-25px_rgb(17_26_51/0.35)] sm:mx-6 md:grid-cols-2 md:p-6 lg:mx-auto"
         >
           <div>
-            <p className="text-sm font-bold text-ink">Shop by size (EU / UK / US)</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {(sizes.length ? sizes : fallbackSizes).map((s) => (
-                <Link
-                  key={s.value}
-                  to={`${paths.shop}?size=${encodeURIComponent(s.value)}&stock=in_stock`}
-                  aria-label={formatSize(s, ', ')}
-                  className="group/size flex h-14 min-w-14 flex-col items-center justify-center rounded-lg border border-line-strong px-2 text-sm leading-tight font-semibold text-ink transition-all hover:-translate-y-0.5 hover:border-sand hover:bg-sand hover:text-white"
-                >
-                  <span>EU {s.value}</span>
-                  {(s.uk || s.us) && (
-                    <span className="text-[10px] font-medium text-ink-subtle group-hover/size:text-white/80">
-                      {[s.uk && `UK ${s.uk}`, s.us && `US ${s.us}`].filter(Boolean).join(' · ')}
-                    </span>
-                  )}
-                </Link>
-              ))}
-            </div>
+            <p className="text-sm font-bold text-ink">Shop by size</p>
+            {sizeRows.map((row) => (
+              <div key={row.system} className="mt-3 flex items-start gap-3">
+                <span className="mt-2.5 w-7 shrink-0 text-xs font-bold tracking-wide text-ink-subtle">{row.system}</span>
+                <div className="flex flex-wrap gap-2">
+                  {row.values.map((v) => (
+                    <Link
+                      key={v}
+                      to={`${paths.shop}?${row.param}=${encodeURIComponent(v)}&stock=in_stock`}
+                      aria-label={`Shop ${row.system} size ${v}`}
+                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-lg border border-line-strong px-2.5 text-sm font-semibold text-ink tabular-nums transition-all hover:-translate-y-0.5 hover:border-sand hover:bg-sand hover:text-white"
+                    >
+                      {v}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
           <div>
             <p className="text-sm font-bold text-ink">Popular brands</p>

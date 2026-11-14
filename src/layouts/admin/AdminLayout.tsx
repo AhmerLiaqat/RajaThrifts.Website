@@ -7,6 +7,7 @@ import { PageLoader } from '@/components/feedback/PageLoader'
 import { SupabaseNotice } from '@/components/feedback/SupabaseNotice'
 import { Logo } from '@/components/brand/Logo'
 import { env } from '@/config/env'
+import { useSeo } from '@/lib/seo/useSeo'
 import { motion as m } from '@/theme/tokens'
 import { AdminSidebar, DashboardNav } from './AdminSidebar'
 import { NewOrderAlerts } from './NewOrderAlerts'
@@ -17,6 +18,7 @@ import { NewOrderAlerts } from './NewOrderAlerts'
  * slide-out drawer on mobile.
  */
 export function AdminLayout() {
+  useSeo({ title: 'Dashboard', noindex: true })
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
 
