@@ -32,8 +32,14 @@ export type SizeSystem = 'EU' | 'UK' | 'US'
 
 export interface ShoeSize {
   system: SizeSystem
-  /** Stored as a string to allow values like "42.5" or "9.5". */
+  /** The EU size. Stored as a string to allow values like "42.5". */
   value: string
+  /** UK size entered for this pair (null only on older listings that were never re-saved). */
+  uk: string | null
+  /** US size entered for this pair (null only on older listings that were never re-saved). */
+  us: string | null
+  /** Optional foot / insole length in cm, e.g. "26.5". */
+  cm: string | null
 }
 
 /**
@@ -159,10 +165,23 @@ export interface FacetCount {
   count: number
 }
 
+/** An EU size option with the UK / US sizes most often entered for it (they vary by brand). */
+export interface SizeFacet extends FacetCount {
+  uk: string | null
+  us: string | null
+}
+
 /** Options and counts for building the filter UI within a scope (e.g. one collection). */
+/** A shoe type (category) option. `value` is the slug. */
+export interface CategoryFacet extends FacetCount {
+  name: string
+}
+
 export interface ProductFacets {
   brands: FacetCount[]
-  sizes: FacetCount[]
+  /** Shoe types (categories) with matching pairs, ignoring the current shoe-type choice. */
+  categories: CategoryFacet[]
+  sizes: SizeFacet[]
   price: { min: MinorUnits; max: MinorUnits }
   availability: Record<Exclude<Availability, 'all'>, number>
   /** Matching pairs per "Shop for" option, ignoring the current audience choice. */

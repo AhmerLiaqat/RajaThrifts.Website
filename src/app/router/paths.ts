@@ -30,7 +30,6 @@ export const paths = {
     productImport: '/dashboard/products/import',
     productEdit: (id = ':productId') => `/dashboard/products/${id}`,
     brands: '/dashboard/brands',
-    sizes: '/dashboard/sizes',
     inventory: '/dashboard/inventory',
     orders: '/dashboard/orders',
     returns: '/dashboard/returns',

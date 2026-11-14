@@ -13,7 +13,6 @@ import type {
   ReturnReason,
   ReturnRequest,
   ReturnStatus,
-  SizeChartRow,
   StoreSettings,
 } from '@/types/dashboard'
 import type { ProductStatus } from '@/types/product'
@@ -24,7 +23,6 @@ import { productImageUrl } from '../core/storage'
 import { slugify } from '../products/admin-product.service'
 
 const clean = (s?: string) => s?.replace(/[,()%*\\]/g, ' ').trim() || ''
-const num = (v: NumericPkr | null | undefined) => (v == null ? null : String(Number(v)))
 
 // ── Overview & settings ───────────────────────────────────────────────────────
 interface SummaryJson {
@@ -183,54 +181,6 @@ export const brandService = {
     const { data, error } = await getSupabase().from('brands').delete().eq('id', id).select('id')
     if (error) throw fromPostgrestError(error)
     if (!data?.length) throw new Error('Only admins can delete brands.')
-  },
-}
-
-// ── Size chart ────────────────────────────────────────────────────────────────
-interface SizeRow {
-  id: string
-  eu: NumericPkr
-  uk: NumericPkr | null
-  us_men: NumericPkr | null
-  us_women: NumericPkr | null
-  foot_length_cm: NumericPkr | null
-  is_active: boolean
-}
-export type SizeInput = Omit<SizeChartRow, 'id'>
-
-const sizeToRow = (s: SizeInput) => ({
-  eu: Number(s.eu),
-  uk: s.uk ? Number(s.uk) : null,
-  us_men: s.usMen ? Number(s.usMen) : null,
-  us_women: s.usWomen ? Number(s.usWomen) : null,
-  foot_length_cm: s.footLengthCm ? Number(s.footLengthCm) : null,
-  is_active: s.isActive,
-})
-
-export const sizeService = {
-  async list(): Promise<SizeChartRow[]> {
-    const { data, error } = await getSupabase().from('shoe_sizes').select('*').order('eu')
-    if (error) throw fromPostgrestError(error)
-    return (data as SizeRow[]).map((r) => ({
-      id: r.id,
-      eu: num(r.eu)!,
-      uk: num(r.uk),
-      usMen: num(r.us_men),
-      usWomen: num(r.us_women),
-      footLengthCm: num(r.foot_length_cm),
-      isActive: r.is_active,
-    }))
-  },
-  async create(s: SizeInput) {
-    check(await getSupabase().from('shoe_sizes').insert(sizeToRow(s)))
-  },
-  async update(id: string, s: SizeInput) {
-    check(await getSupabase().from('shoe_sizes').update(sizeToRow(s)).eq('id', id))
-  },
-  async remove(id: string) {
-    const { data, error } = await getSupabase().from('shoe_sizes').delete().eq('id', id).select('id')
-    if (error) throw fromPostgrestError(error)
-    if (!data?.length) throw new Error('Only admins can delete sizes. Deactivate it instead.')
   },
 }
 

@@ -22,7 +22,7 @@ export const mapVariant = (row: ProductVariantRow): ProductVariant => ({
   id: row.id,
   productId: row.product_id,
   sku: row.sku,
-  size: { system: row.size_system, value: row.size_value },
+  size: { system: row.size_system, value: row.size_value, uk: row.uk_size ?? null, us: row.us_size ?? null, cm: row.cm_size ?? null },
   quantity: row.quantity,
   priceOverride: pkrToMinorOrNull(row.price_override),
   createdAt: row.created_at,

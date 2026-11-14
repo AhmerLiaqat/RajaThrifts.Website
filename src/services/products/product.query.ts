@@ -6,6 +6,7 @@
 import type {
   Audience,
   Availability,
+  CategoryFacet,
   FacetCount,
   Gender,
   Product,
@@ -13,6 +14,8 @@ import type {
   ProductFilters,
   ProductSummary,
   ProductVariant,
+  ShoeSize,
+  SizeFacet,
 } from '@/types/product'
 
 /** Kids' pairs must be smaller than EU 41 (UK 7). */
@@ -85,7 +88,7 @@ const matchesSearch = (p: Product, term: string) => {
 const matchesAvailability = (p: Product, availability: Availability = 'all', audience?: Audience) =>
   availability === 'all' ? true : availability === 'in_stock' ? isInStock(p, audience) : !isInStock(p, audience)
 
-type FilterKey = 'brands' | 'sizes' | 'price' | 'availability' | 'audience'
+type FilterKey = 'brands' | 'sizes' | 'price' | 'availability' | 'audience' | 'category'
 
 /**
  * Applies filters. `ignore` skips one dimension, which is how facet counts are
@@ -100,7 +103,7 @@ export function filterProducts(products: Product[], f: ProductFilters, ignore?: 
     if (f.collection && p.collection !== f.collection) return false
     if (f.gender && p.gender !== f.gender) return false
     if (audience && !matchesAudience(p, audience)) return false
-    if (f.category && p.category?.slug !== f.category) return false
+    if (ignore !== 'category' && f.category && p.category?.slug !== f.category) return false
     if (f.condition && p.condition !== f.condition) return false
     if (f.search && !matchesSearch(p, f.search)) return false
     if (ignore !== 'brands' && brands?.length && !brands.includes(norm(p.brand))) return false
@@ -138,22 +141,58 @@ const countBy = (values: string[]): FacetCount[] => {
   return [...map.entries()].map(([value, count]) => ({ value, count }))
 }
 
+const mostCommon = (values: Array<string | null>) => {
+  const counts = new Map<string, number>()
+  for (const v of values) if (v) counts.set(v, (counts.get(v) ?? 0) + 1)
+  let best: string | null = null
+  for (const [v, n] of counts) if (best == null || n > counts.get(best)!) best = v
+  return best
+}
+
+/** EU size options with their most common UK / US equivalents, smallest first. */
+export function sizeOptions(sizes: ShoeSize[]): Array<Omit<SizeFacet, 'count'> & { count: number }> {
+  const byEu = new Map<string, ShoeSize[]>()
+  for (const s of sizes) byEu.set(s.value, [...(byEu.get(s.value) ?? []), s])
+  return [...byEu.entries()]
+    .map(([value, list]) => ({
+      value,
+      count: list.length,
+      uk: mostCommon(list.map((s) => s.uk)),
+      us: mostCommon(list.map((s) => s.us)),
+    }))
+    .sort((a, b) => Number(a.value) - Number(b.value))
+}
+
 /** Facet options + counts for the current filter state. */
 export function computeFacets(products: Product[], f: ProductFilters): ProductFacets {
   const scope = products.filter((p) => isPublic(p) && (!f.collection || p.collection === f.collection))
   const brands = countBy(filterProducts(products, f, 'brands').map((p) => p.brand)).sort((a, b) =>
     a.value.localeCompare(b.value),
   )
-  const sizes = countBy(
-    filterProducts(products, f, 'sizes').flatMap((p) => [
-      ...new Set(p.variants.filter((v) => v.quantity > 0 && fitsAudience(v, f.audience)).map((v) => v.size.value)),
-    ]),
-  ).sort((a, b) => Number(a.value) - Number(b.value))
+  // One entry per product per EU size (a pair counts once even with two variants of that size).
+  const sizes = sizeOptions(
+    filterProducts(products, f, 'sizes').flatMap((p) => {
+      const seen = new Set<string>()
+      return p.variants
+        .filter((v) => v.quantity > 0 && fitsAudience(v, f.audience))
+        .map((v) => v.size)
+        .filter((s) => !seen.has(s.value) && !!seen.add(s.value))
+    }),
+  )
+  const byCategory = new Map<string, CategoryFacet>()
+  for (const p of filterProducts(products, f, 'category')) {
+    if (!p.category) continue
+    const c = byCategory.get(p.category.slug) ?? { value: p.category.slug, name: p.category.name, count: 0 }
+    c.count++
+    byCategory.set(p.category.slug, c)
+  }
+  const categories = [...byCategory.values()].sort((a, b) => a.name.localeCompare(b.name))
   const forAvailability = filterProducts(products, f, 'availability')
   const prices = scope.map((p) => p.price)
 
   return {
     brands,
+    categories,
     sizes,
     price: { min: prices.length ? Math.min(...prices) : 0, max: prices.length ? Math.max(...prices) : 0 },
     availability: {

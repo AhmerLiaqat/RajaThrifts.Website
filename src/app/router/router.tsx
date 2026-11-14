@@ -49,7 +49,6 @@ const adminRoutes: RouteObject[] = [
     lazy: page(() => import('@/features/admin/products/pages/ProductEditorPage')),
   },
   { path: paths.admin.brands, lazy: page(() => import('@/features/admin/catalog/pages/BrandsPage')) },
-  { path: paths.admin.sizes, lazy: page(() => import('@/features/admin/catalog/pages/SizesPage')) },
   { path: paths.admin.inventory, lazy: page(() => import('@/features/admin/inventory/pages/InventoryPage')) },
   { path: paths.admin.orders, lazy: page(() => import('@/features/admin/orders/pages/OrdersPage')) },
   { path: paths.admin.returns, lazy: page(() => import('@/features/admin/returns/pages/ReturnsPage')) },

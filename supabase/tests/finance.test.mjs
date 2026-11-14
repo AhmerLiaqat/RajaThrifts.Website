@@ -68,7 +68,7 @@ await as(shop)
 const save = async (slug, name, price, sizes) =>
   (await q(`select save_product($1::jsonb, $2::jsonb) as id`, [
     JSON.stringify({ slug, name, brand_id: nike, collection: 'PREMIUM', condition: 'excellent', price: String(price), status: 'active' }),
-    JSON.stringify(sizes.map(([s, qty]) => ({ sku: `RT-T-${slug.toUpperCase()}-${s}`, size_value: s, quantity: qty }))),
+    JSON.stringify(sizes.map(([s, qty]) => ({ sku: `RT-T-${slug.toUpperCase()}-${s}`, size_value: s, uk_size: String(Number(s) - 34), us_size: String(Number(s) - 33), quantity: qty }))),
   ]))[0].id
 const A = await save('pair-a', 'Pair A', 25000, [['41', 1], ['42', 1], ['43', 1]])
 const B = await save('pair-b', 'Pair B', 20000, [['44', 2]])

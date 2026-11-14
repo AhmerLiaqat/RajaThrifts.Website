@@ -10,6 +10,8 @@ insert into public.categories (name, slug, sort_order) values
   ('Formal',            'formal',     5),
   ('Loafers',           'loafers',    6),
   ('Sandals & Slides',  'sandals',    7),
+  ('Hiking',            'hiking',     8),
+  ('Sports',            'sports',     9),
   ('Other',             'other',      99)
 on conflict (slug) do nothing;
 

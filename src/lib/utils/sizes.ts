@@ -1,47 +1,20 @@
+import type { ShoeSize } from '@/types/product'
+
+type SizeLike = Pick<ShoeSize, 'value' | 'uk' | 'us'> & { cm?: string | null }
+
 /**
- * EU ↔ UK shoe size helpers for the storefront.
- *
- * Sizes are stored in EU. The UK equivalent comes from the staff-managed size chart
- * (public.shoe_sizes); this default mirrors the chart seeded by the migrations so
- * customers still see UK sizes in demo mode or before the chart has loaded.
+ * Shoe size labels. Every pair stores its own EU, UK and US size (conversions vary by
+ * brand, so there is no shared chart) plus an optional length in cm. Older listings may be
+ * missing UK / US until re-saved.
  */
-export const DEFAULT_EU_TO_UK: Readonly<Record<string, string>> = {
-  '36': '3.5',
-  '37': '4.5',
-  '38': '5',
-  '39': '6',
-  '40': '6.5',
-  '41': '7.5',
-  '42': '8',
-  '43': '9',
-  '44': '9.5',
-  '45': '10.5',
-  '46': '11',
-  '47': '12',
+export function sizeParts(size: SizeLike): string[] {
+  return [
+    `EU ${size.value}`,
+    size.uk ? `UK ${size.uk}` : null,
+    size.us ? `US ${size.us}` : null,
+    size.cm ? `${size.cm} cm` : null,
+  ].filter((p): p is string => !!p)
 }
 
-/** "42.0" → "42", "42.50" → "42.5". Leaves non-numeric values untouched. */
-export function normalizeSize(value: string | number): string {
-  const n = Number(value)
-  return Number.isFinite(n) ? String(n) : String(value).trim()
-}
-
-export interface SizeConversions {
-  /** UK equivalent of an EU size, or null when the chart has none. */
-  uk: (eu: string) => string | null
-  /** "EU 42 · UK 8" (or "EU 42" when no UK size is known). */
-  label: (eu: string, separator?: string) => string
-}
-
-export function buildSizeConversions(map: ReadonlyMap<string, string>): SizeConversions {
-  const uk = (eu: string) => map.get(normalizeSize(eu)) ?? null
-  return {
-    uk,
-    label: (eu, separator = ' · ') => {
-      const u = uk(eu)
-      return u ? `EU ${normalizeSize(eu)}${separator}UK ${u}` : `EU ${normalizeSize(eu)}`
-    },
-  }
-}
-
-export const defaultSizeConversions = buildSizeConversions(new Map(Object.entries(DEFAULT_EU_TO_UK)))
+/** "EU 42 · UK 8 · US 9 · 26.5 cm" (separator configurable; cm only when set). */
+export const formatSize = (size: SizeLike, separator = ' · ') => sizeParts(size).join(separator)

@@ -5,9 +5,10 @@ import { paths } from '@/app/router/paths'
 import { DemoTag } from '@/components/ui/DemoTag'
 import { CollectionBadge } from '@/features/catalog/components/CollectionBadge'
 import { discountPercent, formatPrice } from '@/lib/utils/format'
+import { formatSize } from '@/lib/utils/sizes'
 import { HERO_SHOWCASE_PHOTO, unsplash, unsplashSrcSet } from '@/mocks/demo-media'
+import { sizeOptions } from '@/services/products/product.query'
 import { motion as m } from '@/theme/tokens'
-import { useSizeConversions } from '@/features/catalog/hooks/useSizeConversions'
 import { useHomeProducts } from '../useHomeProducts'
 
 const rise = (delay: number) => ({
@@ -26,7 +27,6 @@ const TRUST = [
 /** HERO: bold navy banner with ONE showcase pair (the one marked "Feature on the homepage"), then a quick-shop bar and trust row. */
 export function HeroSection() {
   const { items, isDemo } = useHomeProducts()
-  const conv = useSizeConversions()
   const inStock = items.filter((p) => p.totalStock > 0)
   // One pair only: the newest in-stock pair marked "Feature on the homepage" (premium first),
   // falling back to the newest premium pair, then the newest pair.
@@ -40,9 +40,9 @@ export function HeroSection() {
   const off = featured ? discountPercent(featured.price, featured.compareAtPrice) : 0
 
   // Quick-shop shortcuts built from what is actually in stock.
-  const sizes = [...new Set(inStock.flatMap((p) => p.availableSizes.map((s) => s.value)))]
-    .sort((a, b) => Number(a) - Number(b))
-    .slice(0, 10)
+  // EU sizes with the UK / US most often entered for them (they vary by brand).
+  const sizes = sizeOptions(inStock.flatMap((p) => p.availableSizes)).slice(0, 10)
+  const fallbackSizes = ['39', '40', '41', '42', '43', '44'].map((value) => ({ value, uk: null, us: null }))
   const brandCounts = inStock.reduce<Record<string, number>>((acc, p) => {
     acc[p.brand] = (acc[p.brand] ?? 0) + 1
     return acc
@@ -196,19 +196,19 @@ export function HeroSection() {
           className="relative z-10 mx-auto -mt-14 grid max-w-6xl gap-5 rounded-2xl border border-line bg-white p-5 shadow-[0_20px_50px_-25px_rgb(17_26_51/0.35)] sm:mx-6 md:grid-cols-2 md:p-6 lg:mx-auto"
         >
           <div>
-            <p className="text-sm font-bold text-ink">Shop by size (EU / UK)</p>
+            <p className="text-sm font-bold text-ink">Shop by size (EU / UK / US)</p>
             <div className="mt-3 flex flex-wrap gap-2">
-              {(sizes.length ? sizes : ['39', '40', '41', '42', '43', '44']).map((s) => (
+              {(sizes.length ? sizes : fallbackSizes).map((s) => (
                 <Link
-                  key={s}
-                  to={`${paths.shop}?size=${encodeURIComponent(s)}&stock=in_stock`}
-                  aria-label={conv.label(s, ', ')}
-                  className="group/size flex h-12 min-w-12 flex-col items-center justify-center rounded-lg border border-line-strong px-2 text-sm leading-tight font-semibold text-ink transition-all hover:-translate-y-0.5 hover:border-sand hover:bg-sand hover:text-white"
+                  key={s.value}
+                  to={`${paths.shop}?size=${encodeURIComponent(s.value)}&stock=in_stock`}
+                  aria-label={formatSize(s, ', ')}
+                  className="group/size flex h-14 min-w-14 flex-col items-center justify-center rounded-lg border border-line-strong px-2 text-sm leading-tight font-semibold text-ink transition-all hover:-translate-y-0.5 hover:border-sand hover:bg-sand hover:text-white"
                 >
-                  <span>{s}</span>
-                  {conv.uk(s) && (
+                  <span>EU {s.value}</span>
+                  {(s.uk || s.us) && (
                     <span className="text-[10px] font-medium text-ink-subtle group-hover/size:text-white/80">
-                      UK {conv.uk(s)}
+                      {[s.uk && `UK ${s.uk}`, s.us && `US ${s.us}`].filter(Boolean).join(' · ')}
                     </span>
                   )}
                 </Link>

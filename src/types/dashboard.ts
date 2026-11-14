@@ -67,16 +67,6 @@ export interface BrandWithCount extends BrandRef {
   productCount: number
 }
 
-export interface SizeChartRow {
-  id: ID
-  eu: string
-  uk: string | null
-  usMen: string | null
-  usWomen: string | null
-  footLengthCm: string | null
-  isActive: boolean
-}
-
 /** One SKU (size of a product) in the inventory view. */
 export interface InventoryRow {
   variantId: ID

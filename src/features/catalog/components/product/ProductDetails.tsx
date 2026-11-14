@@ -3,9 +3,9 @@ import { AlertTriangle, CircleCheck, Minus, Plus } from 'lucide-react'
 import { useId, useState, type ReactNode } from 'react'
 import { CONDITION_META, CONDITION_ORDER, DEFECT_SEVERITY_META } from '@/constants/product'
 import { cn } from '@/lib/utils/cn'
+import { formatSize } from '@/lib/utils/sizes'
 import { motion as m } from '@/theme/tokens'
 import type { ConditionGrade, ProductDefect, ProductVariant } from '@/types/product'
-import { useSizeConversions } from '../../hooks/useSizeConversions'
 
 /* ── Size selector ────────────────────────────────────────────────────── */
 
@@ -16,15 +16,14 @@ interface SizeSelectorProps {
 }
 
 export function SizeSelector({ variants, selectedId, onSelect }: SizeSelectorProps) {
-  const sizes = useSizeConversions()
   const sorted = [...variants].sort((a, b) => Number(a.size.value) - Number(b.size.value))
   return (
-    <div role="radiogroup" aria-label="Size (EU / UK)" className="flex flex-wrap gap-2">
+    <div role="radiogroup" aria-label="Size (EU / UK / US)" className="flex flex-wrap gap-2">
       {sorted.map((v) => {
         const soldOut = v.quantity === 0
         const selected = v.id === selectedId
-        const uk = sizes.uk(v.size.value)
-        const label = sizes.label(v.size.value, ', ')
+        const { uk, us, cm } = v.size
+        const label = formatSize(v.size, ', ')
         return (
           <button
             key={v.id}
@@ -36,15 +35,20 @@ export function SizeSelector({ variants, selectedId, onSelect }: SizeSelectorPro
             onClick={() => onSelect(v.id)}
             title={soldOut ? `${label} has sold` : label}
             className={cn(
-              'relative flex h-14 min-w-20 flex-col items-center justify-center rounded-sm border px-4 font-display tabular-nums transition-colors',
+              'relative flex min-h-16 min-w-24 flex-col py-2 items-center justify-center rounded-sm border px-4 font-display tabular-nums transition-colors',
               selected ? 'border-sand bg-sand text-night' : 'border-bone/20 text-bone hover:border-bone/60',
               soldOut && 'cursor-not-allowed border-bone/10 text-bone/25 line-through hover:border-bone/10',
             )}
           >
             <span className="text-sm leading-tight">EU {v.size.value}</span>
-            {uk && (
-              <span className={cn('text-[11px] leading-tight', selected ? 'text-night/75' : 'text-ink-muted', soldOut && 'text-bone/25')}>
-                UK {uk}
+            {(uk || us) && (
+              <span className={cn('mt-0.5 text-[11px] leading-tight', selected ? 'text-night/75' : 'text-ink-muted', soldOut && 'text-bone/25')}>
+                {[uk && `UK ${uk}`, us && `US ${us}`].filter(Boolean).join(' · ')}
+              </span>
+            )}
+            {cm && (
+              <span className={cn('text-[11px] leading-tight', selected ? 'text-night/75' : 'text-ink-subtle', soldOut && 'text-bone/25')}>
+                {cm} cm
               </span>
             )}
           </button>
@@ -141,8 +145,7 @@ export function DefectList({ defects, notes }: { defects: ProductDefect[]; notes
 /* ── Stock status ─────────────────────────────────────────────────────── */
 
 export function StockStatus({ variant, totalStock }: { variant: ProductVariant | null; totalStock: number }) {
-  const sizes = useSizeConversions()
-  const size = variant ? sizes.label(variant.size.value, ' / ') : ''
+  const size = variant ? formatSize(variant.size, ' / ') : ''
   let tone: 'ok' | 'low' | 'out'
   let text: string
   if (totalStock === 0) {

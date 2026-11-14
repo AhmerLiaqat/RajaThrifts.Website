@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils/cn'
 import { formatPrice } from '@/lib/utils/format'
 import { adminProductService } from '@/services'
 import { MIN_PRODUCT_IMAGES } from '@/types/product'
+import { formatSize } from '@/lib/utils/sizes'
 import { isAiStudioEnabled } from './aiStudio'
 import { isSupportedImage, loadStudioModel, processPhoto, type StudioMode, type StudioResult } from './photoStudio'
 import { VIEWS } from './runImport'
@@ -463,7 +464,14 @@ export default function BulkImportPage() {
                         </div>
                         <p className="mt-1 truncate font-semibold text-ink">{it.row.name || 'Untitled'}</p>
                         <p className="text-sm text-ink-muted">
-                          EU {it.row.sizes.join(', ') || '—'} ·{' '}
+                          {it.row.sizes.length
+                            ? it.row.sizes
+                                .map((eu, i) =>
+                                  formatSize({ value: eu, uk: it.row.ukSizes[i] ?? null, us: it.row.usSizes[i] ?? null, cm: it.row.cmSizes[i] ?? null }, ' / '),
+                                )
+                                .join(', ')
+                            : '—'}{' '}
+                          ·{' '}
                           {it.row.condition ? CONDITION_META[it.row.condition].label : '—'} ·{' '}
                           <span className="font-semibold text-ink">{it.row.price ? formatPrice(it.row.price * 100) : '—'}</span>
                           {it.row.originalPrice ? (
@@ -533,7 +541,7 @@ export default function BulkImportPage() {
                 </Button>
               </Step>
               <Step n={2} title="Fill one row per pair">
-                Give each pair a short <b>Code</b> (01, 02, 03…) plus brand, name, size, grade, condition and price.
+                Give each pair a short <b>Code</b> (01, 02, 03…) plus brand, name, <b>EU, UK and US size</b>, grade, condition and price.
               </Step>
               <Step n={3} title="Name the photos by Code">
                 Put each pair&apos;s photos in a folder named with its code (folder <b>01</b>), or name the files{' '}

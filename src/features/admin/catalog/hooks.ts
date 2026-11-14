@@ -1,10 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { SIZE_CHART_QUERY_KEY } from '@/features/catalog/hooks/useSizeConversions'
-import { brandService, sizeService, type SizeInput } from '@/services/dashboard/dashboard.service'
+import { brandService } from '@/services/dashboard/dashboard.service'
 
 const KEYS = {
   brands: ['admin', 'brands', 'counts'] as const,
-  sizes: ['admin', 'sizes'] as const,
 }
 
 export const useBrandsWithCounts = () => useQuery({ queryKey: KEYS.brands, queryFn: brandService.list })
@@ -22,26 +20,5 @@ export function useBrandMutations() {
       onSuccess: done,
     }),
     remove: useMutation({ mutationFn: (id: string) => brandService.remove(id), onSuccess: done }),
-  }
-}
-
-/** Size chart (public read). Used by the product editor and the sizes page. */
-export const useSizeChart = () =>
-  useQuery({ queryKey: KEYS.sizes, queryFn: sizeService.list, staleTime: 5 * 60_000 })
-
-export function useSizeMutations() {
-  const qc = useQueryClient()
-  const done = () => {
-    qc.invalidateQueries({ queryKey: KEYS.sizes })
-    // Storefront EU → UK labels read the same chart.
-    qc.invalidateQueries({ queryKey: SIZE_CHART_QUERY_KEY })
-  }
-  return {
-    create: useMutation({ mutationFn: (s: SizeInput) => sizeService.create(s), onSuccess: done }),
-    update: useMutation({
-      mutationFn: (v: { id: string; size: SizeInput }) => sizeService.update(v.id, v.size),
-      onSuccess: done,
-    }),
-    remove: useMutation({ mutationFn: (id: string) => sizeService.remove(id), onSuccess: done }),
   }
 }

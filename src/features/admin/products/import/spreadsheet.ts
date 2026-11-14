@@ -10,7 +10,10 @@ export const TEMPLATE_COLUMNS = [
   { key: 'code', header: 'Code', hint: 'Folder / photo name, e.g. 01' },
   { key: 'brand', header: 'Brand', hint: 'Nike, Adidas…' },
   { key: 'name', header: 'Name', hint: 'Air Max 90, White / Red' },
-  { key: 'size', header: 'Size (EU)', hint: '42 (or 42, 43)' },
+  { key: 'size', header: 'EU size', hint: 'Required. 42 (or 42, 43 for two sizes)' },
+  { key: 'ukSize', header: 'UK size', hint: 'Required. 8 (or 8, 9, in the same order as the EU sizes)' },
+  { key: 'usSize', header: 'US size', hint: 'Required. 9 (or 9, 10, in the same order as the EU sizes)' },
+  { key: 'cmSize', header: 'Size (cm)', hint: 'Optional. 26.5 (or 26, 26.5, in the same order as the EU sizes)' },
   { key: 'grade', header: 'Grade', hint: 'Premium / A / B' },
   { key: 'condition', header: 'Condition', hint: 'Like new / Excellent / Good / Fair' },
   { key: 'price', header: 'Price', hint: 'Selling price in PKR' },
@@ -31,7 +34,14 @@ export interface ImportRow {
   code: string
   brand: string
   name: string
+  /** EU sizes. */
   sizes: string[]
+  /** UK sizes, same order as `sizes`. */
+  ukSizes: string[]
+  /** US sizes, same order as `sizes`. */
+  usSizes: string[]
+  /** Optional lengths in cm, same order as `sizes` (empty when not given). */
+  cmSizes: string[]
   collection: Collection | null
   condition: ConditionGrade | null
   gender: Gender
@@ -52,11 +62,22 @@ const norm = (s: unknown) =>
     .replace(/\(.*?\)/g, '')
     .replace(/[^a-z0-9]/g, '')
 
+/** Like norm, but keeps text in brackets, so "Size (UK)" and "Size (EU)" stay different. */
+const normFull = (s: unknown) =>
+  String(s ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+
+const headerKey = (c: unknown): Key | undefined => HEADER_ALIASES[normFull(c)] ?? HEADER_ALIASES[norm(c)]
+
 const HEADER_ALIASES: Record<string, Key> = {
   code: 'code', folder: 'code', id: 'code', no: 'code', number: 'code', sr: 'code', srno: 'code',
   brand: 'brand',
   name: 'name', title: 'name', shoe: 'name', product: 'name', productname: 'name',
-  size: 'size', sizes: 'size', sizeeu: 'size', eu: 'size', eusize: 'size',
+  size: 'size', sizes: 'size', sizeeu: 'size', eu: 'size', eusize: 'size', eusizes: 'size',
+  uksize: 'ukSize', sizeuk: 'ukSize', uk: 'ukSize', uksizes: 'ukSize',
+  ussize: 'usSize', sizeus: 'usSize', us: 'usSize', ussizes: 'usSize',
+  sizecm: 'cmSize', cmsize: 'cmSize', cm: 'cmSize', length: 'cmSize', lengthcm: 'cmSize', footlength: 'cmSize', insole: 'cmSize', insolecm: 'cmSize',
   grade: 'grade', collection: 'grade', category: 'grade', tier: 'grade',
   condition: 'condition',
   price: 'price', sellingprice: 'price', saleprice: 'price',
@@ -111,7 +132,7 @@ function parseMoney(v: unknown): number | null {
 
 function parseSizes(v: unknown): string[] {
   return String(v ?? '')
-    .replace(/eu/gi, '')
+    .replace(/eu|uk|us|cm/gi, '')
     .split(/[,/;|&]+|\s+and\s+/i)
     .map((s) => s.trim().replace(/\s+/g, ''))
     .filter(Boolean)
@@ -161,12 +182,12 @@ async function readGrid(file: File): Promise<unknown[][]> {
 export async function readImportSheet(file: File): Promise<ImportRow[]> {
   const grid = await readGrid(file)
   // The header is the first row that names at least three known columns.
-  const headerIndex = grid.findIndex((r) => r.filter((c) => HEADER_ALIASES[norm(c)]).length >= 3)
+  const headerIndex = grid.findIndex((r) => r.filter((c) => headerKey(c)).length >= 3)
   if (headerIndex < 0)
-    throw new Error('Could not find the header row. Use the template: Code, Brand, Name, Size (EU), Grade, Condition, Price…')
+    throw new Error('Could not find the header row. Use the template: Code, Brand, Name, EU size, UK size, US size, Grade, Condition, Price…')
   const map = new Map<number, Key>()
   grid[headerIndex].forEach((c, i) => {
-    const k = HEADER_ALIASES[norm(c)]
+    const k = headerKey(c)
     if (k && ![...map.values()].includes(k)) map.set(i, k)
   })
 
@@ -188,6 +209,9 @@ export async function readImportSheet(file: File): Promise<ImportRow[]> {
       brand: str('brand'),
       name: str('name'),
       sizes: parseSizes(get('size')),
+      ukSizes: parseSizes(get('ukSize')),
+      usSizes: parseSizes(get('usSize')),
+      cmSizes: parseSizes(get('cmSize')),
       collection: parseGrade(str('grade')),
       condition: parseCondition(str('condition')),
       gender: parseGender(str('gender')),
@@ -204,8 +228,32 @@ export async function readImportSheet(file: File): Promise<ImportRow[]> {
     if (!row.code) row.errors.push('Code is missing (it links the row to its photos).')
     if (!row.brand) row.errors.push('Brand is missing.')
     if (row.name.length < 2) row.errors.push('Name is missing.')
-    if (!row.sizes.length) row.errors.push('Size is missing.')
-    for (const s of row.sizes) if (!/^\d{1,2}(\.5)?$/.test(s)) row.errors.push(`Size "${s}" is not a valid EU size.`)
+    // EU, UK and US sizes are all required, one of each per pair, in the same order.
+    for (const [list, system] of [
+      [row.sizes, 'EU'],
+      [row.ukSizes, 'UK'],
+      [row.usSizes, 'US'],
+    ] as const) {
+      if (!list.length) row.errors.push(`${system} size is missing.`)
+      for (const s of list) if (!/^\d{1,2}(\.5)?$/.test(s)) row.errors.push(`${system} size "${s}" is not valid (e.g. 8 or 8.5).`)
+    }
+    if (
+      row.sizes.length &&
+      row.ukSizes.length &&
+      row.usSizes.length &&
+      (row.ukSizes.length !== row.sizes.length || row.usSizes.length !== row.sizes.length)
+    )
+      row.errors.push(
+        `Give one UK and one US size for each EU size (${row.sizes.length} EU, ${row.ukSizes.length} UK, ${row.usSizes.length} US).`,
+      )
+    // cm is optional, but when given it needs one value per EU size.
+    if (row.cmSizes.length) {
+      for (const c of row.cmSizes)
+        if (!/^\d{1,2}(\.\d)?$/.test(c) || Number(c) < 10 || Number(c) > 40)
+          row.errors.push(`Size in cm "${c}" is not valid (e.g. 26.5).`)
+      if (row.sizes.length && row.cmSizes.length !== row.sizes.length)
+        row.errors.push(`Give one cm size for each EU size, or leave cm empty (${row.sizes.length} EU, ${row.cmSizes.length} cm).`)
+    }
     if (!row.collection) row.errors.push(`Grade "${str('grade')}" is not Premium, A or B.`)
     if (!row.condition) row.errors.push(`Condition "${str('condition')}" is not Like new, Excellent, Good or Fair.`)
     if (row.price == null || Number.isNaN(row.price) || row.price <= 0) row.errors.push('Price is missing or not a number.')
@@ -233,8 +281,8 @@ export async function readImportSheet(file: File): Promise<ImportRow[]> {
 export async function downloadTemplate() {
   type R = Record<Key, string | number>
   const example: R[] = [
-    { code: '01', brand: 'Nike', name: 'Air Max 90, White / Red', size: '42', grade: 'Premium', condition: 'Excellent', price: 18500, originalPrice: 32000, costPrice: '', colour: 'White / Red', gender: 'Men', model: 'Air Max 90', description: '', notes: 'Small scuff on left toe' },
-    { code: '02', brand: 'Adidas', name: 'Samba OG, Black', size: '41', grade: 'A', condition: 'Good', price: 9500, originalPrice: '', costPrice: '', colour: 'Black', gender: 'Unisex', model: 'Samba OG', description: '', notes: '' },
+    { code: '01', brand: 'Nike', name: 'Air Max 90, White / Red', size: '42', ukSize: '8', usSize: '9', cmSize: '26.5', grade: 'Premium', condition: 'Excellent', price: 18500, originalPrice: 32000, costPrice: '', colour: 'White / Red', gender: 'Men', model: 'Air Max 90', description: '', notes: 'Small scuff on left toe' },
+    { code: '02', brand: 'Adidas', name: 'Samba OG, Black', size: '41', ukSize: '7', usSize: '8', cmSize: '', grade: 'A', condition: 'Good', price: 9500, originalPrice: '', costPrice: '', colour: 'Black', gender: 'Unisex', model: 'Samba OG', description: '', notes: '' },
   ]
   await exportXlsx('raja-thrifts-bulk-import-template', [
     {

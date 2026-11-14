@@ -77,9 +77,12 @@ export async function importOne(
     isFeatured: false,
     purchasePrice: row.costPrice != null ? toMinor(row.costPrice) : null,
     supplierRef: '',
-    variants: row.sizes.map((s) => ({
+    variants: row.sizes.map((s, i) => ({
       sku: skuFor(row, s, opts.stamp),
       sizeValue: s,
+      ukSize: row.ukSizes[i],
+      usSize: row.usSizes[i],
+      cmSize: row.cmSizes[i] ?? '',
       quantity: 1,
       priceOverride: null,
     })),

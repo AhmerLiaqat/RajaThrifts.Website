@@ -19,12 +19,17 @@ import { motion as m } from '@/theme/tokens'
 
 const collections = Object.values(COLLECTION_META).sort((a, b) => a.rank - b.rank)
 
-/** `audience` links open the shop with the "Shop for" filter (women includes kids; kids is under EU 41 / UK 7). */
-const primaryLinks: Array<{ to: string; label: string; audience?: Audience | null }> = [
+/**
+ * `audience` links open the shop with the "Shop for" filter (women includes kids; kids is under EU 41 / UK 7).
+ * `type` links open it with a shoe type (category slug).
+ */
+const primaryLinks: Array<{ to: string; label: string; audience?: Audience | null; type?: string }> = [
   ...collections.map((c) => ({ to: paths.collection(c.slug), label: c.label })),
   { to: `${paths.shop}?for=women`, label: AUDIENCE_LABEL.women, audience: 'women' },
   { to: `${paths.shop}?for=kids`, label: AUDIENCE_LABEL.kids, audience: 'kids' },
   { to: `${paths.shop}?for=men`, label: AUDIENCE_LABEL.men, audience: 'men' },
+  { to: `${paths.shop}?type=hiking`, label: 'Hiking', type: 'hiking' },
+  { to: `${paths.shop}?type=sports`, label: 'Sports', type: 'sports' },
   { to: paths.shop, label: 'Shop all', audience: null },
 ]
 
@@ -34,11 +39,15 @@ export function Wordmark({ className }: { className?: string }) {
 
 export function CustomerHeader() {
   const { pathname, search } = useLocation()
-  const currentAudience = new URLSearchParams(search).get('for')
-  const isLinkActive = (l: (typeof primaryLinks)[number]) =>
-    l.audience === undefined
-      ? pathname === l.to
-      : pathname === paths.shop && (currentAudience ?? null) === l.audience
+  const params = new URLSearchParams(search)
+  const currentAudience = params.get('for')
+  const currentType = params.get('type')
+  const isLinkActive = (l: (typeof primaryLinks)[number]) => {
+    if (l.type) return pathname === paths.shop && currentType === l.type && !currentAudience
+    if (l.audience !== undefined)
+      return pathname === paths.shop && (currentAudience ?? null) === l.audience && (l.audience !== null || !currentType)
+    return pathname === l.to
+  }
   const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)

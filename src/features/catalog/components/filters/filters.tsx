@@ -1,10 +1,11 @@
 import { Check } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
+import { typeLabel } from '@/constants/product'
 import { cn } from '@/lib/utils/cn'
+import { formatSize } from '@/lib/utils/sizes'
 import { KIDS_MAX_EU_EXCLUSIVE } from '@/services/products/product.query'
 import type { Audience, Availability, ProductFacets } from '@/types/product'
 import type { CatalogFiltersApi } from '../../hooks/useCatalogFilters'
-import { useSizeConversions } from '../../hooks/useSizeConversions'
 import { FilterGroup } from './FilterGroup'
 
 interface FilterProps {
@@ -50,6 +51,54 @@ export function AudienceFilter({ api, facets }: FilterProps) {
                   </span>
                   {o.hint && <span className="block text-[11px] text-ink-subtle">{o.hint}</span>}
                 </span>
+              </span>
+              {o.count != null && <span className="text-xs text-ink-subtle tabular-nums">{o.count}</span>}
+            </button>
+          )
+        })}
+      </div>
+    </FilterGroup>
+  )
+}
+
+/* ── Shoe type (category) ─────────────────────────────────────────────── */
+
+export function CategoryFilter({ api, facets }: FilterProps) {
+  const categories = facets?.categories ?? []
+  const selected = api.state.type
+  // Keep the chosen type visible even when nothing matches it under the other filters.
+  const all =
+    selected && !categories.some((c) => c.value === selected)
+      ? [...categories, { value: selected, name: typeLabel(selected, facets), count: 0 }]
+      : categories
+  const options: Array<{ value: string | null; label: string; count?: number }> = [
+    { value: null, label: 'All types' },
+    ...all.map((c) => ({ value: c.value, label: c.name, count: c.count })),
+  ]
+  return (
+    <FilterGroup title="Shoe type" badge={selected ? 1 : 0} onClear={() => api.update({ type: null })}>
+      <div role="radiogroup" aria-label="Shoe type" className="flex flex-col gap-1">
+        {options.map((o) => {
+          const active = selected === o.value
+          return (
+            <button
+              key={o.value ?? 'all'}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => api.update({ type: o.value })}
+              className="group flex items-center justify-between rounded-sm py-1.5 text-left text-sm"
+            >
+              <span className="flex items-center gap-3">
+                <span
+                  className={cn(
+                    'grid size-4 shrink-0 place-items-center rounded-full border transition-colors',
+                    active ? 'border-sand' : 'border-bone/30 group-hover:border-bone/60',
+                  )}
+                >
+                  {active && <span className="size-2 rounded-full bg-sand" />}
+                </span>
+                <span className={active ? 'text-bone' : 'text-bone/70 group-hover:text-bone'}>{o.label}</span>
               </span>
               {o.count != null && <span className="text-xs text-ink-subtle tabular-nums">{o.count}</span>}
             </button>
@@ -168,23 +217,28 @@ export function BrandFilter({ api, facets }: FilterProps) {
 
 /* ── Size ─────────────────────────────────────────────────────────────── */
 
-/** EU sizes the store carries (UK shown underneath). Sizes with no matching stock render disabled. */
+/**
+ * EU sizes the store carries. UK / US underneath are the values staff most often entered for
+ * that EU size among matching pairs (they vary by brand). Sizes with no matching stock render disabled.
+ */
 const SIZE_RANGE = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']
 
 export function SizeFilter({ api, facets }: FilterProps) {
   const counts = new Map(facets?.sizes.map((s) => [s.value, s.count]))
-  const conv = useSizeConversions()
+  const facetBySize = new Map(facets?.sizes.map((s) => [s.value, s]))
   const sizes = [...new Set([...SIZE_RANGE, ...counts.keys()])].sort((a, b) => Number(a) - Number(b))
 
   return (
-    <FilterGroup title="Size (EU / UK)" badge={api.state.sizes.length} onClear={() => api.update({ sizes: [] })}>
-      <div className="grid grid-cols-4 gap-2" role="group" aria-label="Shoe sizes">
+    <FilterGroup title="Size (EU / UK / US)" badge={api.state.sizes.length} onClear={() => api.update({ sizes: [] })}>
+      <div className="grid grid-cols-3 gap-2" role="group" aria-label="Shoe sizes">
         {sizes.map((size) => {
           const selected = api.state.sizes.includes(size)
           const count = counts.get(size) ?? 0
           const disabled = !selected && count === 0
-          const uk = conv.uk(size)
-          const label = conv.label(size, ' / ')
+          const facet = facetBySize.get(size)
+          const uk = facet?.uk ?? null
+          const us = facet?.us ?? null
+          const label = formatSize({ value: size, uk, us }, ' / ')
           return (
             <button
               key={size}
@@ -197,15 +251,16 @@ export function SizeFilter({ api, facets }: FilterProps) {
               aria-label={label}
               onClick={() => api.toggle('sizes', size)}
               className={cn(
-                'flex h-12 flex-col items-center justify-center rounded-sm border font-display text-sm leading-tight tabular-nums transition-colors',
+                'flex h-16 flex-col items-center justify-center rounded-sm border font-display text-sm leading-tight tabular-nums transition-colors',
                 selected
                   ? 'border-sand bg-sand text-night'
                   : 'border-bone/15 text-bone/80 hover:border-bone/50 hover:text-bone',
                 disabled && 'cursor-not-allowed border-bone/5 text-bone/20 line-through hover:border-bone/5',
               )}
             >
-              <span>{size}</span>
+              <span>EU {size}</span>
               {uk && <span className="text-[10px] opacity-70">UK {uk}</span>}
+              {us && <span className="text-[10px] opacity-70">US {us}</span>}
             </button>
           )
         })}
@@ -318,6 +373,7 @@ export function FilterPanel({ api, facets }: FilterProps) {
   return (
     <div>
       <AudienceFilter api={api} facets={facets} />
+      <CategoryFilter api={api} facets={facets} />
       <AvailabilityFilter api={api} facets={facets} />
       <BrandFilter api={api} facets={facets} />
       <SizeFilter api={api} facets={facets} />

@@ -19,7 +19,7 @@ const pid = (
   await q(`select save_product($1::jsonb, $2::jsonb) as id`, [
     JSON.stringify({ id: '', slug: 'af1', name: 'Air Force 1', brand_id: nike, category_id: sneakers, collection: 'A CATEGORY',
       condition: 'excellent', price: '9500', status: 'active', defects: [] }),
-    JSON.stringify([{ sku: 'RT-A-1-42', size_value: '42', quantity: 3 }]),
+    JSON.stringify([{ sku: 'RT-A-1-42', size_value: '42', uk_size: '8', us_size: '9', cm_size: '26.5', quantity: 3 }]),
   ])
 )[0].id
 const variant = (await q(`select id from product_variants where product_id=$1`, [pid]))[0].id
@@ -165,6 +165,7 @@ await q(`select approve_order($1, 'MEZN-REF-9')`, [go.id])
 await as(shop)
 for (const s of ['shipped', 'delivered']) await q(`select update_order_status($1, $2::order_status)`, [go.id, s])
 const item = (await q(`select id from order_items where order_id=$1`, [go.id]))[0].id
+ok('order line shows EU / UK / US / cm', (await q(`select size_label from order_items where id=$1`, [item]))[0].size_label === 'EU 42 / UK 8 / US 9 / 26.5 cm')
 ok('staff logs a return on a guest order', (await err(`select request_return($1, 1, 'wrong_size', 'Too small')`, [item])) === null)
 await as(alice)
 ok('customer cannot call customer_summaries', !!(await err(`select * from customer_summaries()`)))

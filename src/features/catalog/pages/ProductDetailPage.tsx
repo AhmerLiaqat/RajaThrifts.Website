@@ -111,9 +111,9 @@ export default function ProductDetailPage() {
               </AccordionItem>
               <AccordionItem title="Size & fit">
                 <p>
-                  Sizes are shown in EU with the UK equivalent. Conversions are a guide and vary slightly by
-                  brand. Pre-loved shoes may have slightly softened insoles. If you are between sizes, message
-                  us before ordering and we will measure the insole for you.
+                  Each pair is listed with its EU, UK and US size, taken from the pair itself, and its length in cm where we measured it. Pre-loved shoes
+                  may have slightly softened insoles. If you are between sizes, message us before ordering and
+                  we will measure the insole for you.
                 </p>
               </AccordionItem>
               <AccordionItem title="Delivery & returns">

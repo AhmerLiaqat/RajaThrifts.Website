@@ -46,7 +46,12 @@ export interface ProductFormValues {
   variants: Array<{
     id?: string
     sku: string
+    /** EU size. */
     sizeValue: string
+    ukSize: string
+    usSize: string
+    /** Optional length in cm ('' = none). */
+    cmSize?: string
     quantity: number
     priceOverride: MinorUnits | null
   }>
@@ -136,6 +141,9 @@ export const adminProductService = {
       sku: v.sku.trim().toUpperCase(),
       size_system: 'EU',
       size_value: v.sizeValue.trim(),
+      uk_size: v.ukSize.trim(),
+      us_size: v.usSize.trim(),
+      cm_size: v.cmSize?.trim() ?? '',
       quantity: v.quantity,
       price_override: v.priceOverride != null ? minorToPkr(v.priceOverride) : '',
     }))

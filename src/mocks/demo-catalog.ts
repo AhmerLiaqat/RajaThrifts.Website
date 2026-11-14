@@ -58,6 +58,8 @@ const DEMO_CATEGORIES = {
   running: 'Running',
   basketball: 'Basketball',
   boots: 'Boots',
+  hiking: 'Hiking',
+  sports: 'Sports',
 } as const
 
 const DEMO_TODAY = Date.parse('2026-11-08T10:00:00Z')
@@ -106,11 +108,17 @@ const build = (s: Seed): Product => {
     })),
   ]
 
+  // Demo pairs carry typical conversions; real listings get their own EU / UK / US sizes from staff.
+  const DEMO_UK_US: Record<string, [string, string, string]> = {
+    '38': ['5', '6', '24'], '39': ['6', '7', '24.5'], '40': ['6.5', '7', '25'], '41': ['7.5', '8', '26'],
+    '42': ['8', '9', '26.5'], '43': ['9', '10', '27.5'], '44': ['9.5', '10.5', '28'], '45': ['10.5', '11.5', '29'],
+    '46': ['11', '12', '29.5'],
+  }
   const variants = s.sizes.map(([size, quantity]) => ({
     id: `${id}-eu${size}`,
     productId: id,
     sku: `RT-${CODE[s.collection]}-${String(seq).padStart(3, '0')}-${size}`,
-    size: { system: 'EU' as const, value: size },
+    size: { system: 'EU' as const, value: size, uk: DEMO_UK_US[size]?.[0] ?? null, us: DEMO_UK_US[size]?.[1] ?? null, cm: DEMO_UK_US[size]?.[2] ?? null },
     quantity,
     priceOverride: null,
     createdAt,

@@ -9,7 +9,6 @@ import {
   Undo2,
   Wallet,
   FileUp,
-  Footprints,
   LayoutDashboard,
   MessageSquareQuote,
   Package,
@@ -50,7 +49,6 @@ export const DASHBOARD_NAV: Array<{ label: string; items: NavItem[] }> = [
       { to: paths.admin.products, label: 'Products', icon: Package, end: true, roles: STAFF },
       { to: paths.admin.productImport, label: 'Bulk import', icon: FileUp, roles: STAFF },
       { to: paths.admin.brands, label: 'Brands', icon: Tags, roles: STAFF },
-      { to: paths.admin.sizes, label: 'Size chart', icon: Footprints, roles: STAFF },
     ],
   },
   {

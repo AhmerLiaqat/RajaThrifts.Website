@@ -15,7 +15,6 @@ import { AdminPageHeader } from '@/layouts/admin/AdminLayout'
 import { slugify } from '@/services/products/admin-product.service'
 import type { AdminProduct } from '@/types/dashboard'
 import { MIN_PRODUCT_IMAGES } from '@/types/product'
-import { useSizeChart } from '@/features/admin/catalog/hooks'
 import { formatPrice } from '@/lib/utils/format'
 import { ImageManager } from '../components/ImageManager'
 import {
@@ -29,6 +28,7 @@ import {
 } from '../hooks'
 import {
   emptyProductForm,
+  emptyVariant,
   formToValues,
   productFormSchema,
   productToForm,
@@ -165,14 +165,6 @@ function ProductForm({ product }: { product?: AdminProduct }) {
     control,
     name: ['slug', 'brandId', 'price', 'purchasePrice'],
   })
-  const sizeChart = useSizeChart()
-  // Active chart sizes, plus any legacy size already on this product.
-  const sizeOptions = [
-    ...(sizeChart.data ?? []),
-    ...(product?.variants ?? [])
-      .filter((v) => !sizeChart.data?.some((s) => s.eu === v.size.value))
-      .map((v) => ({ eu: v.size.value, uk: null, isActive: true })),
-  ]
   const e = formState.errors
   const variants = useFieldArray({ control, name: 'variants' })
   const defects = useFieldArray({ control, name: 'defects' })
@@ -343,7 +335,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
 
         <Section
           title="Sizes & stock"
-          description="Thrift stock is usually one pair per size. Quantity edits are recorded in the inventory ledger."
+          description="Enter the EU, UK and US size printed on each pair (all three are required; conversions vary by brand). Length in cm is optional. Thrift stock is usually one pair per size. Quantity edits are recorded in the inventory ledger."
         >
           {(e.variants?.root?.message || e.variants?.message) && (
             <p className="text-xs text-danger">{e.variants?.root?.message ?? e.variants?.message}</p>
@@ -352,22 +344,37 @@ function ProductForm({ product }: { product?: AdminProduct }) {
             {variants.fields.map((f, i) => (
               <div
                 key={f.id}
-                className="grid grid-cols-2 gap-3 rounded-sm border border-bone/10 p-3 sm:grid-cols-[100px_1fr_100px_140px_auto] sm:items-start"
+                className="grid grid-cols-4 gap-3 rounded-sm border border-bone/10 p-3 sm:grid-cols-[repeat(4,70px)_1fr_70px_110px_auto] sm:items-start"
               >
-                <Select
-                  label={i === 0 ? 'EU size' : undefined}
-                  aria-label="EU size"
-                  error={e.variants?.[i]?.sizeValue?.message}
-                  {...register(`variants.${i}.sizeValue`)}
-                >
-                  <option value="">Size…</option>
-                  {sizeOptions.map((s) => (
-                    <option key={s.eu} value={s.eu} disabled={!s.isActive}>
-                      EU {s.eu}
-                      {s.uk ? ` · UK ${s.uk}` : ''}
-                    </option>
-                  ))}
-                </Select>
+                {(
+                  [
+                    ['sizeValue', 'EU', '42'],
+                    ['ukSize', 'UK', '8'],
+                    ['usSize', 'US', '9'],
+                  ] as const
+                ).map(([field, system, example]) => (
+                  <Input
+                    key={field}
+                    label={i === 0 ? `${system} size *` : undefined}
+                    aria-label={`${system} size`}
+                    aria-required
+                    inputMode="decimal"
+                    placeholder={example}
+                    className="tabular-nums"
+                    error={e.variants?.[i]?.[field]?.message}
+                    {...register(`variants.${i}.${field}`)}
+                  />
+                ))}
+                <Input
+                  label={i === 0 ? 'cm' : undefined}
+                  aria-label="Length in cm (optional)"
+                  inputMode="decimal"
+                  placeholder="26.5"
+                  title="Optional: foot / insole length in cm"
+                  className="tabular-nums"
+                  error={e.variants?.[i]?.cmSize?.message}
+                  {...register(`variants.${i}.cmSize`)}
+                />
                 <Input
                   label={i === 0 ? 'SKU' : undefined}
                   aria-label="SKU"
@@ -408,7 +415,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
             <Button
               size="sm"
               variant="outline"
-              onClick={() => variants.append({ sizeValue: '', sku: '', quantity: 1, priceOverride: '' })}
+              onClick={() => variants.append(emptyVariant())}
             >
               <Plus className="size-3.5" /> Add size
             </Button>

@@ -68,15 +68,23 @@ interface CatalogHeroProps {
   meta?: CollectionMeta
   /** Active "Shop for" choice on the shop page. */
   audience?: Audience | null
+  /** Name of the active shoe type (category), e.g. "Hiking". */
+  typeName?: string | null
   total?: number
   isDemo?: boolean
 }
 
 /** Cinematic banner: photographic for collections, typographic for Shop All. */
-export function CatalogHero({ meta, audience, total, isDemo }: CatalogHeroProps) {
+export function CatalogHero({ meta, audience, typeName, total, isDemo }: CatalogHeroProps) {
   const photo = meta ? COLLECTION_PHOTOS[meta.value] : null
   const forAudience = !meta && audience ? AUDIENCE_HERO[audience] : null
-  const title = meta?.label ?? forAudience?.title ?? 'Shop all'
+  const forType = !meta && typeName ? typeName : null
+  // e.g. "Hiking", "Women", or "Women · Hiking" when both are picked.
+  const title =
+    meta?.label ?? ([forAudience?.title, forType].filter(Boolean).join(' · ') || 'Shop all')
+  const typeTagline = forType
+    ? `${forType} shoes, every pair hand-inspected and graded. Filter by brand, size, price and availability.`
+    : null
 
   return (
     <section className="hero-navy relative isolate overflow-hidden text-white">
@@ -121,6 +129,7 @@ export function CatalogHero({ meta, audience, total, isDemo }: CatalogHeroProps)
             <p className="text-sm leading-relaxed text-white/75 sm:text-base">
               {meta?.tagline ??
                 forAudience?.tagline ??
+                typeTagline ??
                 'Every pair in stock across PREMIUM, A CATEGORY and B CATEGORY. Filter by brand, size, price and availability.'}
             </p>
             {isDemo && <DemoTag className="mt-4" label="Sample listings" />}

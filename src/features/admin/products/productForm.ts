@@ -10,6 +10,14 @@ const pkr = z
 
 const optionalPkr = z.union([z.literal(''), pkr])
 
+/** A shoe size: whole or half sizes, e.g. 8 or 8.5. All three systems are required. */
+const shoeSize = (system: 'EU' | 'UK' | 'US', example: string) =>
+  z
+    .string()
+    .trim()
+    .min(1, `${system} size is required`)
+    .regex(/^\d{1,2}(\.5)?$/, `${system} size, e.g. ${example}`)
+
 export const productFormSchema = z
   .object({
     name: z.string().trim().min(2, 'Enter a product name').max(140),
@@ -44,10 +52,19 @@ export const productFormSchema = z
       .array(
         z.object({
           id: z.string().optional(),
-          sizeValue: z
-            .string()
-            .trim()
-            .regex(/^\d{1,2}(\.5)?$/, 'EU size, e.g. 42 or 42.5'),
+          /** EU size. */
+          sizeValue: shoeSize('EU', '42 or 42.5'),
+          ukSize: shoeSize('UK', '8 or 8.5'),
+          usSize: shoeSize('US', '9 or 9.5'),
+          /** Optional foot / insole length. */
+          cmSize: z.union([
+            z.literal(''),
+            z
+              .string()
+              .trim()
+              .regex(/^\d{1,2}(\.\d)?$/, 'Length in cm, e.g. 26.5')
+              .refine((v) => Number(v) >= 10 && Number(v) <= 40, 'Between 10 and 40 cm'),
+          ]),
           sku: z
             .string()
             .trim()
@@ -92,6 +109,8 @@ export function suggestSku(collection: Collection, name: string, size: string) {
   return `RT-${COLLECTION_CODE[collection]}-${fragment}-${size.replace('.', '')}`
 }
 
+export const emptyVariant = () => ({ sizeValue: '', ukSize: '', usSize: '', cmSize: '', sku: '', quantity: 1, priceOverride: '' })
+
 export function emptyProductForm(): ProductFormInput {
   return {
     name: '',
@@ -113,7 +132,7 @@ export function emptyProductForm(): ProductFormInput {
     status: 'draft',
     isFeatured: false,
     defects: [],
-    variants: [{ sizeValue: '', sku: '', quantity: 1, priceOverride: '' }],
+    variants: [emptyVariant()],
   }
 }
 
@@ -141,6 +160,10 @@ export function productToForm(p: AdminProduct): ProductFormInput {
     variants: p.variants.map((v) => ({
       id: v.id,
       sizeValue: v.size.value,
+      // Older listings may be missing these; the form then asks for them before saving.
+      ukSize: v.size.uk ?? '',
+      usSize: v.size.us ?? '',
+      cmSize: v.size.cm ?? '',
       sku: v.sku,
       quantity: v.quantity,
       priceOverride: toPkrString(v.priceOverride),
@@ -174,6 +197,9 @@ export function formToValues(f: ProductFormOutput, id?: string): ProductFormValu
       id: v.id,
       sku: v.sku,
       sizeValue: v.sizeValue,
+      ukSize: v.ukSize,
+      usSize: v.usSize,
+      cmSize: v.cmSize,
       quantity: v.quantity,
       priceOverride: v.priceOverride ? toMinor(v.priceOverride) : null,
     })),

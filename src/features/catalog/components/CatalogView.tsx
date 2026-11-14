@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import { Button } from '@/components/ui'
 import { env } from '@/config/env'
 import type { CollectionMeta } from '@/constants/collections'
+import { typeLabel } from '@/constants/product'
 import { useCatalogFilters } from '../hooks/useCatalogFilters'
 import { useProductFacets, useProducts } from '../hooks/useProducts'
 import { CatalogHero } from './CatalogHero'
@@ -32,6 +33,7 @@ export function CatalogView({ meta }: { meta?: CollectionMeta }) {
       <CatalogHero
         meta={meta}
         audience={api.state.audience}
+        typeName={api.state.type ? typeLabel(api.state.type, facets.data) : null}
         total={facets.data ? facets.data.availability.in_stock : undefined}
         isDemo={isDemo}
       />
@@ -76,7 +78,7 @@ export function CatalogView({ meta }: { meta?: CollectionMeta }) {
                 'Loading pairs…'
               )}
             </p>
-            <ActiveFilters api={api} />
+            <ActiveFilters api={api} facets={facets.data} />
           </div>
 
           <div className="mt-8">

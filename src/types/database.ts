@@ -92,7 +92,11 @@ export interface ProductVariantRow {
   product_id: string
   sku: string
   size_system: SizeSystem
+  /** EU size. */
   size_value: string
+  uk_size: string | null
+  us_size: string | null
+  cm_size: string | null
   quantity: number
   price_override: NumericPkr | null
   created_at: string

@@ -32,6 +32,9 @@ npx supabase db seed --linked # or paste supabase/seed.sql into the SQL editor
 | `…000900_advance_payment_whatsapp_reviews` | Bank details + WhatsApp in `store_settings`, private `payment-proofs` bucket, `place_order_with_proof()` / `set_payment_proof()`, `reviews` |
 | `…001000_guest_checkout` | Guest checkout (no customer accounts): nullable `orders.user_id`, `orders.phone_key`, guest screenshot uploads, `track_order()`, customers grouped by phone, 3 open orders per phone |
 | `…001100_admin_approval` | Bank-transfer orders stay pending until an admin verifies the payment: `approve_order()`, `reject_order()`, trigger blocking non-admin verification |
+| `…001400_variant_uk_us_sizes` | Each size gets its own `uk_size` / `us_size` (backfilled once from the old chart), all three sizes required for new or edited sizes, `shoe_sizes` chart dropped, order lines labelled `EU 42 / UK 8 / US 9`, `save_product` stores the new columns |
+| `…001500_variant_cm_size` | Optional `cm_size` per size (10–40 cm, one decimal), appended to order lines (`… / 26.5 cm`), stored by `save_product` |
+| `…001600_hiking_sports_categories` | Adds the **Hiking** and **Sports** categories (also in `seed.sql`) |
 | `…000800_finance` | Admin-only finance: investments, suppliers, stock purchases + import costs (landed cost), expenses, courier settlements, `order_item_costs`, delivery charge settings, `finance_report()` |
 
 ## 3. Authentication settings
@@ -67,7 +70,7 @@ Every row is enforced in the database (RLS or a role check inside a function). T
 | Request a return on own delivered order (within the return window) | ✓ | ✓ | ✓ |
 | Products: create, edit, photos, assign collection, archive | | ✓ | ✓ |
 | See and set purchase prices (`product_costs`) | | ✓ | ✓ |
-| Brands & size chart: add, edit, hide | | ✓ | ✓ |
+| Brands: add, edit, hide | | ✓ | ✓ |
 | Inventory: adjust stock, edit SKUs, view ledger | | ✓ | ✓ |
 | Orders: status, delivery (courier, tracking), record payments | | ✓ | ✓ |
 | Returns: approve, reject, receive (restock) | | ✓ | ✓ |
@@ -95,7 +98,7 @@ Every row is enforced in the database (RLS or a role check inside a function). T
 - **Delivery fee**: `private.shipping_fee_for()` returns 0 until you set your pricing. Edit that one function.
 - **Purchase prices** live in `product_costs`, not `products`, because `products` is publicly readable and a
   cost column there would leak through `select *`. Anonymous users have no privileges on the table at all.
-- **Sizes**: new or re-sized EU variants must match an active row in `shoe_sizes` (trigger).
+- **Sizes**: every size stores its own EU (`size_value`), UK (`uk_size`) and US (`us_size`) value. New or edited sizes must have all three (trigger, migration `…001400`). The old `shoe_sizes` chart was removed. An optional length in cm (`cm_size`) can be added per size.
 - **Returns** are created only by `request_return()` (owner within the window, or staff any time, never more than
   was bought) and moved only by `update_return()`. "Received" can restock through the ledger; "refunded" is admin-only
   and writes a refund payment. A fully refunded order flips to `refunded`.

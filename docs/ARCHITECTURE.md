@@ -92,7 +92,6 @@ a drawer on mobile, no storefront chrome. All pages are lazy-loaded; dashboard c
 | Overview | `dashboard/pages/DashboardPage` | `dashboard_summary(days)`: action queue, KPIs, daily sales chart, status/collection/brand breakdowns, inventory value |
 | Products | `products/pages/*` | `save_product()` (now incl. purchase price), bulk collection/status updates, multi-photo upload with drag & drop |
 | Brands | `catalog/pages/BrandsPage` | `brands` (+ product counts) |
-| Size chart | `catalog/pages/SizesPage` | `shoe_sizes`; drives the editor's size picker and server-side size validation |
 | Inventory & SKUs | `inventory/pages/InventoryPage` | `product_variants`, `adjust_stock()`, `inventory_movements`; low stock from `store_settings.low_stock_threshold` |
 | Orders | `orders/pages/OrdersPage` | delivery queues (`to_ship`, `unpaid`), courier + tracking, payments, linked returns |
 | Returns | `returns/pages/ReturnsPage` | `returns`, `update_return()`; customers request via `request_return()` on their order page |

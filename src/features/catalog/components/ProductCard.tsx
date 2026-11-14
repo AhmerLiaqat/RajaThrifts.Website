@@ -5,9 +5,9 @@ import { DemoTag } from '@/components/ui/DemoTag'
 import { WishlistButton } from '@/features/wishlist/WishlistButton'
 import { cn } from '@/lib/utils/cn'
 import { discountPercent, formatPrice } from '@/lib/utils/format'
+import { formatSize, sizeParts } from '@/lib/utils/sizes'
 import { CONDITION_META } from '@/constants/product'
 import type { ProductSummary } from '@/types/product'
-import { useSizeConversions } from '../hooks/useSizeConversions'
 import { CollectionBadge } from './CollectionBadge'
 
 interface ProductCardProps {
@@ -30,7 +30,6 @@ export function ProductCard({
 }: ProductCardProps) {
   const off = discountPercent(product.price, product.compareAtPrice)
   const soldOut = product.totalStock === 0
-  const sizes = useSizeConversions()
 
   return (
     <article
@@ -93,22 +92,23 @@ export function ProductCard({
           <p className="mt-1 text-xs text-ink-muted">{CONDITION_META[product.condition].label} condition</p>
           {product.availableSizes.length > 0 && (
             <ul className="mt-2 flex flex-wrap gap-1" aria-label="Available sizes">
-              {product.availableSizes.slice(0, 3).map((sz) => {
-                const uk = sizes.uk(sz.value)
-                return (
-                  <li
-                    key={sz.value}
-                    aria-label={sizes.label(sz.value, ', ')}
-                    className="inline-flex items-center overflow-hidden rounded-md border border-line bg-surface-sunken text-[11px] font-semibold text-ink-muted tabular-nums"
-                  >
-                    <span className="px-1.5 py-0.5">EU {sz.value}</span>
-                    {uk && <span className="border-l border-line bg-white/60 px-1.5 py-0.5 text-ink-subtle">UK {uk}</span>}
-                  </li>
-                )
-              })}
-              {product.availableSizes.length > 3 && (
+              {product.availableSizes.slice(0, 2).map((sz) => (
+                <li
+                  key={sz.value}
+                  aria-label={formatSize(sz, ', ')}
+                  className="inline-flex items-center divide-x divide-line overflow-hidden rounded-md border border-line bg-surface-sunken text-[11px] font-semibold text-ink-muted tabular-nums"
+                >
+                  {/* cm is left off cards to keep chips narrow; it shows on the product page. */}
+                  {sizeParts({ ...sz, cm: null }).map((part, i) => (
+                    <span key={part} className={i === 0 ? 'px-1.5 py-0.5' : 'bg-white/60 px-1.5 py-0.5 text-ink-subtle'}>
+                      {part}
+                    </span>
+                  ))}
+                </li>
+              ))}
+              {product.availableSizes.length > 2 && (
                 <li className="px-1 py-0.5 text-[11px] font-semibold text-ink-subtle">
-                  +{product.availableSizes.length - 3}
+                  +{product.availableSizes.length - 2}
                 </li>
               )}
             </ul>

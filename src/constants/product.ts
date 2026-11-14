@@ -1,4 +1,9 @@
-import type { Audience, ConditionGrade, DefectSeverity, ProductImageView } from '@/types/product'
+import type { Audience, ConditionGrade, DefectSeverity, ProductFacets, ProductImageView } from '@/types/product'
+
+/** Name of a shoe type (category) slug: from the facets when known, else "trail-running" → "Trail running". */
+export const typeLabel = (slug: string, facets?: Pick<ProductFacets, 'categories'>) =>
+  facets?.categories.find((c) => c.value === slug)?.name ??
+  slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ')
 
 /** Storefront "Shop for" options. */
 export const AUDIENCE_LABEL: Record<Audience, string> = { men: 'Men', women: 'Women', kids: 'Kids' }
