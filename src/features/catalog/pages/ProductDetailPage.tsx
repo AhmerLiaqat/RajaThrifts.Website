@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
 import { PageLoader } from '@/components/feedback/PageLoader'
 import { env } from '@/config/env'
-import { productSchema } from '@/lib/seo/schema'
+import { productSeo } from '@/lib/seo/copy'
+import { toSeoProduct } from '@/lib/seo/schema'
 import { useSeo } from '@/lib/seo/useSeo'
 import { COLLECTION_META } from '@/constants/collections'
 import { CONDITION_META } from '@/constants/product'
@@ -20,17 +21,7 @@ export default function ProductDetailPage() {
   const { data: product, isPending, error } = useProduct(productSlug)
   const isDemo = env.useDemoCatalog
 
-  useSeo(
-    product
-      ? {
-          title: `${product.brand} ${product.name}`,
-          description: `${product.brand} ${product.name}, ${COLLECTION_META[product.collection].label}, ${CONDITION_META[product.condition].label.toLowerCase()} condition. Sizes: ${product.variants.map((v) => `EU ${v.size.value}`).join(', ')}. ${product.description}`,
-          path: `/products/${product.slug}`,
-          image: product.images[0]?.url,
-          jsonLd: productSchema(product, window.location.origin),
-        }
-      : null,
-  )
+  useSeo(product ? productSeo(toSeoProduct(product), window.location.origin) : null)
 
   if (isPending) return <PageLoader />
   if (error instanceof ServiceError && error.code === 'NOT_FOUND') return <NotFoundPage />

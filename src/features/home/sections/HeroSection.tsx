@@ -97,8 +97,8 @@ export function HeroSection() {
               </motion.h1>
 
               <motion.p {...rise(0.1)} className="mt-5 max-w-lg text-base leading-relaxed text-white/75 sm:text-lg">
-                Imported Nike, Adidas, New Balance and more, graded by hand into three honest tiers.
-                Every pair is cleaned, checked and photographed exactly as it is.
+                Pakistan&apos;s thrift store for imported branded shoes: Nike, Adidas, New Balance and more,
+                graded by hand into three honest tiers. Every pair is cleaned, checked and photographed exactly as it is.
               </motion.p>
 
               <motion.div {...rise(0.15)} className="mt-8 flex flex-wrap gap-3">

@@ -7,6 +7,7 @@ import { COLLECTION_META, type CollectionMeta } from '@/constants/collections'
 import { cn } from '@/lib/utils/cn'
 import { COLLECTION_PHOTOS, unsplash, unsplashSrcSet } from '@/mocks/demo-media'
 import { motion as m } from '@/theme/tokens'
+import { COLLECTION_SEO } from '@/lib/seo/copy'
 import type { Audience } from '@/types/product'
 
 const TABS = [
@@ -127,10 +128,10 @@ export function CatalogHero({ meta, audience, typeName, total, isDemo }: Catalog
           </div>
           <div className="max-w-lg">
             <p className="text-sm leading-relaxed text-white/75 sm:text-base">
-              {meta?.tagline ??
+              {(meta && COLLECTION_SEO[meta.slug]?.intro) ??
                 forAudience?.tagline ??
                 typeTagline ??
-                'Every pair in stock across PREMIUM, A CATEGORY and B CATEGORY. Filter by brand, size, price and availability.'}
+                'Branded thrift shoes in Pakistan: every imported pair in stock across PREMIUM, A CATEGORY and B CATEGORY. Filter by brand, size, price and availability.'}
             </p>
             {isDemo && <DemoTag className="mt-4" label="Sample listings" />}
           </div>

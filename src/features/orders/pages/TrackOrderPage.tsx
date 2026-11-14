@@ -25,6 +25,7 @@ import { OrderStatusBadge } from '@/features/account/components/OrderBits'
 import { CollectionBadge } from '@/features/catalog/components/CollectionBadge'
 import { cn } from '@/lib/utils/cn'
 import { formatDate, formatPrice, formatPriceCode } from '@/lib/utils/format'
+import { trackSeo } from '@/lib/seo/copy'
 import { useSeo } from '@/lib/seo/useSeo'
 import { orderService } from '@/services'
 import type { TrackedOrder } from '@/types/order'
@@ -218,7 +219,7 @@ function TrackedOrderCard({ order }: { order: TrackedOrder }) {
 
 /** Customers (no account needed) track an order with its number and the phone used at checkout. */
 export default function TrackOrderPage() {
-  useSeo({ title: 'Track your order', description: 'Track your Raja Thrifts order with your order number and phone number.', path: '/track-order' })
+  useSeo(trackSeo())
   const [params] = useSearchParams()
   const [orderNumber, setOrderNumber] = useState(params.get('order') ?? '')
   const [phone, setPhone] = useState('')
