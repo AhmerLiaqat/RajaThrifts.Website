@@ -2,7 +2,6 @@ import { Check } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { typeLabel } from '@/constants/product'
 import { cn } from '@/lib/utils/cn'
-import { formatSize } from '@/lib/utils/sizes'
 import { KIDS_MAX_EU_EXCLUSIVE } from '@/services/products/product.query'
 import type { Audience, Availability, ProductFacets } from '@/types/product'
 import type { CatalogFiltersApi } from '../../hooks/useCatalogFilters'
@@ -218,53 +217,75 @@ export function BrandFilter({ api, facets }: FilterProps) {
 /* ── Size ─────────────────────────────────────────────────────────────── */
 
 /**
- * EU sizes the store carries. UK / US underneath are the values staff most often entered for
- * that EU size among matching pairs (they vary by brand). Sizes with no matching stock render disabled.
+ * One grid of size buttons for one size system. Only sizes with matching in-stock pairs are
+ * listed (plus any size already selected, so it can be unticked).
  */
-const SIZE_RANGE = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46']
-
-export function SizeFilter({ api, facets }: FilterProps) {
-  const counts = new Map(facets?.sizes.map((s) => [s.value, s.count]))
-  const facetBySize = new Map(facets?.sizes.map((s) => [s.value, s]))
-  const sizes = [...new Set([...SIZE_RANGE, ...counts.keys()])].sort((a, b) => Number(a) - Number(b))
+function SizeGrid({
+  system,
+  options,
+  selected,
+  onToggle,
+}: {
+  system: 'EU' | 'UK'
+  options: Array<{ value: string; count: number }>
+  selected: string[]
+  onToggle: (value: string) => void
+}) {
+  const counts = new Map(options.map((o) => [o.value, o.count]))
+  const values = [...new Set([...counts.keys(), ...selected])].sort((a, b) => Number(a) - Number(b))
+  if (values.length === 0) return <p className="text-sm text-ink-subtle">No sizes in stock for this selection.</p>
 
   return (
-    <FilterGroup title="Size (EU / UK / US)" badge={api.state.sizes.length} onClear={() => api.update({ sizes: [] })}>
-      <div className="grid grid-cols-3 gap-2" role="group" aria-label="Shoe sizes">
-        {sizes.map((size) => {
-          const selected = api.state.sizes.includes(size)
-          const count = counts.get(size) ?? 0
-          const disabled = !selected && count === 0
-          const facet = facetBySize.get(size)
-          const uk = facet?.uk ?? null
-          const us = facet?.us ?? null
-          const label = formatSize({ value: size, uk, us }, ' / ')
-          return (
-            <button
-              key={size}
-              type="button"
-              aria-pressed={selected}
-              disabled={disabled}
-              title={
-                disabled ? `No pairs in ${label}` : `${count} pair${count === 1 ? '' : 's'} in ${label}`
-              }
-              aria-label={label}
-              onClick={() => api.toggle('sizes', size)}
-              className={cn(
-                'flex h-16 flex-col items-center justify-center rounded-sm border font-display text-sm leading-tight tabular-nums transition-colors',
-                selected
-                  ? 'border-sand bg-sand text-night'
-                  : 'border-bone/15 text-bone/80 hover:border-bone/50 hover:text-bone',
-                disabled && 'cursor-not-allowed border-bone/5 text-bone/20 line-through hover:border-bone/5',
-              )}
-            >
-              <span>EU {size}</span>
-              {uk && <span className="text-[10px] opacity-70">UK {uk}</span>}
-              {us && <span className="text-[10px] opacity-70">US {us}</span>}
-            </button>
-          )
-        })}
-      </div>
+    <div className="grid grid-cols-4 gap-2" role="group" aria-label={`${system} sizes`}>
+      {values.map((size) => {
+        const isSelected = selected.includes(size)
+        const count = counts.get(size) ?? 0
+        const label = `${system} ${size}`
+        return (
+          <button
+            key={size}
+            type="button"
+            aria-pressed={isSelected}
+            title={`${count} pair${count === 1 ? '' : 's'} in ${label}`}
+            onClick={() => onToggle(size)}
+            className={cn(
+              'flex h-11 items-center justify-center rounded-sm border font-display text-sm tabular-nums transition-colors',
+              isSelected
+                ? 'border-sand bg-sand text-night'
+                : 'border-bone/15 text-bone/80 hover:border-bone/50 hover:text-bone',
+              !isSelected && count === 0 && 'text-bone/30',
+            )}
+          >
+            {size}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+export function EuSizeFilter({ api, facets }: FilterProps) {
+  return (
+    <FilterGroup title="EU size" badge={api.state.sizes.length} onClear={() => api.update({ sizes: [] })}>
+      <SizeGrid
+        system="EU"
+        options={facets?.sizes ?? []}
+        selected={api.state.sizes}
+        onToggle={(v) => api.toggle('sizes', v)}
+      />
+    </FilterGroup>
+  )
+}
+
+export function UkSizeFilter({ api, facets }: FilterProps) {
+  return (
+    <FilterGroup title="UK size" badge={api.state.ukSizes.length} onClear={() => api.update({ ukSizes: [] })}>
+      <SizeGrid
+        system="UK"
+        options={facets?.ukSizes ?? []}
+        selected={api.state.ukSizes}
+        onToggle={(v) => api.toggle('ukSizes', v)}
+      />
     </FilterGroup>
   )
 }
@@ -376,7 +397,8 @@ export function FilterPanel({ api, facets }: FilterProps) {
       <CategoryFilter api={api} facets={facets} />
       <AvailabilityFilter api={api} facets={facets} />
       <BrandFilter api={api} facets={facets} />
-      <SizeFilter api={api} facets={facets} />
+      <EuSizeFilter api={api} facets={facets} />
+      <UkSizeFilter api={api} facets={facets} />
       {/* Remount when the URL range changes elsewhere (chips, presets, clear all) to resync inputs. */}
       <PriceFilter key={`${api.state.min}-${api.state.max}`} api={api} facets={facets} />
     </div>

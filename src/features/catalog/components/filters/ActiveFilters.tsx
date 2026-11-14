@@ -24,6 +24,7 @@ export function ActiveFilters({ api, facets }: { api: CatalogFiltersApi; facets?
     ...(state.q ? [{ key: 'q', label: `“${state.q}”`, onRemove: () => update({ q: '' }) }] : []),
     ...state.brands.map((b) => ({ key: `b-${b}`, label: b, onRemove: () => toggle('brands', b) })),
     ...state.sizes.map((s) => ({ key: `s-${s}`, label: `EU ${s}`, onRemove: () => toggle('sizes', s) })),
+    ...state.ukSizes.map((s) => ({ key: `uk-${s}`, label: `UK ${s}`, onRemove: () => toggle('ukSizes', s) })),
     ...(state.min != null
       ? [
           {

@@ -152,6 +152,8 @@ export interface ProductFilters extends PageParams {
   brands?: string[]
   /** Match products with an in-stock variant in any of these EU sizes. */
   sizes?: string[]
+  /** Match products with an in-stock variant in any of these UK sizes. */
+  ukSizes?: string[]
   minPrice?: MinorUnits
   maxPrice?: MinorUnits
   search?: string
@@ -182,6 +184,8 @@ export interface ProductFacets {
   /** Shoe types (categories) with matching pairs, ignoring the current shoe-type choice. */
   categories: CategoryFacet[]
   sizes: SizeFacet[]
+  /** UK size options (as entered by staff per pair), smallest first. */
+  ukSizes: FacetCount[]
   price: { min: MinorUnits; max: MinorUnits }
   availability: Record<Exclude<Availability, 'all'>, number>
   /** Matching pairs per "Shop for" option, ignoring the current audience choice. */

@@ -47,15 +47,6 @@ export const EDITORIAL_PHOTOS: Array<DemoPhoto & { caption: string }> = [
   { id: '1600269452121-4f2416e55c28', alt: 'White leather low-top close up', caption: 'Clean slate' },
 ]
 
-export const INSTAGRAM_PHOTOS: DemoPhoto[] = [
-  { id: '1515955656352-a1fa3ffcd111', alt: 'Blue air-cushion runner on violet background' },
-  { id: '1491553895911-0055eca6402d', alt: 'Black runner floating on white' },
-  { id: '1603808033192-082d6919d3e1', alt: 'White sneakers on an orange set' },
-  { id: '1543508282-6319a3e2621f', alt: 'Black leather low-top on a white pedestal' },
-  { id: '1556906781-9a412961c28c', alt: 'Sneakers on feet in the city' },
-  { id: '1562183241-b937e95585b6', alt: 'Grey knit sneaker tossed mid-air' },
-]
-
 /** Banner photography for the collection pages (demo). */
 export const COLLECTION_PHOTOS: Record<'PREMIUM' | 'A CATEGORY' | 'B CATEGORY', DemoPhoto> = {
   PREMIUM: { id: '1586525198428-225f6f12cff5', alt: 'High-top sneakers worn on concrete' },

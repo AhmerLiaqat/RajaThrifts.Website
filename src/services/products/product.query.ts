@@ -88,7 +88,7 @@ const matchesSearch = (p: Product, term: string) => {
 const matchesAvailability = (p: Product, availability: Availability = 'all', audience?: Audience) =>
   availability === 'all' ? true : availability === 'in_stock' ? isInStock(p, audience) : !isInStock(p, audience)
 
-type FilterKey = 'brands' | 'sizes' | 'price' | 'availability' | 'audience' | 'category'
+type FilterKey = 'brands' | 'sizes' | 'ukSizes' | 'price' | 'availability' | 'audience' | 'category'
 
 /**
  * Applies filters. `ignore` skips one dimension, which is how facet counts are
@@ -96,8 +96,15 @@ type FilterKey = 'brands' | 'sizes' | 'price' | 'availability' | 'audience' | 'c
  */
 export function filterProducts(products: Product[], f: ProductFilters, ignore?: FilterKey): Product[] {
   const brands = f.brands?.map(norm)
-  const sizes = f.sizes
+  const eu = ignore === 'sizes' ? undefined : f.sizes
+  const uk = ignore === 'ukSizes' ? undefined : f.ukSizes
   const audience = ignore === 'audience' ? undefined : f.audience
+  // EU and UK choices must both hold for the same in-stock size.
+  const sizeMatches = (v: ProductVariant) =>
+    v.quantity > 0 &&
+    fitsAudience(v, audience) &&
+    (!eu?.length || eu.includes(v.size.value)) &&
+    (!uk?.length || (!!v.size.uk && uk.includes(v.size.uk)))
   return products.filter((p) => {
     if (!isPublic(p)) return false
     if (f.collection && p.collection !== f.collection) return false
@@ -107,12 +114,7 @@ export function filterProducts(products: Product[], f: ProductFilters, ignore?: 
     if (f.condition && p.condition !== f.condition) return false
     if (f.search && !matchesSearch(p, f.search)) return false
     if (ignore !== 'brands' && brands?.length && !brands.includes(norm(p.brand))) return false
-    if (
-      ignore !== 'sizes' &&
-      sizes?.length &&
-      !p.variants.some((v) => v.quantity > 0 && fitsAudience(v, audience) && sizes.includes(v.size.value))
-    )
-      return false
+    if ((eu?.length || uk?.length) && !p.variants.some(sizeMatches)) return false
     if (ignore !== 'price') {
       if (f.minPrice != null && p.price < f.minPrice) return false
       if (f.maxPrice != null && p.price > f.maxPrice) return false
@@ -179,6 +181,16 @@ export function computeFacets(products: Product[], f: ProductFilters): ProductFa
         .filter((s) => !seen.has(s.value) && !!seen.add(s.value))
     }),
   )
+  // One entry per product per UK size.
+  const ukSizes = countBy(
+    filterProducts(products, f, 'ukSizes').flatMap((p) => [
+      ...new Set(
+        p.variants
+          .filter((v) => v.quantity > 0 && fitsAudience(v, f.audience) && !!v.size.uk)
+          .map((v) => v.size.uk as string),
+      ),
+    ]),
+  ).sort((a, b) => Number(a.value) - Number(b.value))
   const byCategory = new Map<string, CategoryFacet>()
   for (const p of filterProducts(products, f, 'category')) {
     if (!p.category) continue
@@ -194,6 +206,7 @@ export function computeFacets(products: Product[], f: ProductFilters): ProductFa
     brands,
     categories,
     sizes,
+    ukSizes,
     price: { min: prices.length ? Math.min(...prices) : 0, max: prices.length ? Math.max(...prices) : 0 },
     availability: {
       in_stock: forAvailability.filter((p) => isInStock(p, f.audience)).length,

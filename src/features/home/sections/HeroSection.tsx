@@ -41,7 +41,7 @@ export function HeroSection() {
 
   // Quick-shop shortcuts built from what is actually in stock.
   // EU sizes with the UK / US most often entered for them (they vary by brand).
-  const sizes = sizeOptions(inStock.flatMap((p) => p.availableSizes)).slice(0, 10)
+  const sizes = sizeOptions(inStock.flatMap((p) => p.availableSizes))
   const fallbackSizes = ['39', '40', '41', '42', '43', '44'].map((value) => ({ value, uk: null, us: null }))
   const brandCounts = inStock.reduce<Record<string, number>>((acc, p) => {
     acc[p.brand] = (acc[p.brand] ?? 0) + 1
