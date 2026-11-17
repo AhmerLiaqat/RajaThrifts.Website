@@ -3,22 +3,16 @@
  * and structured data into the HTML of public pages BEFORE JavaScript runs. Google, Bing,
  * WhatsApp and Facebook all read these. Any failure falls back to the normal page.
  */
-import { CONDITION_LABELS, productSeo, SITE_URL, staticPageSeo } from '../../src/lib/seo/copy.ts'
+import { COLLECTION_SEO, CONDITION_LABELS, productSeo, SITE_URL, staticPageSeo } from '../../src/lib/seo/copy.ts'
+import { injectBody, listingBody, productBody } from '../edge-lib/body.js'
 import { injectSeo } from '../edge-lib/inject.js'
 import ENV from '../edge-lib/seo-env.js'
 
-async function loadProduct(slug) {
-  if (!ENV.supabaseUrl || !ENV.supabaseKey) return null
-  const select =
-    'slug,name,description,price,compare_at_price,collection,condition,color,status,' +
-    'brand:brands(name),product_images(storage_path,position),product_variants(size_value,quantity,sku)'
-  const res = await fetch(
-    `${ENV.supabaseUrl}/rest/v1/products?select=${select}&slug=eq.${encodeURIComponent(slug)}&limit=1`,
-    { headers: { apikey: ENV.supabaseKey, Accept: 'application/json' }, signal: AbortSignal.timeout(2500) },
-  )
-  if (!res.ok) return null
-  const [row] = await res.json()
-  if (!row || (row.status !== 'active' && row.status !== 'sold_out')) return null
+const SELECT =
+  'slug,name,description,price,compare_at_price,collection,condition,color,status,created_at,' +
+  'brand:brands(name),product_images(storage_path,position),product_variants(size_value,quantity,sku)'
+
+function mapRow(row) {
   const variants = row.product_variants ?? []
   const inStock = variants.filter((v) => v.quantity > 0)
   const images = [...(row.product_images ?? [])]
@@ -41,6 +35,56 @@ async function loadProduct(slug) {
   }
 }
 
+async function query(params) {
+  // Throws on any failure so callers never mistake "Supabase is down" for "no such product".
+  if (!ENV.supabaseUrl || !ENV.supabaseKey) throw new Error('Supabase env missing')
+  const res = await fetch(`${ENV.supabaseUrl}/rest/v1/products?select=${SELECT}&${params}`, {
+    headers: { apikey: ENV.supabaseKey, Accept: 'application/json' },
+    signal: AbortSignal.timeout(2500),
+  })
+  if (!res.ok) throw new Error(`Supabase ${res.status}`)
+  return res.json()
+}
+
+async function loadProduct(slug) {
+  const [row] = await query(`slug=eq.${encodeURIComponent(slug)}&limit=1`)
+  if (!row || (row.status !== 'active' && row.status !== 'sold_out')) return null
+  return mapRow(row)
+}
+
+async function loadListing(collection) {
+  const filter = collection ? `&collection=eq.${encodeURIComponent(collection)}` : ''
+  const rows = await query(`status=eq.active${filter}&order=created_at.desc&limit=60`)
+  return rows.map(mapRow).filter((p) => p.inStock)
+}
+
+const GRADE_BY_SLUG = { premium: 'PREMIUM', 'a-category': 'A CATEGORY', 'b-category': 'B CATEGORY' }
+
+/** Page content for crawlers: headings, text and links to every pair in stock. */
+async function bodyFor(pathname, seo) {
+  const path = pathname.replace(/\/+$/, '') || '/'
+  if (path === '/') {
+    return listingBody(seo, {
+      heading: 'Branded thrift sneakers in Pakistan',
+      intro:
+        "Raja Thrifts is Pakistan's online thrift store for imported branded shoes: Nike, Adidas, New Balance and more, " +
+        'graded by hand into Premium, A Category and B Category and delivered nationwide.',
+      products: await loadListing(),
+      faqs: true,
+    })
+  }
+  if (path === '/shop') {
+    return listingBody(seo, { heading: 'Shop branded thrift shoes in Pakistan', products: await loadListing() })
+  }
+  const m = path.match(/^\/collections\/([a-z-]+)$/)
+  if (m && COLLECTION_SEO[m[1]]) {
+    const c = COLLECTION_SEO[m[1]]
+    return listingBody(seo, { heading: `${c.name} thrift sneakers`, intro: `${c.intro} ${c.description}`, products: await loadListing(GRADE_BY_SLUG[m[1]]) })
+  }
+  if (path === '/track-order') return listingBody(seo, { heading: 'Track your order' })
+  return null
+}
+
 export default async (request, context) => {
   const res = await context.next()
   try {
@@ -48,13 +92,24 @@ export default async (request, context) => {
     const url = new URL(request.url)
     const origin = url.hostname.endsWith('rajathrifts.com') ? SITE_URL : url.origin
     let seo = staticPageSeo(url.pathname, origin)
+    let body = null
     const m = url.pathname.match(/^\/products\/([^/]+)\/?$/)
     if (m) {
       const product = await loadProduct(decodeURIComponent(m[1]))
-      seo = product ? productSeo(product, origin) : null
+      if (!product) {
+        // Deleted/unknown product: keep it out of the index instead of letting it look like the homepage.
+        const headers = new Headers(res.headers)
+        headers.set('X-Robots-Tag', 'noindex')
+        return new Response(res.body, { status: res.status, headers })
+      }
+      seo = productSeo(product, origin)
+      body = productBody(product, seo)
+    } else if (seo) {
+      body = await bodyFor(url.pathname, seo).catch(() => null)
     }
     if (!seo) return res
-    const html = injectSeo(await res.text(), seo, origin)
+    let html = injectSeo(await res.text(), seo, origin)
+    if (body) html = injectBody(html, body)
     const headers = new Headers(res.headers)
     headers.delete('content-length')
     return new Response(html, { status: res.status, headers })

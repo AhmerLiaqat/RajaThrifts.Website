@@ -15,7 +15,6 @@ import { CONTACT, shopWhatsappUrl } from '@/constants/contact'
 import { AUDIENCE_LABEL } from '@/constants/product'
 import { cn } from '@/lib/utils/cn'
 import type { Audience } from '@/types/product'
-import { motion as m } from '@/theme/tokens'
 
 const collections = Object.values(COLLECTION_META).sort((a, b) => a.rank - b.rank)
 
@@ -50,7 +49,6 @@ export function CustomerHeader() {
   }
   const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
-  const [hidden, setHidden] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const closeSearch = useCallback(() => setSearchOpen(false), [])
@@ -59,12 +57,8 @@ export function CustomerHeader() {
   // Customers shop as guests; only staff sign in, and they get a shortcut to the dashboard.
   const { isStaff } = useAuth()
 
-  // Solid after leaving the top. Hide when scrolling down, reveal when scrolling up.
-  useMotionValueEvent(scrollY, 'change', (y) => {
-    const prev = scrollY.getPrevious() ?? 0
-    setScrolled(y > 40)
-    setHidden(y > prev && y > 400 && !menuOpen)
-  })
+  // Always pinned to the top so every page section can reach the menu; gains a shadow once scrolled.
+  useMotionValueEvent(scrollY, 'change', (y) => setScrolled(y > 40))
 
   // Close the mobile menu on navigation (including /shop?for=women → /shop?for=kids).
   const [lastPath, setLastPath] = useState(pathname + search)
@@ -90,12 +84,7 @@ export function CustomerHeader() {
 
   return (
     <>
-      <motion.header
-        initial={false}
-        animate={{ y: hidden ? -160 : 0 }}
-        transition={{ duration: 0.3, ease: m.ease.outExpo }}
-        className="fixed inset-x-0 top-0 z-30"
-      >
+      <header className="fixed inset-x-0 top-0 z-30">
         {/* Announcement bar */}
         <div className="hero-navy text-white">
           <div className="mx-auto flex h-9 max-w-7xl items-center justify-center gap-8 overflow-hidden px-4 text-xs font-medium sm:px-6 lg:justify-between lg:px-8">
@@ -240,7 +229,7 @@ export function CustomerHeader() {
             </div>
           </nav>
         </div>
-      </motion.header>
+      </header>
 
       <SearchOverlay open={searchOpen} onClose={closeSearch} />
 

@@ -9,6 +9,7 @@ import { formatSize, sizeParts } from '@/lib/utils/sizes'
 import { CONDITION_META } from '@/constants/product'
 import type { ProductSummary } from '@/types/product'
 import { CollectionBadge } from './CollectionBadge'
+import { QuickBuyButton } from './QuickBuyButton'
 
 interface ProductCardProps {
   product: ProductSummary
@@ -122,6 +123,8 @@ export function ProductCard({
         </div>
       </Link>
       {/* Outside the link: a button cannot live inside an anchor. */}
+      <QuickBuyButton product={product} />
+
       <WishlistButton
         productId={product.id}
         productName={product.name}

@@ -1,11 +1,12 @@
 import { AnimatePresence, motion, type PanInfo } from 'framer-motion'
-import { Check, ChevronLeft, ChevronRight, Minus } from 'lucide-react'
-import { useState, type KeyboardEvent, type MouseEvent } from 'react'
+import { Check, ChevronLeft, ChevronRight, Minus, ZoomIn } from 'lucide-react'
+import { useCallback, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import { DemoTag } from '@/components/ui/DemoTag'
 import { IMAGE_VIEW_LABEL } from '@/constants/product'
 import { cn } from '@/lib/utils/cn'
 import { motion as m } from '@/theme/tokens'
 import { REQUIRED_IMAGE_VIEWS, type ProductImage, type ProductImageView } from '@/types/product'
+import { ImageLightbox } from './ImageLightbox'
 
 interface ProductGalleryProps {
   images: ProductImage[]
@@ -22,6 +23,7 @@ const COVERAGE_VIEWS: ProductImageView[] = [...REQUIRED_IMAGE_VIEWS, 'on_foot']
  * - Thumbnails labelled by view (Front / Side / Back / Sole / On foot / Detail).
  * - Arrow keys, arrow buttons and swipe to navigate.
  * - Hover-to-zoom on fine pointers (follows the cursor).
+ * - Tap/click opens a full-screen viewer with pinch-to-zoom for phones.
  * - A coverage row that states which standard views were photographed,
  *   so customers know exactly what they are (and aren't) seeing.
  */
@@ -29,6 +31,8 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
   const [index, setIndex] = useState(0)
   const [direction, setDirection] = useState(0)
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null)
+  const [viewerOpen, setViewerOpen] = useState(false)
+  const closeViewer = useCallback(() => setViewerOpen(false), [])
 
   const count = images.length
   const current = images[index]
@@ -105,6 +109,7 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.25}
               onDragEnd={onDragEnd}
+              onTap={() => setViewerOpen(true)}
               draggable={false}
               style={zoom ? { transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined}
               className={cn(
@@ -122,6 +127,9 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
             </span>
             {isDemo && <DemoTag label="Demo photo" />}
           </div>
+          <span className="pointer-events-none absolute top-12 right-3 flex items-center gap-1 rounded-full bg-night/70 px-2.5 py-1 text-[11px] font-medium text-bone backdrop-blur lg:hidden">
+            <ZoomIn className="size-3.5" aria-hidden /> Tap to zoom
+          </span>
           {soldOut && (
             <span className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 bg-night/70 py-3 text-center font-display text-sm tracking-[0.4em] text-bone uppercase backdrop-blur-sm">
               Sold out
@@ -214,6 +222,16 @@ export function ProductGallery({ images, productName, isDemo, soldOut }: Product
           ))}
         </ul>
       )}
+      <ImageLightbox
+        open={viewerOpen}
+        images={images}
+        index={index}
+        onIndexChange={(i) => {
+          setDirection(i > index ? 1 : -1)
+          setIndex(i)
+        }}
+        onClose={closeViewer}
+      />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, BadgeCheck, MessageCircle, ShieldCheck, Sparkles, Truck } from 'lucide-react'
+import { ArrowRight, Ruler, SlidersHorizontal, Sparkles } from 'lucide-react'
+import { useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
 import { DemoTag } from '@/components/ui/DemoTag'
@@ -9,6 +10,7 @@ import { HERO_SHOWCASE_PHOTO, unsplash, unsplashSrcSet } from '@/mocks/demo-medi
 import { sizeOptions } from '@/services/products/product.query'
 import { motion as m } from '@/theme/tokens'
 import { useHomeProducts } from '../useHomeProducts'
+import { SizePickerSheet } from './SizePickerSheet'
 
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 14 },
@@ -16,16 +18,11 @@ const rise = (delay: number) => ({
   transition: { duration: 0.5, ease: m.ease.outExpo, delay },
 })
 
-const TRUST = [
-  { icon: ShieldCheck, label: 'Hand-inspected', sub: 'Every pair checked' },
-  { icon: BadgeCheck, label: '3 honest grades', sub: 'Premium · A · B' },
-  { icon: MessageCircle, label: 'WhatsApp support', sub: 'Quick, real replies' },
-  { icon: Truck, label: 'Nationwide delivery', sub: 'Tracked to your door' },
-]
-
-/** HERO: bold navy banner with ONE showcase pair (the one marked "Feature on the homepage"), then a quick-shop bar and trust row. */
+/** HERO: compact navy banner with ONE showcase pair (the one marked "Feature on the homepage"), then a quick-shop bar. */
 export function HeroSection() {
   const { items, isDemo } = useHomeProducts()
+  const [sizesOpen, setSizesOpen] = useState(false)
+  const closeSizes = useCallback(() => setSizesOpen(false), [])
   const inStock = items.filter((p) => p.totalStock > 0)
   // One pair only: the newest in-stock pair marked "Feature on the homepage" (premium first),
   // falling back to the newest premium pair, then the newest pair.
@@ -59,7 +56,7 @@ export function HeroSection() {
     .map(([b]) => b)
 
   return (
-    <section aria-labelledby="hero-title" className="relative pt-4 sm:pt-6">
+    <section aria-labelledby="hero-title" className="relative pt-3 sm:pt-4">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Banner */}
         <div className="hero-navy relative isolate overflow-hidden rounded-3xl text-white shadow-[0_30px_60px_-30px_rgb(12_18_48/0.7)]">
@@ -73,7 +70,7 @@ export function HeroSection() {
             className="absolute top-10 right-[38%] -z-10 hidden size-24 rotate-12 rounded-3xl border border-gold/30 lg:block"
           />
 
-          <div className="grid items-center gap-10 px-6 pt-10 pb-24 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:gap-6 lg:px-14 lg:pt-14 lg:pb-28">
+          <div className="grid items-center gap-10 px-6 pt-7 pb-16 sm:px-10 lg:grid-cols-[1.3fr_1fr] lg:gap-6 lg:px-12 lg:pt-9 lg:pb-16">
             {/* Copy */}
             <div>
               <motion.span
@@ -87,7 +84,7 @@ export function HeroSection() {
               <motion.h1
                 {...rise(0.05)}
                 id="hero-title"
-                className="mt-5 text-[clamp(2.4rem,5.6vw,4.4rem)] leading-[1.02] font-extrabold tracking-[-0.035em] text-white"
+                className="mt-4 text-[clamp(2rem,4.2vw,3.4rem)] leading-[1.04] font-extrabold tracking-[-0.035em] text-white"
               >
                 Branded sneakers.
                 <br />
@@ -96,12 +93,12 @@ export function HeroSection() {
                 </span>
               </motion.h1>
 
-              <motion.p {...rise(0.1)} className="mt-5 max-w-lg text-base leading-relaxed text-white/75 sm:text-lg">
+              <motion.p {...rise(0.1)} className="mt-4 max-w-lg text-sm leading-relaxed text-white/75 sm:text-base">
                 Pakistan&apos;s thrift store for imported branded shoes: Nike, Adidas, New Balance and more,
                 graded by hand into three honest tiers. Every pair is cleaned, checked and photographed exactly as it is.
               </motion.p>
 
-              <motion.div {...rise(0.15)} className="mt-8 flex flex-wrap gap-3">
+              <motion.div {...rise(0.15)} className="mt-6 flex flex-wrap gap-3">
                 <Link
                   to={paths.shop}
                   className="group inline-flex h-12 items-center gap-2 rounded-xl bg-gold px-6 text-base font-bold text-brand-navy shadow-[0_10px_30px_-10px_rgb(201_154_46/0.9)] transition-all hover:-translate-y-0.5 hover:bg-[#d8ab43]"
@@ -117,7 +114,7 @@ export function HeroSection() {
                 </Link>
               </motion.div>
 
-              <motion.dl {...rise(0.2)} className="mt-10 flex flex-wrap gap-x-8 gap-y-4">
+              <motion.dl {...rise(0.2)} className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
                 {[
                   { k: inStock.length ? `${inStock.length}` : '—', v: 'Pairs in stock' },
                   { k: Object.keys(brandCounts).length ? `${Object.keys(brandCounts).length}` : '—', v: 'Brands' },
@@ -125,7 +122,7 @@ export function HeroSection() {
                 ].map((s) => (
                   <div key={s.v}>
                     <dt className="sr-only">{s.v}</dt>
-                    <dd className="text-2xl font-extrabold text-white tabular-nums">{s.k}</dd>
+                    <dd className="text-xl font-extrabold text-white tabular-nums">{s.k}</dd>
                     <dd className="text-xs font-medium text-white/60">{s.v}</dd>
                   </div>
                 ))}
@@ -137,7 +134,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 16, rotate: -2 }}
               animate={{ opacity: 1, y: 0, rotate: 0 }}
               transition={{ duration: 0.7, ease: m.ease.outExpo, delay: 0.1 }}
-              className="relative mx-auto w-full max-w-[440px]"
+              className="relative mx-auto w-full max-w-[300px] lg:max-w-[330px]"
             >
               <div
                 aria-hidden
@@ -169,7 +166,7 @@ export function HeroSection() {
               {featured && (
                 <Link
                   to={paths.product(featured.slug)}
-                  className="group absolute -bottom-8 left-1/2 flex w-[88%] -translate-x-1/2 items-center gap-3 rounded-2xl bg-white p-3 text-ink shadow-[0_20px_40px_-15px_rgb(0_0_0/0.5)] transition-transform hover:-translate-y-1 sm:w-[92%]"
+                  className="group absolute -bottom-6 left-1/2 flex w-[92%] -translate-x-1/2 items-center gap-3 rounded-2xl bg-white p-2.5 text-ink shadow-[0_20px_40px_-15px_rgb(0_0_0/0.5)] transition-transform hover:-translate-y-1 sm:w-[92%]"
                 >
                   <span className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-surface-sunken">
                     {featured.primaryImage && (
@@ -199,27 +196,21 @@ export function HeroSection() {
         {/* Quick shop: overlaps the banner for depth */}
         <motion.div
           {...rise(0.25)}
-          className="relative z-10 mx-auto -mt-14 grid max-w-6xl gap-5 rounded-2xl border border-line bg-white p-5 shadow-[0_20px_50px_-25px_rgb(17_26_51/0.35)] sm:mx-6 md:grid-cols-2 md:p-6 lg:mx-auto"
+          className="relative z-10 mx-auto -mt-8 grid max-w-6xl gap-4 rounded-2xl border border-line bg-white p-4 shadow-[0_20px_50px_-25px_rgb(17_26_51/0.35)] sm:mx-6 md:grid-cols-[auto_1fr] md:gap-8 md:p-5 lg:mx-auto"
         >
-          <div>
-            <p className="text-sm font-bold text-ink">Shop by size</p>
-            {sizeRows.map((row) => (
-              <div key={row.system} className="mt-3 flex items-start gap-3">
-                <span className="mt-2.5 w-7 shrink-0 text-xs font-bold tracking-wide text-ink-subtle">{row.system}</span>
-                <div className="flex flex-wrap gap-2">
-                  {row.values.map((v) => (
-                    <Link
-                      key={v}
-                      to={`${paths.shop}?${row.param}=${encodeURIComponent(v)}&stock=in_stock`}
-                      aria-label={`Shop ${row.system} size ${v}`}
-                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-lg border border-line-strong px-2.5 text-sm font-semibold text-ink tabular-nums transition-all hover:-translate-y-0.5 hover:border-sand hover:bg-sand hover:text-white"
-                    >
-                      {v}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
+          <div className="flex flex-col justify-center">
+            <p className="text-sm font-bold text-ink">Find your size</p>
+            <button
+              type="button"
+              onClick={() => setSizesOpen(true)}
+              aria-haspopup="dialog"
+              className="mt-3 inline-flex h-11 w-full items-center justify-between gap-3 rounded-xl border border-line-strong bg-surface-sunken px-4 text-sm font-semibold text-ink transition-colors hover:border-sand hover:bg-white sm:w-auto sm:min-w-64"
+            >
+              <span className="flex items-center gap-2">
+                <Ruler className="size-4 text-sand" aria-hidden /> Shop by size (EU / UK)
+              </span>
+              <SlidersHorizontal className="size-4 text-ink-subtle" aria-hidden />
+            </button>
           </div>
           <div>
             <p className="text-sm font-bold text-ink">Popular brands</p>
@@ -243,20 +234,7 @@ export function HeroSection() {
           </div>
         </motion.div>
 
-        {/* Trust row */}
-        <ul className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {TRUST.map(({ icon: Icon, label, sub }) => (
-            <li key={label} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3 sm:p-4">
-              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-sand-100 text-sand">
-                <Icon className="size-5" aria-hidden />
-              </span>
-              <span className="min-w-0">
-                <span className="block text-sm font-bold text-ink">{label}</span>
-                <span className="block truncate text-xs text-ink-subtle">{sub}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
+        <SizePickerSheet open={sizesOpen} onClose={closeSizes} rows={sizeRows} />
       </div>
     </section>
   )

@@ -68,6 +68,7 @@ function summarize(p: Product, audience?: Audience): ProductSummary {
     isFeatured: p.isFeatured,
     primaryImage: p.images[0] ?? null,
     availableSizes: inStock.map((v) => v.size),
+    variants: inStock.map(({ id, sku, size, quantity, priceOverride }) => ({ id, sku, size, quantity, priceOverride })),
     totalStock: inStock.reduce((sum, v) => sum + v.quantity, 0),
     createdAt: p.createdAt,
   }

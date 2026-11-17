@@ -129,6 +129,8 @@ export type ProductSummary = Pick<
   primaryImage: ProductImage | null
   /** In-stock sizes only. */
   availableSizes: ShoeSize[]
+  /** In-stock variants, so a card can add a pair to the bag without opening the product page. */
+  variants?: Array<Pick<ProductVariant, 'id' | 'sku' | 'size' | 'quantity' | 'priceOverride'>>
   totalStock: number
   createdAt: string
 }
