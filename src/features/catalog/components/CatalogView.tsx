@@ -38,7 +38,7 @@ export function CatalogView({ meta }: { meta?: CollectionMeta }) {
         isDemo={isDemo}
       />
 
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[280px_1fr] lg:gap-14 lg:px-8 lg:py-14">
+      <div className="mx-auto grid grid-cols-1 max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[280px_1fr] lg:gap-14 lg:px-8 lg:py-14">
         {/* Desktop sidebar */}
         <aside aria-label="Filters" className="hidden lg:block">
           <div className="sticky top-[172px] max-h-[calc(100dvh-11rem)] overflow-y-auto pr-2 pb-10">

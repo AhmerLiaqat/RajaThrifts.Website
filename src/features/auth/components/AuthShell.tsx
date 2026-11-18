@@ -20,7 +20,7 @@ export function AuthShell({
   children: ReactNode
 }) {
   return (
-    <div className="grid min-h-[calc(100dvh-5rem)] lg:grid-cols-2">
+    <div className="grid grid-cols-1 min-h-[calc(100dvh-5rem)] lg:grid-cols-2">
       <div className="grain relative hidden overflow-hidden lg:block">
         <motion.img
           src={unsplash(SIDE_PHOTO, 1400)}

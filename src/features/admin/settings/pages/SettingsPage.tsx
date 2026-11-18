@@ -79,7 +79,7 @@ function SettingsForm({ settings }: { settings: StoreSettings }) {
             Shown to customers at checkout. They transfer the order total, then upload a screenshot of the
             transfer.
           </p>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Input label="Bank name" placeholder="Meezan Bank" {...field('bankName')} />
             <Input label="Account title" placeholder="Raja Thrifts" {...field('bankAccountTitle')} />
             <Input label="Account number" {...field('bankAccountNumber')} />
@@ -94,7 +94,7 @@ function SettingsForm({ settings }: { settings: StoreSettings }) {
       </Panel>
 
       <Panel title="Delivery charge">
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Input
             label="Delivery charge (Rs)"
             type="number"

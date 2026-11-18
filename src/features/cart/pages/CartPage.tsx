@@ -29,7 +29,7 @@ export default function CartPage() {
           </ButtonLink>
         </div>
       ) : (
-        <div className="mt-14 grid gap-12 lg:grid-cols-[1fr_380px]">
+        <div className="mt-14 grid grid-cols-1 gap-12 lg:grid-cols-[1fr_380px]">
           <ul className="divide-y divide-bone/10 border-y border-bone/10">
             {items.map((item) => (
               <li key={item.variantId} className="flex gap-4 py-6 sm:gap-6">

@@ -11,7 +11,7 @@ import { HomeHeading } from '../components/HomeHeading'
 export function SeoFaqSection() {
   return (
     <section aria-labelledby="about-title" className="border-t border-line py-16 lg:py-20">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr] lg:gap-16 lg:px-8">
+      <div className="mx-auto grid grid-cols-1 max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr] lg:gap-16 lg:px-8">
         <div>
           <HomeHeading id="about-title" eyebrow="About Raja Thrifts" title="Branded thrift sneakers" highlight="in Pakistan" />
           <div className="mt-5 space-y-4 text-base leading-relaxed text-ink-muted">

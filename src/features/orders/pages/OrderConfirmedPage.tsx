@@ -91,7 +91,7 @@ export default function OrderConfirmedPage() {
         </p>
       </motion.div>
 
-      <ol className="relative mt-14 grid gap-4 sm:grid-cols-3">
+      <ol className="relative mt-14 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {NEXT_STEPS.map(({ icon: Icon, title, body }, i) => (
           <li key={title} className="glass rounded-2xl p-5">
             <Icon className="size-5 text-sand" />

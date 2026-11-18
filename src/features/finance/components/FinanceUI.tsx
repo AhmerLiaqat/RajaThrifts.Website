@@ -43,14 +43,14 @@ export function PeriodControls({
             ...(period.preset === 'custom' ? [{ value: 'custom' as const, label: 'Custom' }] : []),
           ]}
         />
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex min-w-0 items-center gap-2 text-sm">
           <input
             type="date"
             aria-label="From"
             value={period.from}
             max={period.to}
             onChange={(e) => e.target.value && period.setRange(e.target.value, period.to)}
-            className="h-9 rounded-md border border-line-strong bg-surface-raised px-2 text-sm focus:border-sand focus:outline-none"
+            className="h-10 min-w-0 flex-1 rounded-md border border-line-strong bg-surface-raised px-2 text-sm focus:border-sand focus:outline-none sm:flex-none"
           />
           <span className="text-ink-subtle">→</span>
           <input
@@ -59,7 +59,7 @@ export function PeriodControls({
             value={period.to}
             min={period.from}
             onChange={(e) => e.target.value && period.setRange(period.from, e.target.value)}
-            className="h-9 rounded-md border border-line-strong bg-surface-raised px-2 text-sm focus:border-sand focus:outline-none"
+            className="h-10 min-w-0 flex-1 rounded-md border border-line-strong bg-surface-raised px-2 text-sm focus:border-sand focus:outline-none sm:flex-none"
           />
         </div>
       </div>

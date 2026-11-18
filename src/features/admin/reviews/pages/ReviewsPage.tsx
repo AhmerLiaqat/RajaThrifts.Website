@@ -85,7 +85,7 @@ function ReviewForm({ initial, onDone }: { initial: ReviewInput; onDone: () => v
       className="flex flex-col gap-5"
     >
       {save.error && <Alert tone="error">{save.error.message}</Alert>}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
           label="Customer name"
           placeholder="Ayesha K."
@@ -104,7 +104,7 @@ function ReviewForm({ initial, onDone }: { initial: ReviewInput; onDone: () => v
         onChange={(e) => set('body', e.target.value)}
         hint={`${v.body.length}/600`}
       />
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div>
           <p className="mb-2 text-xs font-medium tracking-wide text-bone/80">Rating</p>
           <Stars value={v.rating} onChange={(n) => set('rating', n)} />
@@ -250,7 +250,7 @@ export default function ReviewsPage() {
         title="Reviews"
         description="Most customers send feedback on WhatsApp. Paste it here and it appears in the Reviews section on the homepage."
       />
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <Panel title={editing ? 'Edit review' : 'Add a review'}>
           <ReviewForm key={editing?.id ?? `new-${formKey}`} initial={editing ?? { ...EMPTY, reviewDate: today() }} onDone={reset} />
         </Panel>

@@ -198,7 +198,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="grid gap-6 xl:grid-cols-[1fr_340px]">
+    <form onSubmit={onSubmit} noValidate className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_340px]">
       <div className="flex flex-col gap-6">
         {save.error && (
           <Alert tone="error" title="Could not save">
@@ -224,7 +224,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
             error={e.slug?.message}
             {...register('slug', { onChange: () => setSlugTouched(true) })}
           />
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <BrandField
               value={brandId}
               onChange={(id) => setValue('brandId', id, { shouldDirty: true, shouldValidate: true })}
@@ -239,7 +239,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
               ))}
             </Select>
           </div>
-          <div className="grid gap-5 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
             <Input label="Model (optional)" placeholder="Air Jordan 1 Low" {...register('model')} />
             <Input label="Colour" placeholder="Black / Red" {...register('color')} />
             <Input label="Imported from" placeholder="United Kingdom" {...register('originCountry')} />
@@ -251,7 +251,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
           title="Grading & condition"
           description="Collection is the commercial tier. Condition and defects are what you inspected."
         >
-          <div className="grid gap-5 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
             <Select label="Collection" {...register('collection')}>
               {COLLECTIONS.map((c) => (
                 <option key={c}>{c}</option>
@@ -300,7 +300,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
               {defects.fields.map((f, i) => (
                 <div
                   key={f.id}
-                  className="grid gap-3 rounded-sm border border-bone/10 p-3 sm:grid-cols-[1fr_140px_2fr_auto] sm:items-start"
+                  className="grid grid-cols-1 gap-3 rounded-sm border border-bone/10 p-3 sm:grid-cols-[1fr_140px_2fr_auto] sm:items-start"
                 >
                   <Input
                     aria-label="Area"

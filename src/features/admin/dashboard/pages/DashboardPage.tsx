@@ -151,7 +151,7 @@ export default function DashboardPage() {
       </div>
 
       <div className={cn('space-y-6 transition-opacity', summary.isPlaceholderData && 'opacity-60')}>
-        <section aria-label="Key figures" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <section aria-label="Key figures" className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
           {s ? (
             <>
               <StatTile
@@ -185,7 +185,7 @@ export default function DashboardPage() {
           {s ? <SalesChart daily={s.daily} /> : <Skeleton className="h-64" />}
         </Panel>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Panel title="Orders by status" description="Orders placed in this period.">
             {s ? (
               Object.keys(s.byStatus).length ? (
@@ -237,7 +237,7 @@ export default function DashboardPage() {
           </Panel>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Panel title="Inventory value" description="Listed stock (active and sold-out listings).">
             {s ? (
               <dl className="grid grid-cols-2 gap-4 text-sm">

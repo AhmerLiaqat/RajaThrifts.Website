@@ -364,7 +364,7 @@ function CheckoutForm({
 
       <fieldset className="flex flex-col gap-5">
         <legend className="mb-5 font-display text-xs tracking-wider uppercase">1 · Your details</legend>
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Input label="Full name" autoComplete="name" error={e.name?.message} {...form.register('name')} />
           <Input
             label="Phone (WhatsApp)"
@@ -392,7 +392,7 @@ function CheckoutForm({
           autoComplete="address-line2"
           {...form.register('line2')}
         />
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Input label="City" autoComplete="address-level2" error={e.city?.message} {...form.register('city')} />
           <Select label="Province" error={e.province?.message} {...form.register('province')}>
             <option value="">Select…</option>
@@ -451,7 +451,7 @@ export default function CheckoutPage() {
         Almost <span className="text-sand">yours</span>
       </h1>
 
-      <div className="mt-12 grid gap-12 lg:grid-cols-[1.4fr_1fr]">
+      <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-[1.4fr_1fr]">
         <div>
           {blocked === 'supabase' && <SupabaseNotice feature="Checkout" />}
           {blocked === 'demo' && (

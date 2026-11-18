@@ -139,7 +139,7 @@ export function PurchasePanel({ product, isDemo }: PurchasePanelProps) {
       </div>
 
       {/* Actions */}
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Button
           variant="outline"
           size="lg"
@@ -160,7 +160,7 @@ export function PurchasePanel({ product, isDemo }: PurchasePanelProps) {
       </div>
       {notice && <p className="mt-2 text-xs text-ink-muted">{notice}</p>}
 
-      <ul className="mt-6 grid gap-2 text-xs text-ink-muted sm:grid-cols-2">
+      <ul className="mt-6 grid grid-cols-1 gap-2 text-xs text-ink-muted sm:grid-cols-2">
         <li className="flex items-center gap-2">
           <ShieldCheck className="size-4 text-sand" /> Hand-inspected and graded
         </li>

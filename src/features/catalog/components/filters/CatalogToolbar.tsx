@@ -57,12 +57,12 @@ function SearchField({ api }: { api: CatalogFiltersApi }) {
 
 function SortSelect({ api }: { api: CatalogFiltersApi }) {
   return (
-    <label className="relative flex h-12 items-center rounded-lg border border-line-strong bg-white shadow-sm focus-within:border-sand">
+    <label className="relative flex h-12 min-w-0 flex-1 items-center rounded-lg sm:flex-none border border-line-strong bg-white shadow-sm focus-within:border-sand">
       <span className="sr-only">Sort by</span>
       <select
         value={api.state.sort}
         onChange={(e) => api.update({ sort: e.target.value as SortOption })}
-        className="h-full cursor-pointer appearance-none bg-transparent pr-10 pl-4 text-sm font-medium text-ink focus:outline-none"
+        className="h-full w-full min-w-0 cursor-pointer appearance-none truncate bg-transparent pr-10 pl-4 text-sm font-medium text-ink focus:outline-none"
       >
         {SORT_OPTIONS.map((o) => (
           <option key={o.value} value={o.value} className="normal-case">

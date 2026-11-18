@@ -54,7 +54,7 @@ export default function ProductDetailPage() {
           </ol>
         </nav>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
           <div className="lg:sticky lg:top-[172px] lg:self-start">
             <ProductGallery
               images={product.images}

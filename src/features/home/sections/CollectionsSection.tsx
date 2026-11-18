@@ -56,7 +56,7 @@ export function CollectionsSection() {
           }
         />
 
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
           {collections.map((c, i) => {
             const d = DETAIL[c.value]
             const inCollection = items.filter((p) => p.collection === c.value)

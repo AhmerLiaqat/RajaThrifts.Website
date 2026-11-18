@@ -111,7 +111,7 @@ export default function SalesReportPage() {
             />
           </section>
 
-          <section className="grid gap-4 md:grid-cols-2">
+          <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <MetricChart title="Net sales" series={r.series} metric="net_sales" granularity={r.granularity} />
             <MetricChart
               title="Orders delivered"
@@ -122,7 +122,7 @@ export default function SalesReportPage() {
             />
           </section>
 
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <Panel title="By collection">
               {r.salesByCollection.length ? (
                 <BarList

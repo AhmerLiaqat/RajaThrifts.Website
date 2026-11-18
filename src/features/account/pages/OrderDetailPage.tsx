@@ -73,7 +73,7 @@ export default function OrderDetailPage() {
         )}
       </div>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+      <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1.4fr_1fr]">
         <section>
           <h2 className="mb-4 font-display text-xs tracking-wider uppercase">Items</h2>
           <OrderItemsList order={order} />

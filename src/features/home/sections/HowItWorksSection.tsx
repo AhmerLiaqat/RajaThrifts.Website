@@ -22,7 +22,7 @@ export function HowItWorksSection() {
           center
           description="No guesswork and no surprises: you see exactly what you get before you order."
         />
-        <ol className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map(({ icon: Icon, title, text }, i) => (
             <Reveal key={title} delay={i * 0.05}>
               <li className="group relative h-full rounded-2xl border border-line bg-white p-6 shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-glow">

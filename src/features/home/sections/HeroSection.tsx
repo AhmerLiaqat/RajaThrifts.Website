@@ -70,7 +70,7 @@ export function HeroSection() {
             className="absolute top-10 right-[38%] -z-10 hidden size-24 rotate-12 rounded-3xl border border-gold/30 lg:block"
           />
 
-          <div className="grid items-center gap-10 px-6 pt-7 pb-16 sm:px-10 lg:grid-cols-[1.3fr_1fr] lg:gap-6 lg:px-12 lg:pt-9 lg:pb-16">
+          <div className="grid grid-cols-1 items-center gap-10 px-6 pt-7 pb-16 sm:px-10 lg:grid-cols-[1.3fr_1fr] lg:gap-6 lg:px-12 lg:pt-9 lg:pb-16">
             {/* Copy */}
             <div>
               <motion.span
@@ -196,7 +196,7 @@ export function HeroSection() {
         {/* Quick shop: overlaps the banner for depth */}
         <motion.div
           {...rise(0.25)}
-          className="relative z-10 mx-auto -mt-8 grid max-w-6xl gap-4 rounded-2xl border border-line bg-white p-4 shadow-[0_20px_50px_-25px_rgb(17_26_51/0.35)] sm:mx-6 md:grid-cols-[auto_1fr] md:gap-8 md:p-5 lg:mx-auto"
+          className="relative z-10 mx-auto -mt-8 grid grid-cols-1 max-w-6xl gap-4 rounded-2xl border border-line bg-white p-4 shadow-[0_20px_50px_-25px_rgb(17_26_51/0.35)] sm:mx-6 md:grid-cols-[auto_1fr] md:gap-8 md:p-5 lg:mx-auto"
         >
           <div className="flex flex-col justify-center">
             <p className="text-sm font-bold text-ink">Find your size</p>

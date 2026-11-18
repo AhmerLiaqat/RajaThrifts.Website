@@ -36,7 +36,7 @@ export function CustomerFooter() {
     <footer className="mt-16 bg-brand-navy text-white/80">
       {/* Service promises */}
       <div className="border-b border-white/10">
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
+        <div className="mx-auto grid grid-cols-1 max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
           {[
             { icon: ShieldCheck, title: 'Hand-inspected', text: 'Every pair checked and honestly graded' },
             { icon: PackageCheck, title: 'Cleaned & photographed', text: 'What you see is the pair you get' },
@@ -56,7 +56,7 @@ export function CustomerFooter() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
             <Logo tone="dark" tagline size="lg" />
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/65">

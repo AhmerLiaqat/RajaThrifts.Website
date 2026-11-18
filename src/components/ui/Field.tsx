@@ -9,7 +9,7 @@ import {
 import { cn } from '@/lib/utils/cn'
 
 const control =
-  'w-full rounded-lg border border-line-strong bg-surface-raised px-3 text-sm text-ink shadow-sm placeholder:text-ink-subtle transition-shadow focus:border-sand focus:ring-3 focus:ring-sand/15 focus:outline-none disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:opacity-60'
+  'w-full min-w-0 rounded-lg border border-line-strong bg-surface-raised px-3 text-sm text-ink shadow-sm placeholder:text-ink-subtle transition-shadow focus:border-sand focus:ring-3 focus:ring-sand/15 focus:outline-none disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:opacity-60'
 
 function Label({ htmlFor, children }: { htmlFor: string; children: ReactNode }) {
   return (
@@ -46,7 +46,7 @@ export function Select({ label, error, hint, id, className, children, ...props }
   const auto = useId()
   const sid = id ?? auto
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex min-w-0 flex-col gap-1.5">
       {label && <Label htmlFor={sid}>{label}</Label>}
       <select
         id={sid}
@@ -73,7 +73,7 @@ export function Textarea({ label, error, hint, id, className, rows = 3, ...props
   const auto = useId()
   const tid = id ?? auto
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex min-w-0 flex-col gap-1.5">
       {label && <Label htmlFor={tid}>{label}</Label>}
       <textarea
         id={tid}

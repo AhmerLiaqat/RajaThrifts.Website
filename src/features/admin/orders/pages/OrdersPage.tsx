@@ -295,7 +295,7 @@ function OrderPanel({ order }: { order: Order }) {
       </DrawerSection>
 
       <DrawerSection title="Delivery">
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <Input
               label="Courier"
@@ -365,7 +365,7 @@ function OrderPanel({ order }: { order: Order }) {
             </p>
           </div>
         )}
-        <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
           <Select
             label="Status"
             value={payStatus}

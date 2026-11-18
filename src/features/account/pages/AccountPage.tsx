@@ -41,7 +41,7 @@ function ProfileForm({ profile }: { profile: Profile }) {
     >
       {update.error && <Alert tone="error">{update.error.message}</Alert>}
       {update.isSuccess && !form.formState.isDirty && <Alert tone="success">Profile saved.</Alert>}
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <Input
           label="Full name"
           autoComplete="name"
@@ -73,7 +73,7 @@ function ProfileForm({ profile }: { profile: Profile }) {
         {...form.register('line1')}
       />
       <Input label="Apartment, area (optional)" autoComplete="address-line2" {...form.register('line2')} />
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
         <Input label="City" autoComplete="address-level2" {...form.register('city')} />
         <Select label="Province" {...form.register('province')}>
           <option value="">Select…</option>
@@ -133,7 +133,7 @@ export default function AccountPage() {
         </div>
       </div>
 
-      <div className="mt-12 grid gap-16 lg:grid-cols-[1.2fr_1fr]">
+      <div className="mt-12 grid grid-cols-1 gap-16 lg:grid-cols-[1.2fr_1fr]">
         <section aria-labelledby="orders-heading">
           <h2 id="orders-heading" className="font-display text-xs tracking-wider uppercase">
             Orders

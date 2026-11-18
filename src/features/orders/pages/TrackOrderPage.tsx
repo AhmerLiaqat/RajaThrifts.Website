@@ -123,7 +123,7 @@ function TrackedOrderCard({ order }: { order: TrackedOrder }) {
         <p className="mt-5 text-center text-sm text-ink-muted">{ORDER_STATUS_META[order.status].description}</p>
       </div>
 
-      <div className="grid gap-6 border-t border-line px-6 py-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 border-t border-line px-6 py-6 md:grid-cols-2">
         <div>
           <h2 className="text-sm font-bold text-ink">Delivery details</h2>
           <div className="mt-4 flex flex-col gap-4">
@@ -250,7 +250,7 @@ export default function TrackOrderPage() {
             e.preventDefault()
             if (valid) track.mutate()
           }}
-          className="mt-8 grid gap-4 rounded-2xl border border-line bg-white p-5 shadow-card sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+          className="mt-8 grid grid-cols-1 gap-4 rounded-2xl border border-line bg-white p-5 shadow-card sm:grid-cols-[1fr_1fr_auto] sm:items-end"
         >
           <Input
             label="Order number"

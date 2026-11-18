@@ -37,7 +37,7 @@ export default function UsersPage() {
         description="Only admins can open the dashboard. Promote an account to Admin to give access, or set it back to Customer to remove it."
       />
 
-      <dl className="mb-6 grid gap-3 sm:grid-cols-2">
+      <dl className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
         {ASSIGNABLE_ROLES.map((r) => (
           <div key={r} className="rounded-sm border border-bone/10 p-4">
             <dt className="font-display text-xs tracking-wider text-sand uppercase">{r}</dt>
