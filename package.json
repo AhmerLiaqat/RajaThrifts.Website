@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/write-edge-env.mjs",
+    "build": "tsc -b && vite build && node scripts/write-edge-env.mjs && node scripts/write-cloudflare.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "test:db": "node supabase/tests/security.test.mjs && node supabase/tests/finance.test.mjs && node supabase/tests/checkout.test.mjs"
