@@ -7,6 +7,10 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
+    // Older iPhones stay on iOS 15/16 (iPhone 7/8/X) and many are still in use. Vite's default
+    // (Safari 16.4+) would leave them on a blank page; compile down so the shop runs there too.
+    target: ['es2020', 'safari15', 'ios15', 'chrome87', 'edge88', 'firefox78'],
+    cssTarget: ['safari15', 'ios15', 'chrome87', 'edge88', 'firefox78'],
     rolldownOptions: {
       output: {
         // Long-lived vendor chunks: cache well across deploys and keep the app chunk small.

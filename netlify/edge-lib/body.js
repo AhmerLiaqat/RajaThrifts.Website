@@ -78,5 +78,5 @@ export function productBody(p, seo) {
 
 /** Replaces the empty app container with the fallback content. */
 export function injectBody(html, body) {
-  return html.replace(/<div id="root"><\/div>/, `<div id="root">${body}</div>`)
+  return html.replace(/(<div id="root"[^>]*>)<\/div>/, `$1${body}</div>`)
 }

@@ -32,9 +32,67 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!--
+      Boot guard. The edge function puts plain text into #root for search engines; visitors
+      should never see it. While the app loads they see a small branded splash instead. If the
+      scripts fail (e.g. an old tab asking for files from a previous deploy) the page reloads
+      once; if it still cannot start, the plain text is shown so the shop stays usable.
+    -->
+    <style>
+      #boot{display:none;position:fixed;inset:0;z-index:1;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:#fff;font:600 14px/1.4 Inter,system-ui,-apple-system,sans-serif;color:#1b2550}
+      #boot img{width:72px;height:72px;border-radius:9999px}
+      #boot i{display:block;width:28px;height:28px;border-radius:9999px;border:3px solid #e8e2d0;border-top-color:#c99a2e;animation:bootspin .8s linear infinite}
+      @keyframes bootspin{to{transform:rotate(360deg)}}
+      @media (prefers-reduced-motion:reduce){#boot i{animation-duration:2.4s}}
+      #boot a{display:none;padding:10px 18px;border-radius:12px;background:#1b2550;color:#fff;text-decoration:none}
+      #boot .f{display:none}
+      html.js #root>.seo-fallback{display:none}
+      html.js #root.booting~#boot{display:flex}
+      html.boot-failed #root>.seo-fallback{display:block}
+      html.boot-failed #root:not(:empty)~#boot{top:auto;left:12px;right:12px;bottom:12px;flex-direction:row;gap:12px;padding:12px 14px;border-radius:14px;box-shadow:0 10px 30px rgba(17,26,51,.25)}
+      html.boot-failed #root:not(:empty)~#boot img{display:none}
+      html.boot-failed #boot{display:flex}
+      html.boot-failed #boot i,html.boot-failed #boot .l{display:none}
+      html.boot-failed #boot .f,html.boot-failed #boot a{display:inline-block}
+    </style>
+    <script>
+      ;(function () {
+        var d = document.documentElement
+        d.className += ' js'
+        var KEY = 'rt-boot-reload'
+        function failed() {
+          var last = 0
+          try { last = +sessionStorage.getItem(KEY) || 0 } catch (e) {}
+          // Reload once (fresh HTML, fresh script names); never loop.
+          if (Date.now() - last > 60000) {
+            try { sessionStorage.setItem(KEY, String(Date.now())) } catch (e) {}
+            location.reload()
+          } else d.className += ' boot-failed'
+        }
+        // A script or stylesheet of the app failed to load.
+        window.addEventListener('error', function (e) {
+          var t = e.target
+          if (t && (t.tagName === 'SCRIPT' || (t.tagName === 'LINK' && /modulepreload|stylesheet/.test(t.rel))) && /\/assets\//.test(t.src || t.href)) failed()
+        }, true)
+        // Lazy page chunk from an old deploy (Vite fires this before the import rejects).
+        window.addEventListener('vite:preloadError', function (e) { e.preventDefault(); failed() })
+        // Still not started after 15 s (very slow or broken): show the readable text version.
+        setTimeout(function () {
+          var r = document.getElementById('root')
+          if (r && /\bbooting\b/.test(r.className)) d.className += ' boot-failed'
+        }, 15000)
+      })()
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" class="booting"></div>
+    <div id="boot" role="status" aria-live="polite">
+      <img src="/icon-192.png" alt="" width="72" height="72" />
+      <i aria-hidden="true"></i>
+      <span class="l">Loading Raja Thrifts…</span>
+      <span class="f">The shop didn't load. Check your connection and try again.</span>
+      <a href="" onclick="location.reload();return false">Reload</a>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
