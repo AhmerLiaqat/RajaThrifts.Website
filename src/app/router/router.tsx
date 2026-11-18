@@ -23,6 +23,7 @@ const customerRoutes: RouteObject[] = [
   { path: paths.checkout, lazy: page(() => import('@/features/cart/pages/CheckoutPage')) },
   { path: paths.wishlist, lazy: page(() => import('@/features/wishlist/WishlistPage')) },
   { path: paths.orderConfirmed(), lazy: page(() => import('@/features/orders/pages/OrderConfirmedPage')) },
+  { path: paths.reviews, lazy: page(() => import('@/features/reviews/ReviewsPage')) },
   { path: paths.trackOrder, lazy: page(() => import('@/features/orders/pages/TrackOrderPage')) },
   { path: paths.login, lazy: page(() => import('@/features/auth/pages/LoginPage')) },
   // Customers shop as guests: no sign-up or customer account pages.

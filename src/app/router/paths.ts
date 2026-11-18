@@ -14,6 +14,7 @@ export const paths = {
   wishlist: '/wishlist',
   orderConfirmed: (orderNumber = ':orderNumber') => `/order-confirmed/${orderNumber}`,
   trackOrder: '/track-order',
+  reviews: '/reviews',
 
   // Staff sign-in (customers check out as guests). Account pages remain for older accounts.
   login: '/login',

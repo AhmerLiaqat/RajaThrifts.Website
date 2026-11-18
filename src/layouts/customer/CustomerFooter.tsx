@@ -23,6 +23,7 @@ const columns = [
     title: 'Orders',
     links: [
       { label: 'Track your order', to: paths.trackOrder },
+      { label: 'Customer reviews', to: paths.reviews },
       { label: 'Bag', to: paths.cart },
       { label: 'Wishlist', to: paths.wishlist },
       { label: 'Admin login', to: paths.login },

@@ -55,7 +55,7 @@ export function QuickBuyButton({ product, className }: { product: ProductSummary
               key={v.id}
               type="button"
               onClick={() => buy(v)}
-              className="h-8 rounded-md border border-line-strong px-2 text-xs font-semibold text-ink tabular-nums transition-colors hover:border-sand hover:bg-sand hover:text-white"
+              className="h-10 min-w-10 rounded-md border border-line-strong px-2.5 text-xs font-semibold text-ink tabular-nums transition-colors hover:border-sand hover:bg-sand hover:text-white"
             >
               {formatSize({ ...v.size, cm: null }, ' / ')}
             </button>
@@ -66,7 +66,7 @@ export function QuickBuyButton({ product, className }: { product: ProductSummary
         type="button"
         onClick={onClick}
         aria-expanded={variants.length > 1 ? choosing : undefined}
-        className="flex h-10 w-full items-center justify-center gap-1.5 rounded-lg bg-brand-navy text-sm font-semibold text-white transition-colors hover:bg-gold hover:text-brand-navy"
+        className="flex h-11 w-full items-center justify-center gap-1.5 rounded-lg bg-brand-navy text-sm font-semibold text-white transition-colors hover:bg-gold hover:text-brand-navy"
       >
         <Zap className="size-4" aria-hidden />
         {choosing ? 'Pick your size' : 'Buy now'}

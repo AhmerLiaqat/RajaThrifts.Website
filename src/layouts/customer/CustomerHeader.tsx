@@ -84,7 +84,13 @@ export function CustomerHeader() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-30">
+      {/* Stays pinned; once scrolled, the thin announcement strip (h-9) tucks away to give the page more room. */}
+      <header
+        className={cn(
+          'fixed inset-x-0 top-0 z-30 transition-transform duration-300 ease-out',
+          scrolled && !menuOpen && '-translate-y-9',
+        )}
+      >
         {/* Announcement bar */}
         <div className="hero-navy text-white">
           <div className="mx-auto flex h-9 max-w-7xl items-center justify-center gap-8 overflow-hidden px-4 text-xs font-medium sm:px-6 lg:justify-between lg:px-8">

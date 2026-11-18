@@ -11,12 +11,14 @@ import {
 } from '@/components/admin/AdminUI'
 import { Button, Input } from '@/components/ui'
 import { Alert, Select, Textarea } from '@/components/ui/Field'
+import { PRODUCT_STATUS_META, PRODUCT_STATUS_ORDER } from '@/constants/product'
 import { useAdminProducts } from '@/features/admin/products/hooks'
 import { AdminPageHeader } from '@/layouts/admin/AdminLayout'
 import { sheet } from '@/lib/export'
 import { todayPKT } from '@/lib/utils/dates'
 import { financeService } from '@/services/finance/finance.service'
 import type { PurchaseCostType, PurchaseStatus, StockPurchase } from '@/types/finance'
+import type { ProductStatus } from '@/types/product'
 import { ExportButtons } from '../components/FinanceUI'
 import { pkr } from '../format'
 import { useFinanceMutation, useLinkedProducts, usePurchaseCosts, usePurchases, useSuppliers } from '../hooks'
@@ -283,10 +285,12 @@ function LinkedProducts({ purchase }: { purchase: StockPurchase }) {
     financeService.assignProducts(purchase.id, v.ids, true),
   )
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<ProductStatus | ''>('')
   const [picked, setPicked] = useState<Set<string>>(new Set())
   const linkedIds = new Set((linked.data ?? []).map((l) => l.product_id))
   const candidates = (products.data ?? [])
     .filter((p) => !linkedIds.has(p.id))
+    .filter((p) => !statusFilter || p.status === statusFilter)
     .filter((p) => `${p.brand} ${p.name}`.toLowerCase().includes(search.trim().toLowerCase()))
     .slice(0, 40)
 
@@ -328,7 +332,22 @@ function LinkedProducts({ purchase }: { purchase: StockPurchase }) {
         </Button>
       )}
       <div className="rounded-sm border border-bone/10 p-3">
-        <SearchBox value={search} onChange={setSearch} placeholder="Find products to link" className="h-10" />
+        <div className="flex gap-2">
+          <SearchBox value={search} onChange={setSearch} placeholder="Find products to link" className="h-10 flex-1" />
+          <Select
+            aria-label="Listing status"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as ProductStatus | '')}
+            className="h-10 w-36"
+          >
+            <option value="">All statuses</option>
+            {PRODUCT_STATUS_ORDER.map((s) => (
+              <option key={s} value={s}>
+                {PRODUCT_STATUS_META[s].label}
+              </option>
+            ))}
+          </Select>
+        </div>
         <ul className="mt-2 max-h-56 overflow-y-auto text-sm">
           {candidates.map((p) => (
             <li key={p.id}>

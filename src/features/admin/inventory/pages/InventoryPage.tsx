@@ -15,6 +15,7 @@ import {
 import { Button } from '@/components/ui'
 import { Alert, Select, Textarea } from '@/components/ui/Field'
 import { COLLECTIONS, type Collection } from '@/constants/collections'
+import { isProductStatus, PRODUCT_STATUS_META, PRODUCT_STATUS_ORDER } from '@/constants/product'
 import { CollectionBadge } from '@/features/catalog/components/CollectionBadge'
 import { AdminPageHeader } from '@/layouts/admin/AdminLayout'
 import { cn } from '@/lib/utils/cn'
@@ -247,6 +248,19 @@ function StockPanel({ row, threshold }: { row: InventoryRow; threshold: number }
 export default function InventoryPage() {
   const [params, setParams] = useSearchParams()
   const stock = (params.get('stock') as StockFilter) ?? 'all'
+  const rawListing = params.get('listing')
+  const listing = isProductStatus(rawListing) ? rawListing : null
+  /** Updates one URL filter, keeping the others. */
+  const setParam = (key: string, value: string | null) =>
+    setParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (value) next.set(key, value)
+        else next.delete(key)
+        return next
+      },
+      { replace: true },
+    )
   const [search, setSearch] = useState('')
   const [collection, setCollection] = useState<Collection | ''>('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -257,7 +271,10 @@ export default function InventoryPage() {
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase()
     return (inventory.data ?? []).filter((r) => {
-      if (r.product.status === 'archived' || r.product.status === 'draft') {
+      if (listing) {
+        if (r.product.status !== listing) return false
+      } else if (r.product.status === 'archived' || r.product.status === 'draft') {
+        // Low / out of stock only matter for listings on the shop, unless a listing status is picked.
         if (stock !== 'all') return false
       }
       if (stock === 'low' && !(r.quantity > 0 && r.productStock <= threshold)) return false
@@ -266,7 +283,7 @@ export default function InventoryPage() {
       if (term && !`${r.sku} ${r.product.name} ${r.product.brand}`.toLowerCase().includes(term)) return false
       return true
     })
-  }, [inventory.data, stock, collection, search, threshold])
+  }, [inventory.data, stock, listing, collection, search, threshold])
 
   const all = inventory.data ?? []
   const totals = {
@@ -299,7 +316,7 @@ export default function InventoryPage() {
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center">
         <Tabs
           value={stock}
-          onChange={(v) => setParams(v === 'all' ? {} : { stock: v }, { replace: true })}
+          onChange={(v) => setParam('stock', v === 'all' ? null : v)}
           options={[
             { value: 'all', label: 'All SKUs', count: totals.skus },
             { value: 'low', label: 'Low stock', count: totals.low },
@@ -312,6 +329,19 @@ export default function InventoryPage() {
           placeholder="Search SKU, product or brand"
           className="flex-1"
         />
+        <Select
+          aria-label="Listing status"
+          value={listing ?? ''}
+          onChange={(e) => setParam('listing', e.target.value || null)}
+          className="lg:w-44"
+        >
+          <option value="">All listings</option>
+          {PRODUCT_STATUS_ORDER.map((s) => (
+            <option key={s} value={s}>
+              {PRODUCT_STATUS_META[s].label} ({all.filter((r) => r.product.status === s).length})
+            </option>
+          ))}
+        </Select>
         <Select
           aria-label="Collection"
           value={collection}
@@ -386,7 +416,9 @@ export default function InventoryPage() {
               <td className="px-4 py-2.5">
                 <div className="flex items-center gap-2">
                   <CollectionBadge collection={r.product.collection} />
-                  <span className="text-xs text-ink-subtle">{r.product.status.replace('_', ' ')}</span>
+                  <Pill className={PRODUCT_STATUS_META[r.product.status].className} title={PRODUCT_STATUS_META[r.product.status].hint}>
+                    {PRODUCT_STATUS_META[r.product.status].label}
+                  </Pill>
                 </div>
               </td>
               <td className="px-4 py-2.5 text-right">

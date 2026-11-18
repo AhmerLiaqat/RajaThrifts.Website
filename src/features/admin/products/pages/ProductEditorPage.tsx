@@ -446,10 +446,10 @@ function ProductForm({ product }: { product?: AdminProduct }) {
             error={e.status?.message}
             {...register('status')}
           >
-            <option value="draft">Draft (hidden)</option>
+            <option value="draft">Draft (not published)</option>
             <option value="active">Active</option>
             <option value="sold_out">Sold out</option>
-            <option value="archived">Archived (hidden)</option>
+            <option value="archived">Hidden (archived)</option>
           </Select>
           <label className="flex items-center gap-3 text-sm text-bone/85">
             <input type="checkbox" className="size-4 accent-sand" {...register('isFeatured')} /> Feature
@@ -522,7 +522,7 @@ function ProductForm({ product }: { product?: AdminProduct }) {
                   loading={setStatus.isPending}
                   onClick={() => setStatus.mutate({ id: product.id, status: 'archived' })}
                 >
-                  <Archive className="size-3.5" /> Archive
+                  <Archive className="size-3.5" /> Hide from shop
                 </Button>
               )}
               {isAdmin && (

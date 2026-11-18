@@ -1,11 +1,13 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useEffect, useRef, useState, type PointerEvent, type WheelEvent } from 'react'
+import { createPortal } from 'react-dom'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import type { ProductImage } from '@/types/product'
 
 interface ImageLightboxProps {
   open: boolean
-  images: ProductImage[]
+  images: Array<Pick<ProductImage, 'id' | 'url' | 'alt'>>
   index: number
   onIndexChange: (index: number) => void
   onClose: () => void
@@ -25,6 +27,8 @@ const IDENTITY: View = { s: 1, x: 0, y: 0 }
  */
 export function ImageLightbox({ open, images, index, onIndexChange, onClose }: ImageLightboxProps) {
   const stageRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  useFocusTrap(dialogRef, open)
   const closeRef = useRef<HTMLButtonElement>(null)
   const [view, setView] = useState<View>(IDENTITY)
   const [animate, setAnimate] = useState(false)
@@ -151,10 +155,12 @@ export function ImageLightbox({ open, images, index, onIndexChange, onClose }: I
     setView(zoomAround(view, s, local({ x: e.clientX, y: e.clientY })))
   }
 
-  return (
+  // Rendered on <body> so a moving or transformed parent (review strip, hover lift) cannot shift it.
+  return createPortal(
     <AnimatePresence>
       {open && current && (
         <motion.div
+          ref={dialogRef}
           role="dialog"
           aria-modal="true"
           aria-label="Photo viewer"
@@ -175,7 +181,7 @@ export function ImageLightbox({ open, images, index, onIndexChange, onClose }: I
               type="button"
               onClick={onClose}
               aria-label="Close photo viewer"
-              className="grid size-10 place-items-center rounded-full bg-white/10 hover:bg-white/20"
+              className="grid size-11 place-items-center rounded-full bg-white/10 hover:bg-white/20"
             >
               <X className="size-5" />
             </button>
@@ -225,6 +231,7 @@ export function ImageLightbox({ open, images, index, onIndexChange, onClose }: I
           )}
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }

@@ -64,7 +64,6 @@ export const reviewService = {
       .eq('published', true)
       .order('sort_order', { ascending: true })
       .order('review_date', { ascending: false })
-      .limit(24)
     if (error) throw fromPostgrestError(error)
     return (data as ReviewRow[]).map(map)
   },

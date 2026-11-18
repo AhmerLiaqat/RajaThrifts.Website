@@ -6,6 +6,7 @@ import { DataTable, Pill, SearchBox, TableMessage, Tabs } from '@/components/adm
 import { Button, ButtonLink } from '@/components/ui'
 import { Alert, Select } from '@/components/ui/Field'
 import { COLLECTIONS, type Collection } from '@/constants/collections'
+import { isProductStatus, PRODUCT_STATUS_META, PRODUCT_STATUS_ORDER } from '@/constants/product'
 import { useDashboardSummary } from '@/features/admin/hooks'
 import { CollectionBadge } from '@/features/catalog/components/CollectionBadge'
 import { AdminPageHeader } from '@/layouts/admin/AdminLayout'
@@ -14,26 +15,25 @@ import { formatPrice } from '@/lib/utils/format'
 import { MIN_PRODUCT_IMAGES, type ProductStatus } from '@/types/product'
 import { useAdminProducts, useBulkUpdateProducts } from '../hooks'
 
-const STATUS_STYLE: Record<ProductStatus, string> = {
-  draft: 'border-bone/20 text-ink-muted',
-  active: 'border-success/40 text-success',
-  sold_out: 'border-warning/40 text-warning',
-  archived: 'border-bone/10 text-ink-subtle',
-}
-
-const STATUS_TABS: Array<{ value: ProductStatus | 'all'; label: string }> = [
-  { value: 'all', label: 'All' },
-  { value: 'active', label: 'Active' },
-  { value: 'sold_out', label: 'Sold out' },
-  { value: 'draft', label: 'Drafts' },
-  { value: 'archived', label: 'Archived' },
-]
+type StatusFilter = ProductStatus | 'all'
 
 export default function ProductListPage() {
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const [search, setSearch] = useState(params.get('q') ?? '')
   const [debounced, setDebounced] = useState(search)
-  const [status, setStatus] = useState<ProductStatus | 'all'>('all')
+  // Kept in the URL (?status=draft) so the filter survives refresh, back and shared links.
+  const rawStatus = params.get('status')
+  const status: StatusFilter = isProductStatus(rawStatus) ? rawStatus : 'all'
+  const setStatus = (v: StatusFilter) =>
+    setParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (v === 'all') next.delete('status')
+        else next.set('status', v)
+        return next
+      },
+      { replace: true },
+    )
   const [collection, setCollection] = useState<Collection | ''>('')
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [bulkCollection, setBulkCollection] = useState<Collection | ''>('')
@@ -43,11 +43,21 @@ export default function ProductListPage() {
     return () => window.clearTimeout(id)
   }, [search])
 
-  const products = useAdminProducts({ search: debounced, status, collection: collection || undefined })
+  // Load every status once and filter here, so each tab can show its count.
+  const products = useAdminProducts({ search: debounced, status: 'all', collection: collection || undefined })
   const bulk = useBulkUpdateProducts()
   const threshold = useDashboardSummary(30).data?.lowStockThreshold ?? 1
 
-  const rows = useMemo(() => products.data ?? [], [products.data])
+  const all = useMemo(() => products.data ?? [], [products.data])
+  const rows = useMemo(() => (status === 'all' ? all : all.filter((p) => p.status === status)), [all, status])
+  const statusTabs: Array<{ value: StatusFilter; label: string; count?: number }> = [
+    { value: 'all', label: 'All', count: products.data ? all.length : undefined },
+    ...PRODUCT_STATUS_ORDER.map((s) => ({
+      value: s,
+      label: PRODUCT_STATUS_META[s].label,
+      count: products.data ? all.filter((p) => p.status === s).length : undefined,
+    })),
+  ]
   const visibleIds = rows.map((p) => p.id)
   const selectedVisible = visibleIds.filter((id) => selected.has(id))
   const allChecked = visibleIds.length > 0 && selectedVisible.length === visibleIds.length
@@ -83,7 +93,7 @@ export default function ProductListPage() {
     <>
       <AdminPageHeader
         title="Products"
-        description="Create, edit and archive listings. Assign each pair to PREMIUM, A CATEGORY or B CATEGORY."
+        description="Create, edit and hide listings. Filter by Active, Sold out, Draft or Hidden. Assign each pair to PREMIUM, A CATEGORY or B CATEGORY."
         actions={
           <>
             <ButtonLink to={paths.admin.productImport} variant="outline" size="sm">
@@ -97,7 +107,7 @@ export default function ProductListPage() {
       />
 
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center">
-        <Tabs value={status} onChange={setStatus} options={STATUS_TABS} />
+        <Tabs value={status} onChange={setStatus} options={statusTabs} />
         <SearchBox
           value={search}
           onChange={setSearch}
@@ -159,11 +169,11 @@ export default function ProductListPage() {
             size="sm"
             variant="ghost"
             onClick={() =>
-              window.confirm(`Archive ${selectedVisible.length} products?`) &&
+              window.confirm(`Hide ${selectedVisible.length} products from the shop?`) &&
               applyBulk({ status: 'archived' })
             }
           >
-            Archive
+            Hide
           </Button>
           <button
             type="button"
@@ -253,7 +263,9 @@ export default function ProductListPage() {
                 <CollectionBadge collection={p.collection} />
               </td>
               <td className="px-4 py-3">
-                <Pill className={STATUS_STYLE[p.status]}>{p.status.replace('_', ' ')}</Pill>
+                <Pill className={PRODUCT_STATUS_META[p.status].className} title={PRODUCT_STATUS_META[p.status].hint}>
+                  {PRODUCT_STATUS_META[p.status].label}
+                </Pill>
               </td>
               <td className="px-4 py-3 text-right tabular-nums">
                 <span className={stock === 0 ? 'text-ink-subtle' : undefined}>{stock}</span>
@@ -291,9 +303,9 @@ export default function ProductListPage() {
             </tr>
           )
         })}
-        {products.data?.length === 0 && (
+        {products.data && rows.length === 0 && (
           <TableMessage colSpan={8}>
-            No products match.{' '}
+            {status === 'all' ? 'No products match.' : `No ${PRODUCT_STATUS_META[status].label.toLowerCase()} products match.`}{' '}
             <Link to={paths.admin.productNew} className="text-sand underline">
               Create one
             </Link>

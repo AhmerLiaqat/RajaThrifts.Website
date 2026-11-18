@@ -3,6 +3,7 @@ import { X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { cn } from '@/lib/utils/cn'
 import { motion as m } from '@/theme/tokens'
 
@@ -20,6 +21,8 @@ export interface SizeRow {
 export function SizePickerSheet({ open, onClose, rows }: { open: boolean; onClose: () => void; rows: readonly SizeRow[] }) {
   const [system, setSystem] = useState<SizeRow['system']>('EU')
   const closeRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLElement>(null)
+  useFocusTrap(panelRef, open)
   const row = rows.find((r) => r.system === system) ?? rows[0]
 
   useEffect(() => {
@@ -47,6 +50,7 @@ export function SizePickerSheet({ open, onClose, rows }: { open: boolean; onClos
             onClick={onClose}
           />
           <motion.aside
+            ref={panelRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="size-sheet-title"
@@ -65,19 +69,18 @@ export function SizePickerSheet({ open, onClose, rows }: { open: boolean; onClos
                 type="button"
                 onClick={onClose}
                 aria-label="Close size finder"
-                className="grid size-10 place-items-center rounded-lg text-ink hover:bg-surface-sunken"
+                className="grid size-11 place-items-center rounded-lg text-ink hover:bg-surface-sunken"
               >
                 <X className="size-5" />
               </button>
             </div>
 
-            <div role="tablist" aria-label="Size system" className="mt-4 inline-flex rounded-lg bg-surface-sunken p-1">
+            <div role="group" aria-label="Size system" className="mt-4 inline-flex rounded-lg bg-surface-sunken p-1">
               {rows.map((r) => (
                 <button
                   key={r.system}
                   type="button"
-                  role="tab"
-                  aria-selected={r.system === system}
+                  aria-pressed={r.system === system}
                   onClick={() => setSystem(r.system)}
                   className={cn(
                     'h-9 rounded-md px-5 text-sm font-semibold transition-colors',
@@ -89,7 +92,7 @@ export function SizePickerSheet({ open, onClose, rows }: { open: boolean; onClos
               ))}
             </div>
 
-            <div role="tabpanel" className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-5">
+            <div className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-5">
               {row.values.map((v) => (
                 <Link
                   key={v}
