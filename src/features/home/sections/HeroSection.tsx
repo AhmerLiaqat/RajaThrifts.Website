@@ -78,7 +78,7 @@ export function HeroSection() {
                 className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold"
               >
                 <Sparkles className="size-3.5" aria-hidden />
-                Fresh imported shipment
+                Fresh imported shipment every week
               </motion.span>
 
               <motion.h1
@@ -86,6 +86,10 @@ export function HeroSection() {
                 id="hero-title"
                 className="mt-4 text-[clamp(2rem,4.2vw,3.4rem)] leading-[1.04] font-extrabold tracking-[-0.035em] text-white"
               >
+                {/* Main search phrase lives in the H1 (small line), the brand promise stays big. */}
+                <span className="mb-3 block text-base font-bold tracking-normal text-white/80 sm:text-lg">
+                  Raja Thrifts · Thrifted shoes in Pakistan
+                </span>
                 Branded sneakers.
                 <br />
                 <span className="bg-gradient-to-r from-[#f6d77e] via-gold to-[#f0c55a] bg-clip-text text-transparent">
@@ -94,8 +98,9 @@ export function HeroSection() {
               </motion.h1>
 
               <motion.p {...rise(0.1)} className="mt-4 max-w-lg text-sm leading-relaxed text-white/75 sm:text-base">
-                Pakistan&apos;s thrift store for imported branded shoes: Nike, Adidas, New Balance and more,
-                graded by hand into three honest tiers. Every pair is cleaned, checked and photographed exactly as it is.
+                Pakistan&apos;s online thrift store for imported branded shoes and thrifted sneakers: Nike, Adidas,
+                New Balance and more, graded by hand into three honest tiers. Every pair is cleaned, checked and
+                photographed exactly as it is.
               </motion.p>
 
               <motion.div {...rise(0.15)} className="mt-6 flex flex-wrap gap-3">

@@ -60,8 +60,8 @@ export function CustomerFooter() {
           <div>
             <Logo tone="dark" tagline size="lg" />
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/65">
-              Imported thrift footwear, graded into Premium, A Category and B Category. Get a first look at every
-              new shipment.
+              Thrifted shoes and imported branded sneakers in Pakistan, graded into Premium, A Category and B Category.
+              Branded shoes at thrift prices, delivered nationwide.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <a
@@ -131,7 +131,7 @@ export function CustomerFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/55 md:flex-row md:items-center md:justify-between">
-          <p>© {YEAR} Raja Thrifts. Imported thrift footwear.</p>
+          <p>© {YEAR} Raja Thrifts. Thrift shoes &amp; branded sneakers in Pakistan.</p>
           <p className="max-w-xl md:text-right">
             {env.useDemoCatalog
               ? 'Design preview: products, prices and reviews shown are sample data, not current inventory. '

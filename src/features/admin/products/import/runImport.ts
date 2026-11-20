@@ -97,7 +97,8 @@ export async function importOne(
         productId,
         photos[i].file,
         VIEWS[uploaded] ?? 'detail',
-        `${row.brand} ${row.name}, photo ${uploaded + 1}`,
+        // Descriptive alt text: helps Google Images ranking for "thrifted <brand> shoes".
+        `Thrifted ${row.brand} ${row.name} shoes, size EU ${row.sizes.join('/')}, photo ${uploaded + 1}`,
         uploaded,
       )
       uploaded++

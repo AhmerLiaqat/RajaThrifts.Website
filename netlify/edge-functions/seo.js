@@ -65,21 +65,22 @@ async function bodyFor(pathname, seo) {
   const path = pathname.replace(/\/+$/, '') || '/'
   if (path === '/') {
     return listingBody(seo, {
-      heading: 'Branded thrift sneakers in Pakistan',
+      heading: 'Raja Thrifts: thrifted shoes in Pakistan, branded sneakers at thrift prices',
       intro:
-        "Raja Thrifts is Pakistan's online thrift store for imported branded shoes: Nike, Adidas, New Balance and more, " +
-        'graded by hand into Premium, A Category and B Category and delivered nationwide.',
+        "Raja Thrifts is Pakistan's online thrift store for thrifted shoes and imported branded sneakers (landa shoes): " +
+        'Nike, Adidas, New Balance and more, graded by hand into Premium, A Category and B Category. ' +
+        'Delivered to Islamabad, Rawalpindi, Lahore, Karachi, Peshawar, Faisalabad, Multan and all over Pakistan.',
       products: await loadListing(),
       faqs: true,
     })
   }
   if (path === '/shop') {
-    return listingBody(seo, { heading: 'Shop branded thrift shoes in Pakistan', products: await loadListing() })
+    return listingBody(seo, { heading: 'Shop thrift shoes online: branded thrifted sneakers', products: await loadListing() })
   }
   const m = path.match(/^\/collections\/([a-z-]+)$/)
   if (m && COLLECTION_SEO[m[1]]) {
     const c = COLLECTION_SEO[m[1]]
-    return listingBody(seo, { heading: `${c.name} thrift sneakers`, intro: `${c.intro} ${c.description}`, products: await loadListing(GRADE_BY_SLUG[m[1]]) })
+    return listingBody(seo, { heading: `${c.name} thrifted shoes and sneakers`, intro: `${c.intro} ${c.description}`, products: await loadListing(GRADE_BY_SLUG[m[1]]) })
   }
   if (path === '/track-order') return listingBody(seo, { heading: 'Track your order' })
   return null

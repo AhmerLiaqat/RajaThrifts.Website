@@ -22,21 +22,36 @@ export const CONTACT_INFO = {
 
 /** Search phrases the site is written around (Pakistan, branded thrift / pre-owned sneakers). */
 export const KEYWORDS = [
+  'thrifted shoes',
+  'thrift shoes',
   'thrift shoes Pakistan',
+  'thrifted shoes Pakistan',
+  'thrift store Pakistan',
+  'thrift shop online',
+  'landa shoes',
+  'landa bazar shoes',
+  'imported landa shoes',
+  'branded shoes',
   'branded shoes Pakistan',
   'imported shoes Pakistan',
-  'thrift sneakers',
-  'used branded sneakers',
-  'preloved sneakers Pakistan',
-  'second hand branded shoes',
-  'branded sneakers price in Pakistan',
+  'used branded shoes',
+  'second hand shoes',
+  'preloved sneakers',
+  'sneakers Pakistan',
+  'shoes online Pakistan',
+  'cheap branded shoes',
   'Nike shoes Pakistan',
   'Adidas shoes Pakistan',
   'New Balance shoes Pakistan',
-  'cheap branded sneakers Pakistan',
-  'online shoe store Pakistan',
+  'thrift shoes Islamabad',
+  'thrift shoes Rawalpindi',
+  'thrift shoes Lahore',
+  'thrift shoes Karachi',
   'Raja Thrifts',
 ]
+
+/** Cities named in on-page copy. True statement: we deliver to all of them (nationwide delivery). */
+export const DELIVERY_CITIES = ['Islamabad', 'Rawalpindi', 'Lahore', 'Karachi', 'Peshawar', 'Faisalabad', 'Multan', 'Murree']
 
 export interface PageSeo {
   /** Full <title> (already includes the brand). */
@@ -66,12 +81,12 @@ export const COLLECTION_SEO: Record<
 > = {
   premium: {
     name: 'Premium',
-    title: 'Premium Thrift Sneakers in Pakistan | Raja Thrifts',
+    title: 'Premium Thrifted Sneakers in Pakistan | Raja Thrifts',
     description:
       'Premium grade branded thrift sneakers in Pakistan: near-new imported pairs from Nike, Adidas, New Balance & more. Hand-inspected, delivered nationwide.',
     intro:
       'Our top grade: imported branded sneakers in near-new condition, deep-cleaned and checked by hand before they go live.',
-    keywords: ['premium thrift sneakers', 'near new branded shoes Pakistan', 'like new sneakers Pakistan'],
+    keywords: ['premium thrifted shoes', 'premium thrift sneakers', 'near new branded shoes Pakistan', 'like new landa shoes'],
   },
   'a-category': {
     name: 'A Category',
@@ -80,21 +95,29 @@ export const COLLECTION_SEO: Record<
       'A Category branded thrift shoes in Pakistan: imported sneakers in excellent condition with light signs of wear, at thrift prices. Nationwide delivery.',
     intro:
       'Everyday excellence: imported branded pairs with only light signs of wear, ready for daily rotation at a thrift price.',
-    keywords: ['A grade thrift shoes', 'used branded sneakers Pakistan', 'imported sneakers excellent condition'],
+    keywords: ['A grade thrift shoes', 'A grade landa shoes', 'used branded sneakers Pakistan', 'thrifted sneakers excellent condition'],
   },
   'b-category': {
     name: 'B Category',
-    title: 'B Category Budget Branded Shoes | Raja Thrifts',
+    title: 'B Category Cheap Thrift Shoes | Raja Thrifts',
     description:
       'B Category budget branded shoes in Pakistan: imported thrift sneakers with visible, disclosed wear at the lowest prices. Delivered across Pakistan.',
     intro:
       'Honest value: imported branded sneakers with visible wear that is clearly shown in the photos, priced for weekend miles.',
-    keywords: ['cheap branded shoes Pakistan', 'budget sneakers Pakistan', 'second hand shoes Pakistan'],
+    keywords: ['cheap thrift shoes', 'cheap branded shoes Pakistan', 'budget landa shoes', 'second hand shoes Pakistan'],
   },
 }
 
 /** Homepage FAQs: visible on the page and sent to Google as FAQPage structured data. */
 export const FAQS: Array<{ q: string; a: string }> = [
+  {
+    q: 'What are thrifted shoes?',
+    a: 'Thrifted shoes are pre-owned shoes sold again at a lower price. At Raja Thrifts they are imported branded sneakers and shoes that we check, clean, grade and photograph exactly as they are, so you get a branded pair for a thrift price.',
+  },
+  {
+    q: 'Are your shoes the same as landa shoes?',
+    a: 'Yes, "landa" is the common name in Pakistan for imported second-hand goods. Our shoes are imported thrift (landa) pairs, but every one is hand-picked, cleaned and graded, and you can see real photos and sizes online before you order.',
+  },
   {
     q: 'What is Raja Thrifts?',
     a: 'Raja Thrifts is an online thrift store in Pakistan for imported branded sneakers and shoes. Every pair is pre-owned, hand-inspected, cleaned and photographed exactly as it is.',
@@ -105,7 +128,7 @@ export const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: 'Do you deliver all over Pakistan?',
-    a: 'Yes. We deliver to every city in Pakistan. The delivery charge is shown at checkout before you place your order.',
+    a: 'Yes. We deliver thrift shoes to every city in Pakistan, including Islamabad, Rawalpindi, Lahore, Karachi, Peshawar, Faisalabad, Multan and Murree. The delivery charge is shown at checkout before you place your order.',
   },
   {
     q: 'How do I pay for my order?',
@@ -138,12 +161,14 @@ export function storeJsonLd(origin = SITE_URL) {
     '@type': 'ShoeStore',
     '@id': `${origin}/#store`,
     name: SITE_NAME,
+    alternateName: ['RajaThrifts', 'Raja Thrift', 'Raja Thrift Shoes', 'raja_thrifts'],
     url: `${origin}/`,
     logo: `${origin}/brand/raja-thrifts-icon.svg`,
     image: `${origin}/og-image.jpg`,
     description:
       'Online thrift store for imported branded sneakers in Pakistan. Hand-inspected, honestly graded, delivered nationwide.',
     telephone: CONTACT_INFO.phone,
+    address: { '@type': 'PostalAddress', addressLocality: 'Bhara Kahu', addressRegion: 'Islamabad', addressCountry: 'PK' },
     areaServed: { '@type': 'Country', name: 'Pakistan' },
     currenciesAccepted: 'PKR',
     paymentAccepted: 'Bank transfer',
@@ -168,6 +193,7 @@ export function websiteJsonLd(origin = SITE_URL) {
     '@type': 'WebSite',
     '@id': `${origin}/#website`,
     name: SITE_NAME,
+    alternateName: ['RajaThrifts', 'Raja Thrift', 'Raja Thrift Shoes', 'raja_thrifts'],
     url: `${origin}/`,
     inLanguage: 'en-PK',
     potentialAction: {
@@ -207,9 +233,9 @@ export function breadcrumbJsonLd(items: Array<{ name: string; path: string }>, o
 
 export function homeSeo(origin = SITE_URL): PageSeo {
   return {
-    title: 'Raja Thrifts | Branded Thrift Sneakers in Pakistan',
+    title: 'Thrifted Shoes in Pakistan | Branded Thrift Sneakers – Raja Thrifts',
     description:
-      'Buy branded imported thrift sneakers in Pakistan: Nike, Adidas, New Balance & more at thrift prices. Hand-inspected, honestly graded, delivered nationwide.',
+      'Buy thrifted shoes online in Pakistan: imported branded thrift sneakers (landa shoes) from Nike, Adidas, New Balance & more. Hand-checked, delivered nationwide.',
     path: '/',
     keywords: KEYWORDS,
     jsonLd: [storeJsonLd(origin), websiteJsonLd(origin), faqJsonLd()],
@@ -218,11 +244,11 @@ export function homeSeo(origin = SITE_URL): PageSeo {
 
 export function shopSeo(origin = SITE_URL): PageSeo {
   return {
-    title: 'Shop Branded Thrift Shoes Online in Pakistan | Raja Thrifts',
+    title: 'Shop Thrift Shoes Online – Branded Thrifted Sneakers | Raja Thrifts',
     description:
-      'Shop all branded thrift shoes in stock: imported Nike, Adidas, New Balance sneakers and more. Filter by size, brand and grade. Delivery across Pakistan.',
+      'Shop all thrift shoes in stock: thrifted Nike, Adidas, New Balance sneakers and more imported branded shoes. Filter by size, brand and grade. Pakistan-wide delivery.',
     path: '/shop',
-    keywords: ['buy branded shoes online Pakistan', 'thrift sneakers online', ...KEYWORDS.slice(0, 8)],
+    keywords: ['buy thrift shoes online', 'thrift shoes shop', 'buy branded shoes online Pakistan', ...KEYWORDS.slice(0, 12)],
     jsonLd: [breadcrumbJsonLd([{ name: 'Home', path: '/' }, { name: 'Shop', path: '/shop' }], origin)],
   }
 }
@@ -290,7 +316,7 @@ export function productSeo(p: SeoProduct, origin = SITE_URL): PageSeo {
   const description = clip(
     `Buy ${fullName}${p.sizes.length ? ` (EU ${p.sizes.join(', ')})` : ''} for ${pkr(p.price)} in Pakistan` +
       `${p.compareAtPrice ? ` (retail ${pkr(p.compareAtPrice)})` : ''}. ` +
-      `${grade.name} grade, ${p.conditionLabel.toLowerCase()} condition, hand-inspected. ` +
+      `Thrifted ${grade.name} grade shoes, ${p.conditionLabel.toLowerCase()} condition, hand-inspected. ` +
       `${p.inStock ? 'Nationwide delivery.' : 'Sold out.'}`,
     158,
   )
@@ -305,7 +331,10 @@ export function productSeo(p: SeoProduct, origin = SITE_URL): PageSeo {
       `${p.brand} shoes Pakistan`,
       `${p.brand} sneakers`,
       ...(p.sizes.length ? [`${p.brand} shoes size ${p.sizes[0]}`] : []),
-      'thrift sneakers Pakistan',
+      `thrifted ${p.brand} shoes`,
+      `${p.brand} landa shoes`,
+      'thrift shoes Pakistan',
+      'thrifted shoes',
       'branded shoes Pakistan',
     ],
     jsonLd: [

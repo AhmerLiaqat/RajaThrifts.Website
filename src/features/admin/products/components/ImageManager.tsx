@@ -58,7 +58,7 @@ export function ImageManager({
         await upload.mutateAsync({
           file,
           view,
-          alt: `${productName}, ${IMAGE_VIEW_LABEL[view].toLowerCase()} view`,
+          alt: `Thrifted ${productName} shoes, ${IMAGE_VIEW_LABEL[view].toLowerCase()} view`,
           position: position++,
         })
       } catch (e) {

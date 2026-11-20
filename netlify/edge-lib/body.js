@@ -24,7 +24,7 @@ const nav = () =>
 const footer = () =>
   `<footer><p>WhatsApp: ${CONTACT_INFO.whatsapp.map(esc).join(', ')} · Calls: ${esc(CONTACT_INFO.phone)} · ` +
   `<a href="${CONTACT_INFO.instagram}">Instagram</a> · <a href="${CONTACT_INFO.tiktok}">TikTok</a></p>` +
-  '<p>Raja Thrifts: imported branded thrift sneakers, delivered across Pakistan.</p></footer>'
+  '<p>Raja Thrifts: thrifted shoes and imported branded sneakers, delivered across Pakistan.</p></footer>'
 
 function productList(products) {
   if (!products?.length) return ''
@@ -60,7 +60,8 @@ export function productBody(p, seo) {
   return (
     `${STYLE}<div class="seo-fallback">${nav()}<main>` +
     `<p><a href="/">Home</a> › <a href="/shop">Shop</a> › <a href="/collections/${slug}">${esc(grade.name)} sneakers</a></p>` +
-    `<h1>${esc(p.brand)} ${esc(p.name)}</h1>` +
+    `<h1>${esc(p.brand)} ${esc(p.name)}${p.sizes.length ? ` – size ${esc(p.sizes.join('/'))}` : ''}</h1>` +
+    `<p>Thrifted ${esc(p.brand)} shoes in ${esc(grade.name)} grade, imported and hand-checked by Raja Thrifts.</p>` +
     `<p><strong>${esc(pkr(p.price))}</strong>${p.compareAtPrice ? ` <s>${esc(pkr(p.compareAtPrice))}</s>` : ''} · ` +
     `${p.inStock ? 'In stock' : 'Sold out'}</p>` +
     '<ul>' +
@@ -70,7 +71,7 @@ export function productBody(p, seo) {
     (p.color ? `<li>Colour: ${esc(p.color)}</li>` : '') +
     '<li>Delivery: all over Pakistan</li></ul>' +
     `<p>${esc(p.description || seo.description)}</p>` +
-    p.images.slice(0, 4).map((src, i) => `<img src="${esc(src)}" alt="${esc(`${p.brand} ${p.name}, photo ${i + 1}`)}" loading="lazy" />`).join(' ') +
+    p.images.slice(0, 4).map((src, i) => `<img src="${esc(src)}" alt="${esc(`Thrifted ${p.brand} ${p.name} shoes, photo ${i + 1}`)}" loading="lazy" />`).join(' ') +
     `<p>${esc(grade.intro)}</p>` +
     `</main>${footer()}</div>`
   )

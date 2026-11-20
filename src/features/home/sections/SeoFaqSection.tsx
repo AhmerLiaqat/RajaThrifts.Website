@@ -1,8 +1,20 @@
 import { ChevronDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { paths } from '@/app/router/paths'
-import { FAQS } from '@/lib/seo/copy'
+import { DELIVERY_CITIES, FAQS } from '@/lib/seo/copy'
 import { HomeHeading } from '../components/HomeHeading'
+
+/** Internal links with the phrases people search for. */
+const POPULAR = [
+  { label: 'Thrift shoes', to: paths.shop },
+  { label: 'Thrifted sneakers', to: paths.shop },
+  { label: 'Premium thrift shoes', to: paths.collection('premium') },
+  { label: 'Cheap branded shoes', to: paths.collection('b-category') },
+  { label: 'Nike thrift shoes', to: `${paths.shop}?brand=Nike` },
+  { label: 'Adidas thrift shoes', to: `${paths.shop}?brand=Adidas` },
+  { label: 'New Balance thrift shoes', to: `${paths.shop}?brand=New%20Balance` },
+  { label: 'Track my order', to: paths.trackOrder },
+]
 
 /**
  * About + FAQ: real, readable text about the shop (what search engines rank on) and the
@@ -13,12 +25,13 @@ export function SeoFaqSection() {
     <section aria-labelledby="about-title" className="border-t border-line py-16 lg:py-20">
       <div className="mx-auto grid grid-cols-1 max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr] lg:gap-16 lg:px-8">
         <div>
-          <HomeHeading id="about-title" eyebrow="About Raja Thrifts" title="Branded thrift sneakers" highlight="in Pakistan" />
+          <HomeHeading id="about-title" eyebrow="About Raja Thrifts" title="Thrifted shoes &" highlight="branded sneakers in Pakistan" />
           <div className="mt-5 space-y-4 text-base leading-relaxed text-ink-muted">
             <p>
-              Raja Thrifts is an online thrift store for <strong className="text-ink">imported branded sneakers</strong>{' '}
-              in Pakistan. We bring in pre-owned pairs from brands like Nike, Adidas, New Balance, Puma and more, then
-              check, clean and photograph every pair exactly as it is.
+              Raja Thrifts is an online <strong className="text-ink">thrift store</strong> for{' '}
+              <strong className="text-ink">thrifted shoes</strong> and imported branded sneakers in Pakistan. Often called
+              landa shoes, our pre-owned pairs come from brands like Nike, Adidas, New Balance, Puma and more, and every
+              one is checked, cleaned and photographed exactly as it is.
             </p>
             <p>
               Each pair is graded so you know what you are buying:{' '}
@@ -33,15 +46,27 @@ export function SeoFaqSection() {
               <Link to={paths.collection('b-category')} className="font-semibold text-sand hover:underline">
                 B Category
               </Link>{' '}
-              (visible wear, lowest prices). Every pair is one of a kind, and we deliver branded shoes to every city in
-              Pakistan.
+              (visible wear, lowest prices). Every pair is one of a kind, so you get branded shoes at thrift prices.
             </p>
             <p>
-              <Link to={paths.shop} className="font-semibold text-sand hover:underline">
-                Shop all thrift sneakers
-              </Link>{' '}
-              by size, brand and grade.
+              We deliver thrift shoes all over Pakistan, including {DELIVERY_CITIES.slice(0, -1).join(', ')} and{' '}
+              {DELIVERY_CITIES[DELIVERY_CITIES.length - 1]}. Order online as a guest and track your order anytime.
             </p>
+            <div>
+              <h3 className="text-sm font-bold text-ink">Popular searches</h3>
+              <ul className="mt-2 flex flex-wrap gap-2">
+                {POPULAR.map((l) => (
+                  <li key={l.label}>
+                    <Link
+                      to={l.to}
+                      className="inline-flex rounded-full border border-line bg-white px-3 py-1 text-sm font-medium text-ink hover:border-sand hover:text-sand"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
